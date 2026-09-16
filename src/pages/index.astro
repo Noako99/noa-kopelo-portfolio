@@ -12,14 +12,16 @@ import secretsCover from '@assets/projects/secrets/hero.png';
 import threeGenerationsCover from '@assets/projects/3-generations/map-bg.jpg';
 import westBankCover from '@assets/projects/west-bank-barrier/booklet-spread.jpg';
 
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
 const projects = [
-  { number: '01', title: 'Noa & Atalia', href: '/projects/noa-atalia', cover: noaAtaliaCover },
-  { number: '02', title: 'The Prime Minister Next Door', href: '/projects/prime-minister-next-door', cover: primeMinisterCover },
-  { number: '03', title: 'Motion Design', href: '/projects/motion-design', cover: motionGraphicCover },
-  { number: '04', title: 'More Than I Love My Life', href: '/projects/more-than-i-love-my-life', cover: moreThanCover },
-  { number: '05', title: 'Secrets', href: '/projects/secrets', cover: secretsCover },
-  { number: '06', title: '3 Generations', href: '/projects/3-generations', cover: threeGenerationsCover },
-  { number: '07', title: 'The West Bank Barrier', href: '/projects/west-bank-barrier', cover: westBankCover },
+  { number: '01', title: 'Noa & Atalia', href: `${base}/projects/noa-atalia`, cover: noaAtaliaCover },
+  { number: '02', title: 'The Prime Minister Next Door', href: `${base}/projects/prime-minister-next-door`, cover: primeMinisterCover },
+  { number: '03', title: 'Motion Design', href: `${base}/projects/motion-design`, cover: motionGraphicCover },
+  { number: '04', title: 'More Than I Love My Life', href: `${base}/projects/more-than-i-love-my-life`, cover: moreThanCover },
+  { number: '05', title: 'Secrets', href: `${base}/projects/secrets`, cover: secretsCover },
+  { number: '06', title: '3 Generations', href: `${base}/projects/3-generations`, cover: threeGenerationsCover },
+  { number: '07', title: 'The West Bank Barrier', href: `${base}/projects/west-bank-barrier`, cover: westBankCover },
 ];
 ---
 

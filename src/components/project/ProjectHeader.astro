@@ -16,7 +16,7 @@ const { number, title, description, tags } = Astro.props;
     {tags.map((tag) => <li>{tag}</li>)}
   </ul>
 
-  <a href="/" class="brand">
+  <a href={import.meta.env.BASE_URL} class="brand">
     Noa Kopelo
     <img src={logoMark.src} alt="" class="brand-mark" />
   </a>
