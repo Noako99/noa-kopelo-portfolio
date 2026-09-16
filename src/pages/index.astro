@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
+import Nav from '@components/layout/Nav.astro';
 import { Image } from 'astro:assets';
 import { siteConfig } from '@config/site';
 import logoMark from '@assets/shared/logo-mark.svg';
@@ -14,125 +15,205 @@ import westBankCover from '@assets/projects/west-bank-barrier/booklet-spread.jpg
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
+/* x / y / w are the exact Figma coordinates inside the 1512×982 homepage frame. */
 const projects = [
-  { number: '01', title: 'Noa & Atalia', href: `${base}/projects/noa-atalia`, cover: noaAtaliaCover },
-  { number: '02', title: 'The Prime Minister Next Door', href: `${base}/projects/prime-minister-next-door`, cover: primeMinisterCover },
-  { number: '03', title: 'Motion Design', href: `${base}/projects/motion-design`, cover: motionGraphicCover },
-  { number: '04', title: 'More Than I Love My Life', href: `${base}/projects/more-than-i-love-my-life`, cover: moreThanCover },
-  { number: '05', title: 'Secrets', href: `${base}/projects/secrets`, cover: secretsCover },
-  { number: '06', title: '3 Generations', href: `${base}/projects/3-generations`, cover: threeGenerationsCover },
-  { number: '07', title: 'The West Bank Barrier', href: `${base}/projects/west-bank-barrier`, cover: westBankCover },
+  { number: '01', title: 'Noa & Atalia', href: `${base}/projects/noa-atalia`, cover: noaAtaliaCover, x: 644, y: 400, w: 107 },
+  { number: '02', title: 'The Prime Minister Next Door', href: `${base}/projects/prime-minister-next-door`, cover: primeMinisterCover, x: 881, y: 400, w: 172 },
+  { number: '03', title: 'Motion Design', href: `${base}/projects/motion-design`, cover: motionGraphicCover, x: 1126, y: 400, w: 167 },
+  { number: '04', title: 'More Than I Love My Life', href: `${base}/projects/more-than-i-love-my-life`, cover: moreThanCover, x: 1342, y: 400, w: 150 },
+  { number: '05', title: 'Secrets', href: `${base}/projects/secrets`, cover: secretsCover, x: 644, y: 552, w: 74 },
+  { number: '06', title: '3 Generations', href: `${base}/projects/3-generations`, cover: threeGenerationsCover, x: 880, y: 552, w: 128 },
+  { number: '07', title: 'The West Bank Barrier', href: `${base}/projects/west-bank-barrier`, cover: westBankCover, x: 1127, y: 552, w: 117 },
 ];
 ---
 
 <BaseLayout title={siteConfig.title} description={siteConfig.description} image={noaAtaliaCover.src}>
-  <section class="home">
-    <div class="intro">
-      <p class="kicker">Hi! I'm</p>
-      <h1>Noa Kopelo</h1>
-      <p class="intro-copy">{siteConfig.description}</p>
-    </div>
+  <div class="canvas-wrap">
+    <div class="canvas">
+      <Nav canvas />
 
-    <p class="note">
-      I love working with rhythm, archives, and typography across video editing, motion design, and editorial layouts
-    </p>
+      <!-- Figma: red box 130,173 · 237×408 -->
+      <div class="box intro-box">
+        <p class="kicker-wide intro-kicker">Hi! I'm</p>
+        <h1 class="name">Noa Kopelo</h1>
+        <p class="intro-copy">{siteConfig.description}</p>
+      </div>
 
-    <ul class="project-list" role="list">
-      {projects.map((project) => (
-        <li>
-          <a class="project-link" href={project.href}>
-            <span class="num">{project.number}</span>
-            <span class="title">{project.title}</span>
-            <span class="preview">
-              <Image src={project.cover} alt="" width={420} height={280} loading="eager" />
-            </span>
-          </a>
-        </li>
-      ))}
-    </ul>
+      <!-- Figma: red box 1008,132 · 237×201 -->
+      <div class="box note-box">
+        <p class="note-copy">
+          I love working with rhythm, archives, and typography across video editing, motion design, and editorial
+          layouts
+        </p>
+      </div>
 
-    <div class="skills">
-      <p class="kicker">Skills &amp; Software</p>
-      <p>
-        Motion Design, Video Editing, Editorial Layout, Visual Storytelling, Typography Systems, Adobe Creative
-        Suite, Figma, Procreate, Framer, Claude, AI-Assisted Workflows, Archival Research
-      </p>
-    </div>
+      <!-- Figma: red box 644,648 · 404×237 -->
+      <div class="box skills-box">
+        <p class="kicker-wide skills-kicker">Skills &amp; Software</p>
+        <p class="skills-copy">
+          Motion Design, Video Editing, Editorial Layout, Visual Storytelling, Typography Systems, Adobe Creative
+          Suite, Figma, Procreate, Framer, Claude, AI-Assisted Workflows, Archival Research
+        </p>
+      </div>
 
-    <div class="collab">
+      <ul class="project-list" role="list">
+        {projects.map((project) => (
+          <li class="project-item" style={`--x:${project.x}; --y:${project.y}; --w:${project.w};`}>
+            <a class="project-link" href={project.href}>
+              <span class="num">{project.number}</span>
+              <span class="title">{project.title}</span>
+              <span class="preview">
+                <Image src={project.cover} alt="" width={420} height={280} loading="eager" />
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <!-- Figma: logo 47,915 · 30×28 — label 267,922 -->
       <img src={logoMark.src} alt="" class="collab-mark" />
-      <p>Open for collab :)</p>
+      <p class="collab-label">Open for collab :)</p>
     </div>
-  </section>
+  </div>
 </BaseLayout>
 
 <style>
-  .home {
+  /* ===== SCALED FIGMA CANVAS =====
+     --u is one Figma pixel. It equals 1px until the viewport drops below the
+     1512px canvas, then shrinks so the whole design scales proportionally.
+     Every coordinate below is the literal Figma x/y/size. */
+  .canvas-wrap {
+    container-type: inline-size;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .canvas {
+    --u: min(1px, calc(100cqw / 1512));
     position: relative;
-    max-width: var(--canvas-width);
-    margin-inline: 0;
-    padding: 9.5rem var(--space-lg) 6rem var(--content-left);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2xl);
+    width: calc(1512 * var(--u));
+    height: calc(982 * var(--u));
   }
 
-  .intro {
-    max-width: 34rem;
-    border: 1px solid var(--color-accent);
-    padding: var(--space-lg);
+  /* An inset shadow rather than a border: a border would push the absolutely
+     positioned children 1px in, since they resolve against the padding box. */
+  .box {
+    position: absolute;
+    box-shadow: inset 0 0 0 1px var(--color-accent);
   }
 
-  .kicker {
-    font-family: var(--font-label);
-    font-weight: 300;
-    font-size: 0.9rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--color-accent);
-    margin-bottom: var(--space-sm);
+  .intro-box {
+    left: calc(130 * var(--u));
+    top: calc(173 * var(--u));
+    width: calc(237 * var(--u));
+    height: calc(408 * var(--u));
   }
 
-  .intro h1 {
+  .note-box {
+    left: calc(1008 * var(--u));
+    top: calc(132 * var(--u));
+    width: calc(237 * var(--u));
+    height: calc(201 * var(--u));
+  }
+
+  .skills-box {
+    left: calc(644 * var(--u));
+    top: calc(648 * var(--u));
+    width: calc(404 * var(--u));
+    height: calc(237 * var(--u));
+  }
+
+  /* Text inside the boxes — positioned against each box's own origin. */
+  .intro-kicker {
+    position: absolute;
+    left: calc(138 * var(--u));
+    top: calc(12 * var(--u));
+    white-space: nowrap;
+  }
+
+  .name {
+    position: absolute;
+    left: calc(133 * var(--u));
+    top: calc(25 * var(--u));
+    width: calc(371 * var(--u));
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: clamp(2.75rem, 6vw, 4.5rem);
+    font-size: calc(80 * var(--u));
+    line-height: 1.35;
     letter-spacing: -0.07em;
-    margin-bottom: var(--space-md);
+    text-align: center;
+    color: var(--color-text);
   }
 
   .intro-copy {
+    position: absolute;
+    left: calc(21 * var(--u));
+    top: calc(132 * var(--u));
+    --w: 185;
+  }
+
+  .note-copy {
+    position: absolute;
+    left: calc(21 * var(--u));
+    top: calc(12 * var(--u));
+    --w: 201;
+  }
+
+  .skills-kicker {
+    position: absolute;
+    left: calc(136 * var(--u));
+    top: calc(13 * var(--u));
+    width: calc(258 * var(--u));
+  }
+
+  .skills-copy {
+    position: absolute;
+    left: calc(22 * var(--u));
+    top: calc(69 * var(--u));
+    --w: 356;
+  }
+
+  /* Figma: 16px General Sans Light, 3.2px tracking, uppercase, red.
+     The +3.2 on the width compensates for CSS adding letter-spacing after the
+     last character of a line, which Figma does not — without it these blocks
+     wrap one line early. */
+  .intro-copy,
+  .note-copy,
+  .skills-copy {
+    width: calc((var(--w) + 3.2) * var(--u));
+    margin: 0;
     font-family: var(--font-body);
     font-weight: 300;
-    font-size: 1rem;
-    letter-spacing: 0.06em;
+    font-size: calc(16 * var(--u));
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    line-height: 1.6;
+    line-height: 1.375;
     color: var(--color-accent);
   }
 
-  .note {
-    max-width: 34rem;
-    border: 1px solid var(--color-accent);
-    padding: var(--space-lg);
+  /* Figma: 16px, 6.4px tracking, red */
+  .kicker-wide {
+    margin: 0;
     font-family: var(--font-body);
     font-weight: 300;
-    font-size: 1rem;
-    letter-spacing: 0.06em;
+    font-size: calc(16 * var(--u));
+    letter-spacing: 0.4em;
     text-transform: uppercase;
-    line-height: 1.6;
+    line-height: 1.5;
     color: var(--color-accent);
-    margin: 0;
   }
 
   .project-list {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-xl) var(--space-lg);
-    align-content: start;
+  }
+
+  .project-item {
+    position: absolute;
+    left: calc(var(--x) * var(--u));
+    top: calc(var(--y) * var(--u));
+    width: calc(var(--w) * var(--u));
   }
 
   .project-link {
@@ -141,23 +222,24 @@ const projects = [
     color: var(--color-text);
   }
 
+  /* Figma: 18px, -1.26px tracking */
   .num {
     display: block;
     font-family: var(--font-display);
     font-weight: 200;
-    font-size: 1.1rem;
+    font-size: calc(18 * var(--u));
+    letter-spacing: -0.07em;
     color: var(--color-accent);
-    margin-bottom: 0.4rem;
   }
 
   .title {
     display: block;
     font-family: var(--font-body);
     font-weight: 400;
-    font-size: 1.1rem;
+    font-size: calc(18 * var(--u));
     text-transform: uppercase;
-    letter-spacing: -0.04em;
-    line-height: 1.15;
+    letter-spacing: -0.07em;
+    line-height: 1.05;
   }
 
   .project-link:hover .title,
@@ -167,15 +249,14 @@ const projects = [
 
   .preview {
     position: absolute;
-    top: -0.5rem;
-    left: 50%;
-    transform: translate(-50%, -100%) scale(0.97);
-    width: 260px;
+    bottom: calc(100% + 0.5rem);
+    left: 0;
+    width: calc(260 * var(--u));
     aspect-ratio: 3 / 2;
     overflow: hidden;
     opacity: 0;
     pointer-events: none;
-    transition: opacity var(--transition-normal), transform var(--transition-normal);
+    transition: opacity var(--transition-normal);
     z-index: 10;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
   }
@@ -189,55 +270,126 @@ const projects = [
   .project-link:hover .preview,
   .project-link:focus-visible .preview {
     opacity: 1;
-    transform: translate(-50%, -100%) scale(1);
-  }
-
-  .skills {
-    max-width: 34rem;
-    border: 1px solid var(--color-accent);
-    padding: var(--space-lg);
-    color: var(--color-accent);
-  }
-
-  .skills p:last-child {
-    font-family: var(--font-body);
-    font-weight: 300;
-    font-size: 0.95rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    line-height: 1.6;
-  }
-
-  .collab {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
   }
 
   .collab-mark {
-    width: 1.25rem;
-    height: auto;
+    position: absolute;
+    left: calc(47 * var(--u));
+    top: calc(915 * var(--u));
+    width: calc(30 * var(--u));
+    height: calc(28 * var(--u));
   }
 
-  .collab p {
+  /* Figma: 20px General Sans Extralight, -1.4px tracking */
+  .collab-label {
+    position: absolute;
+    left: calc(267 * var(--u));
+    top: calc(922 * var(--u));
+    width: calc(169 * var(--u));
+    margin: 0;
     font-family: var(--font-display);
     font-weight: 200;
-    font-size: 1rem;
-    letter-spacing: -0.05em;
+    font-size: calc(20 * var(--u));
+    letter-spacing: -0.07em;
+    color: var(--color-text);
   }
 
+  /* ===== MOBILE =====
+     Below the canvas breakpoint the design stops scaling and becomes a
+     normal stacked layout, since 16px Figma text would be ~9px on a phone. */
   @media (max-width: 900px) {
-    .home {
-      padding-top: 6rem;
-      gap: var(--space-xl);
+    .canvas-wrap {
+      container-type: normal;
+      overflow: visible;
     }
 
+    .canvas {
+      --u: 1px;
+      width: auto;
+      height: auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xl);
+      padding: 6rem var(--space-lg) var(--space-2xl);
+    }
+
+    .box {
+      position: static;
+      width: auto;
+      height: auto;
+      padding: var(--space-lg);
+      box-shadow: none;
+      border: 1px solid var(--color-accent);
+    }
+
+    .intro-kicker,
+    .name,
+    .intro-copy,
+    .note-copy,
+    .skills-kicker,
+    .skills-copy {
+      position: static;
+      width: auto;
+    }
+
+    .name {
+      font-size: clamp(2.5rem, 12vw, 4rem);
+      text-align: left;
+      margin-block: var(--space-sm);
+    }
+
+    .intro-copy,
+    .note-copy,
+    .skills-copy,
+    .kicker-wide {
+      font-size: 1rem;
+      letter-spacing: 0.15em;
+    }
+
+    /* DOM order puts the skills box before the projects; on mobile the
+       reading order is intro → note → projects → skills → collab. */
     .project-list {
+      display: grid;
       grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-lg);
+    }
+
+    .skills-box {
+      order: 1;
+    }
+
+    .collab-mark,
+    .collab-label {
+      order: 2;
+    }
+
+    .project-item {
+      position: static;
+      width: auto;
+    }
+
+    .num,
+    .title {
+      font-size: 1.1rem;
     }
 
     .preview {
       display: none;
+    }
+
+    .collab-mark,
+    .collab-label {
+      position: static;
+      width: auto;
+    }
+
+    .collab-mark {
+      width: 1.25rem;
+      height: auto;
+    }
+
+    .collab-label {
+      font-size: 1rem;
     }
   }
 

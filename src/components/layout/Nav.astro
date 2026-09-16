@@ -1,9 +1,16 @@
 ---
 import { siteConfig } from '@config/site';
+
+interface Props {
+  /* Positions the nav inside a scaled Figma canvas instead of the viewport. */
+  canvas?: boolean;
+}
+
+const { canvas = false } = Astro.props;
 ---
 
-<nav class="site-nav" aria-label="Main navigation">
-  <a class="nav-link" href={siteConfig.cvUrl} target="_blank" rel="noopener noreferrer">CV</a>
+<nav class:list={['site-nav', { canvas }]} aria-label="Main navigation">
+  <a class="nav-link nav-cv" href={siteConfig.cvUrl} target="_blank" rel="noopener noreferrer">CV</a>
   <button class="nav-link nav-contact" type="button" aria-expanded="false" aria-controls="contact-panel">
     Contact
   </button>
@@ -24,6 +31,35 @@ import { siteConfig } from '@config/site';
     display: flex;
     align-items: center;
     gap: 2.6rem;
+  }
+
+  /* Canvas mode: Figma puts CV at 47,35 and Contact at 110,35 inside the frame. */
+  .site-nav.canvas {
+    position: absolute;
+    inset: 0;
+    display: block;
+    pointer-events: none;
+  }
+
+  .site-nav.canvas .nav-link,
+  .site-nav.canvas .contact-panel {
+    position: absolute;
+    top: calc(35 * var(--u));
+    pointer-events: auto;
+    font-size: calc(20 * var(--u));
+  }
+
+  .site-nav.canvas .nav-cv {
+    left: calc(47 * var(--u));
+  }
+
+  .site-nav.canvas .nav-contact {
+    left: calc(110 * var(--u));
+  }
+
+  .site-nav.canvas .contact-panel {
+    top: calc(75 * var(--u));
+    left: calc(47 * var(--u));
   }
 
   .nav-link {
@@ -66,6 +102,29 @@ import { siteConfig } from '@config/site';
 
   .contact-panel a:hover {
     color: var(--color-accent);
+  }
+
+  /* Below the canvas breakpoint the canvas nav behaves like the regular one. */
+  @media (max-width: 900px) {
+    .site-nav.canvas {
+      position: fixed;
+      inset: auto;
+      top: var(--content-top);
+      left: var(--content-left);
+      display: flex;
+      pointer-events: auto;
+    }
+
+    .site-nav.canvas .nav-link {
+      position: static;
+      font-size: 1.1rem;
+    }
+
+    .site-nav.canvas .contact-panel {
+      top: 2.2rem;
+      left: 0;
+      font-size: inherit;
+    }
   }
 
   @media (max-width: 640px) {
