@@ -1,7 +1,6 @@
 ---
 import BaseHead from '@components/layout/BaseHead.astro';
-import Navbar from '@components/layout/Navbar.astro';
-import Footer from '@components/layout/Footer.astro';
+import Nav from '@components/layout/Nav.astro';
 import '../styles/theme.css';
 
 interface Props {
@@ -19,10 +18,9 @@ const { title, description, image } = Astro.props;
     <BaseHead {title} {description} {image} />
   </head>
   <body>
-    <Navbar />
+    <Nav />
     <main>
       <slot />
     </main>
-    <Footer />
   </body>
 </html>

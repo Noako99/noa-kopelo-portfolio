@@ -1,0 +1,45 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import ProjectHeader from '@components/project/ProjectHeader.astro';
+import { Image } from 'astro:assets';
+import { siteConfig } from '@config/site';
+import cover from '@assets/projects/noa-atalia/cover.jpg';
+
+const title = 'Noa & Atalia';
+const description =
+  'Noa & Atalia is a short documentary film exploring the interplay between human connection and memory through a complex sisterly relationship. The accidental discovery of forgotten family archive footage sparks a series of candid, year-long recorded conversations, weaving personal history with intimate dialogue.';
+---
+
+<BaseLayout title={`${title} — ${siteConfig.name}`} description={description}>
+  <ProjectHeader
+    number="01"
+    title={title}
+    description={description}
+    tags={['Documentary', 'Video Editing', 'Archival Film', 'Storytelling']}
+  />
+
+  <section class="media">
+    <figure>
+      <Image src={cover} alt="Still from the Noa & Atalia documentary" width={900} />
+    </figure>
+  </section>
+</BaseLayout>
+
+<style>
+  .media {
+    max-width: var(--max-width);
+    margin-inline: auto;
+    padding: 0 var(--space-lg) var(--space-2xl);
+  }
+
+  figure {
+    margin: 0;
+    max-width: 32rem;
+  }
+
+  figure :global(img) {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+</style>

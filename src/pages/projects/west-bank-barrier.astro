@@ -1,0 +1,78 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import ProjectHeader from '@components/project/ProjectHeader.astro';
+import { Image } from 'astro:assets';
+import { siteConfig } from '@config/site';
+import bookletDetail from '@assets/projects/west-bank-barrier/booklet-detail.jpg';
+import bookletSpread from '@assets/projects/west-bank-barrier/booklet-spread.jpg';
+import mockup1 from '@assets/projects/west-bank-barrier/mockup-1.jpg';
+import mockup2 from '@assets/projects/west-bank-barrier/mockup-2.jpg';
+import mockup3 from '@assets/projects/west-bank-barrier/mockup-3.jpg';
+import mockup4 from '@assets/projects/west-bank-barrier/mockup-4.jpg';
+
+const title = 'The West Bank Barrier';
+const description =
+  'An interactive landing page and editorial booklet based on the Wikipedia entry for the West Bank Barrier. Exploring the tension between factual documentation and spatial reality, the piece isolates and magnifies clinical sentences to expose their underlying weight. Informed by deep archival and photographic research, the actual geographic trajectory of the barrier dictates the editorial system, functioning as a physical and visual divider across the layout.';
+---
+
+<BaseLayout title={`${title} — ${siteConfig.name}`} description={description}>
+  <ProjectHeader
+    number="07"
+    title={title}
+    description={description}
+    tags={['Web Design', 'Typography', 'Content Redesign', 'Editorial Design']}
+  />
+
+  <section class="media">
+    <figure class="detail"><Image src={bookletDetail} alt="West Bank Barrier booklet spread, detail" width={1100} /></figure>
+    <figure class="spread"><Image src={bookletSpread} alt="West Bank Barrier editorial spread" width={1400} /></figure>
+
+    <div class="mockup-grid">
+      <figure><Image src={mockup1} alt="West Bank Barrier website mockup 1" width={700} /></figure>
+      <figure><Image src={mockup2} alt="West Bank Barrier website mockup 2" width={700} /></figure>
+      <figure><Image src={mockup3} alt="West Bank Barrier website mockup 3" width={700} /></figure>
+      <figure><Image src={mockup4} alt="West Bank Barrier website mockup 4" width={700} /></figure>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .media {
+    max-width: var(--max-width);
+    margin-inline: auto;
+    padding: 0 var(--space-lg) var(--space-2xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+  }
+
+  figure {
+    margin: 0;
+  }
+
+  figure :global(img) {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .detail {
+    max-width: 40rem;
+  }
+
+  .spread {
+    background: #000;
+  }
+
+  .mockup-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+  }
+
+  @media (max-width: 640px) {
+    .mockup-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

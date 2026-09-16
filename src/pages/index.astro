@@ -1,11 +1,259 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
-import Hero from '@components/home/Hero.astro';
-import ProjectGrid from '@components/home/ProjectGrid.astro';
+import { Image } from 'astro:assets';
 import { siteConfig } from '@config/site';
+import logoMark from '@assets/shared/logo-mark.svg';
+
+import noaAtaliaCover from '@assets/projects/noa-atalia/cover.jpg';
+import primeMinisterCover from '@assets/projects/prime-minister/cover.jpg';
+import motionGraphicCover from '@assets/projects/motion-graphic/vinyl-day.jpg';
+import moreThanCover from '@assets/projects/more-than-i-love-my-life/main-1-poster.jpg';
+import secretsCover from '@assets/projects/secrets/hero.png';
+import threeGenerationsCover from '@assets/projects/3-generations/map-bg.jpg';
+import westBankCover from '@assets/projects/west-bank-barrier/booklet-spread.jpg';
+
+const projects = [
+  { number: '01', title: 'Noa & Atalia', href: '/projects/noa-atalia', cover: noaAtaliaCover },
+  { number: '02', title: 'The Prime Minister Next Door', href: '/projects/prime-minister-next-door', cover: primeMinisterCover },
+  { number: '03', title: 'Motion Design', href: '/projects/motion-design', cover: motionGraphicCover },
+  { number: '04', title: 'More Than I Love My Life', href: '/projects/more-than-i-love-my-life', cover: moreThanCover },
+  { number: '05', title: 'Secrets', href: '/projects/secrets', cover: secretsCover },
+  { number: '06', title: '3 Generations', href: '/projects/3-generations', cover: threeGenerationsCover },
+  { number: '07', title: 'The West Bank Barrier', href: '/projects/west-bank-barrier', cover: westBankCover },
+];
 ---
 
 <BaseLayout title={siteConfig.title} description={siteConfig.description}>
-  <Hero />
-  <ProjectGrid />
+  <section class="home">
+    <div class="intro">
+      <p class="kicker">Hi! I'm</p>
+      <h1>Noa Kopelo</h1>
+      <p class="intro-copy">{siteConfig.description}</p>
+    </div>
+
+    <p class="note">
+      I love working with rhythm, archives, and typography across video editing, motion design, and editorial layouts
+    </p>
+
+    <ul class="project-list" role="list">
+      {projects.map((project) => (
+        <li>
+          <a class="project-link" href={project.href}>
+            <span class="num">{project.number}</span>
+            <span class="title">{project.title}</span>
+            <span class="preview">
+              <Image src={project.cover} alt="" width={420} height={280} loading="eager" />
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <div class="skills">
+      <p class="kicker">Skills &amp; Software</p>
+      <p>
+        Motion Design, Video Editing, Editorial Layout, Visual Storytelling, Typography Systems, Adobe Creative
+        Suite, Figma, Procreate, Framer, Claude, AI-Assisted Workflows, Archival Research
+      </p>
+    </div>
+
+    <div class="collab">
+      <img src={logoMark.src} alt="" class="collab-mark" />
+      <p>Open for collab :)</p>
+    </div>
+  </section>
 </BaseLayout>
+
+<style>
+  .home {
+    position: relative;
+    max-width: var(--max-width);
+    margin-inline: auto;
+    padding: 9.5rem var(--space-lg) 6rem;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--space-lg) var(--space-lg);
+  }
+
+  .intro {
+    grid-column: 1 / 5;
+    border: 1px solid var(--color-accent);
+    padding: var(--space-lg);
+    align-self: start;
+  }
+
+  .kicker {
+    font-family: var(--font-label);
+    font-weight: 300;
+    font-size: 0.9rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: var(--space-sm);
+  }
+
+  .intro h1 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(2.75rem, 6vw, 4.5rem);
+    letter-spacing: -0.07em;
+    margin-bottom: var(--space-md);
+  }
+
+  .intro-copy {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.6;
+    color: var(--color-accent);
+  }
+
+  .note {
+    grid-column: 8 / 13;
+    border: 1px solid var(--color-accent);
+    padding: var(--space-lg);
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.6;
+    color: var(--color-accent);
+    align-self: start;
+  }
+
+  .project-list {
+    grid-column: 5 / 13;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-xl) var(--space-lg);
+    align-content: start;
+  }
+
+  .project-link {
+    position: relative;
+    display: block;
+    color: var(--color-text);
+  }
+
+  .num {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 200;
+    font-size: 1.1rem;
+    color: var(--color-accent);
+    margin-bottom: 0.4rem;
+  }
+
+  .title {
+    display: block;
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+    line-height: 1.15;
+  }
+
+  .project-link:hover .title,
+  .project-link:focus-visible .title {
+    color: var(--color-accent);
+  }
+
+  .preview {
+    position: absolute;
+    top: -0.5rem;
+    left: 50%;
+    transform: translate(-50%, -100%) scale(0.97);
+    width: 260px;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-normal), transform var(--transition-normal);
+    z-index: 10;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  .preview :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .project-link:hover .preview,
+  .project-link:focus-visible .preview {
+    opacity: 1;
+    transform: translate(-50%, -100%) scale(1);
+  }
+
+  .skills {
+    grid-column: 5 / 10;
+    border: 1px solid var(--color-accent);
+    padding: var(--space-lg);
+    color: var(--color-accent);
+  }
+
+  .skills p:last-child {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 0.95rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.6;
+  }
+
+  .collab {
+    grid-column: 1 / 4;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    align-self: end;
+  }
+
+  .collab-mark {
+    width: 1.25rem;
+    height: auto;
+  }
+
+  .collab p {
+    font-family: var(--font-display);
+    font-weight: 200;
+    font-size: 1rem;
+    letter-spacing: -0.05em;
+  }
+
+  @media (max-width: 900px) {
+    .home {
+      grid-template-columns: 1fr;
+      padding-top: 6rem;
+    }
+
+    .intro,
+    .note,
+    .project-list,
+    .skills,
+    .collab {
+      grid-column: 1 / -1;
+    }
+
+    .project-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .preview {
+      display: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .project-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

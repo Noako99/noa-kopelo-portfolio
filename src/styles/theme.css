@@ -1,23 +1,24 @@
 @import "tailwindcss";
+@import url('https://api.fontshare.com/v2/css?f[]=general-sans@200,300,400,500,600,700&display=swap');
 
 /* ===== DESIGN TOKENS =====
    Edit these to change the entire look of your site.
    All components reference these variables. */
 
 :root {
-  /* Colors */
-  --color-bg: #fafafa;
-  --color-text: #1a1a1a;
+  /* Colors — from the Figma design system */
+  --color-bg: #fafaf4;
+  --color-text: #000000;
   --color-text-secondary: #666666;
-  --color-accent: #2563eb;
-  --color-accent-hover: #1d4ed8;
-  --color-border: #e5e5e5;
+  --color-accent: #d20000;
+  --color-accent-hover: #a00000;
+  --color-border: #e5e5e0;
   --color-surface: #ffffff;
 
   /* Typography */
-  --font-display: 'Inter', system-ui, sans-serif;
-  --font-body: 'Inter', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: 'General Sans', system-ui, sans-serif;
+  --font-body: 'General Sans', system-ui, sans-serif;
+  --font-label: 'Inter', system-ui, sans-serif;
 
   /* Spacing (8px base) */
   --space-xs: 0.25rem;
@@ -28,7 +29,7 @@
   --space-2xl: 8rem;
 
   /* Layout */
-  --max-width: 1200px;
+  --max-width: 1400px;
   --nav-height: 4rem;
   --border-radius: 0.5rem;
 
@@ -37,18 +38,7 @@
   --transition-normal: 300ms ease;
 }
 
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #0a0a0a;
-    --color-text: #fafafa;
-    --color-text-secondary: #a0a0a0;
-    --color-accent: #60a5fa;
-    --color-accent-hover: #93c5fd;
-    --color-border: #262626;
-    --color-surface: #141414;
-  }
-}
+/* This site uses one fixed editorial palette by design — it does not adapt to system dark mode. */
 
 /* ===== BASE STYLES ===== */
 

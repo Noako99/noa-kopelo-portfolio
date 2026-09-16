@@ -1,0 +1,102 @@
+---
+import { siteConfig } from '@config/site';
+---
+
+<nav class="site-nav" aria-label="Main navigation">
+  <a class="nav-link" href={siteConfig.cvUrl} target="_blank" rel="noopener noreferrer">CV</a>
+  <button class="nav-link nav-contact" type="button" aria-expanded="false" aria-controls="contact-panel">
+    Contact
+  </button>
+  <div id="contact-panel" class="contact-panel" hidden>
+    <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
+    {siteConfig.social.map((link) => (
+      <a href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a>
+    ))}
+  </div>
+</nav>
+
+<style>
+  .site-nav {
+    position: fixed;
+    top: 2.2rem;
+    left: 2.9rem;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 2.6rem;
+  }
+
+  .nav-link {
+    font-family: var(--font-display);
+    font-weight: 200;
+    font-size: 1.1rem;
+    letter-spacing: -0.07em;
+    text-transform: uppercase;
+    color: var(--color-text);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .nav-link:hover {
+    color: var(--color-accent);
+  }
+
+  .contact-panel {
+    position: absolute;
+    top: 2.2rem;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    padding: var(--space-md);
+    min-width: 220px;
+  }
+
+  .contact-panel a {
+    font-family: var(--font-label);
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-text);
+  }
+
+  .contact-panel a:hover {
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 640px) {
+    .site-nav {
+      top: 1.25rem;
+      left: 1.25rem;
+      gap: 1.5rem;
+    }
+  }
+</style>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>('.nav-contact');
+  const panel = document.getElementById('contact-panel');
+
+  button?.addEventListener('click', () => {
+    const isOpen = panel?.hasAttribute('hidden') === false;
+    if (isOpen) {
+      panel?.setAttribute('hidden', '');
+      button.setAttribute('aria-expanded', 'false');
+    } else {
+      panel?.removeAttribute('hidden');
+      button.setAttribute('aria-expanded', 'true');
+    }
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!(event.target instanceof Node)) return;
+    if (!button?.contains(event.target) && !panel?.contains(event.target)) {
+      panel?.setAttribute('hidden', '');
+      button?.setAttribute('aria-expanded', 'false');
+    }
+  });
+</script>

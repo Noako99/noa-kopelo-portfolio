@@ -1,0 +1,109 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import ProjectHeader from '@components/project/ProjectHeader.astro';
+import { Image } from 'astro:assets';
+import { siteConfig } from '@config/site';
+import main1 from '@assets/projects/more-than-i-love-my-life/main-1-poster.jpg';
+import main3 from '@assets/projects/more-than-i-love-my-life/main-3-poster.jpg';
+import six from '@assets/projects/more-than-i-love-my-life/six.png';
+import untitledArtwork from '@assets/projects/more-than-i-love-my-life/untitled-artwork-2.png';
+import layer15 from '@assets/projects/more-than-i-love-my-life/layer-15.png';
+import elevenEleven from '@assets/projects/more-than-i-love-my-life/eleven-eleven.jpg';
+import layer14 from '@assets/projects/more-than-i-love-my-life/layer-14.png';
+import layer7 from '@assets/projects/more-than-i-love-my-life/layer-7.jpg';
+import layer8 from '@assets/projects/more-than-i-love-my-life/layer-8.png';
+import layer9 from '@assets/projects/more-than-i-love-my-life/layer-9.png';
+import layer16 from '@assets/projects/more-than-i-love-my-life/layer-16.png';
+
+const title = 'More Than I Love My Life';
+const description =
+  "A fictional TV title sequence for David Grossman's 'More Than I Love My Life'. Layers of archival footage and experimental editing unpack raw memory, emotion, and complex family bonds. The mixed-media sequence blends hand-crafted typography, archival film, photography, and AI-generated imagery, driven by a deliberate rhythm that echoes generational trauma.";
+---
+
+<BaseLayout title={`${title} — ${siteConfig.name}`} description={description}>
+  <ProjectHeader
+    number="04"
+    title={title}
+    description={description}
+    tags={['Title Sequence', 'Image-making', 'Motion Design', 'Storytelling']}
+  />
+
+  <section class="media">
+    <div class="stills-row">
+      <figure><Image src={main1} alt="Title sequence still 1" width={700} /></figure>
+      <figure><Image src={main3} alt="Title sequence still 2" width={700} /></figure>
+    </div>
+
+    <figure class="wide"><Image src={six} alt="Title sequence typography detail" width={1100} /></figure>
+    <figure class="wide"><Image src={untitledArtwork} alt="Title sequence artwork" width={1400} /></figure>
+
+    <div class="archive-collage">
+      <figure class="c1"><Image src={layer15} alt="Archival family photograph" width={500} /></figure>
+      <figure class="c2"><Image src={elevenEleven} alt="Archival family photograph" width={900} /></figure>
+      <figure class="c3"><Image src={layer14} alt="Archival family photograph" width={500} /></figure>
+      <figure class="c4"><Image src={layer7} alt="Archival family photograph" width={700} /></figure>
+      <figure class="c5"><Image src={layer8} alt="Archival family photograph" width={450} /></figure>
+      <figure class="c6"><Image src={layer9} alt="Archival family photograph" width={650} /></figure>
+      <figure class="c7"><Image src={layer16} alt="Archival family photograph" width={400} /></figure>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .media {
+    max-width: var(--max-width);
+    margin-inline: auto;
+    padding: 0 var(--space-lg) var(--space-2xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+  }
+
+  figure {
+    margin: 0;
+  }
+
+  figure :global(img) {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .stills-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+  }
+
+  .archive-collage {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-lg) var(--space-md);
+    align-items: end;
+    padding-block: var(--space-lg);
+  }
+
+  .c1 { grid-column: 1 / 2; transform: rotate(-2deg); }
+  .c2 { grid-column: 2 / 4; }
+  .c3 { grid-column: 1 / 2; transform: rotate(1.5deg); }
+  .c4 { grid-column: 2 / 3; }
+  .c5 { grid-column: 3 / 4; transform: rotate(-1deg); }
+  .c6 { grid-column: 4 / 5; grid-row: span 2; transform: rotate(2deg); }
+  .c7 { grid-column: 1 / 3; }
+
+  @media (max-width: 720px) {
+    .stills-row {
+      grid-template-columns: 1fr;
+    }
+
+    .archive-collage {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .c1, .c2, .c3, .c4, .c5, .c6, .c7 {
+      grid-column: auto;
+      grid-row: auto;
+      transform: none;
+    }
+  }
+</style>

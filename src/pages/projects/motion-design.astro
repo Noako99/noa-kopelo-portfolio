@@ -1,0 +1,82 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import ProjectHeader from '@components/project/ProjectHeader.astro';
+import { Image } from 'astro:assets';
+import { siteConfig } from '@config/site';
+import deadsea from '@assets/projects/motion-graphic/deadsea.png';
+import rujum from '@assets/projects/motion-graphic/rujum.jpg';
+import vipPassengers from '@assets/projects/motion-graphic/vip-passengers.jpg';
+import vinylDay from '@assets/projects/motion-graphic/vinyl-day.jpg';
+import flight from '@assets/projects/motion-graphic/flight.png';
+import passport from '@assets/projects/motion-graphic/passport.jpg';
+import ringsInsta from '@assets/projects/motion-graphic/rings-insta.jpg';
+
+const title = 'Motion Design';
+const description =
+  'A collection of motion design projects, animated posters, and video experiments created for various events, cultural platforms, and personal explorations.';
+
+---
+
+<BaseLayout title={`${title} — ${siteConfig.name}`} description={description}>
+  <ProjectHeader
+    number="03"
+    title={title}
+    description={description}
+    tags={['Motion Graphics', 'Animated Posters', 'Motion Identity']}
+  />
+
+  <section class="media">
+    <div class="poster-grid">
+      <figure><Image src={deadsea} alt="Dead Sea animated poster" width={600} /></figure>
+      <figure><Image src={rujum} alt="Rujum animated poster" width={600} /></figure>
+      <figure><Image src={vipPassengers} alt="VIP passengers motion graphic" width={600} /></figure>
+      <figure><Image src={vinylDay} alt="Vinyl Day event poster" width={600} /></figure>
+      <figure><Image src={flight} alt="Flight motion graphic" width={600} /></figure>
+      <figure><Image src={passport} alt="Passport motion graphic" width={600} /></figure>
+    </div>
+    <figure class="rings">
+      <Image src={ringsInsta} alt="Rings Instagram motion graphic" width={400} />
+    </figure>
+  </section>
+</BaseLayout>
+
+<style>
+  .media {
+    max-width: var(--max-width);
+    margin-inline: auto;
+    padding: 0 var(--space-lg) var(--space-2xl);
+  }
+
+  .poster-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+  }
+
+  figure {
+    margin: 0;
+  }
+
+  figure :global(img) {
+    width: 100%;
+    height: auto;
+    display: block;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+  }
+
+  .rings {
+    max-width: 16rem;
+    margin: var(--space-xl) auto 0;
+  }
+
+  .rings :global(img) {
+    aspect-ratio: 4 / 5;
+  }
+
+  @media (max-width: 720px) {
+    .poster-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
