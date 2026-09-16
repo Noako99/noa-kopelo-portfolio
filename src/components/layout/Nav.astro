@@ -18,9 +18,8 @@ import { siteConfig } from '@config/site';
 <style>
   .site-nav {
     position: fixed;
-    top: 2.2rem;
-    /* align with the left edge of the centered, max-width content container */
-    left: max(1.25rem, calc((100vw - var(--max-width)) / 2 + var(--space-lg)));
+    top: var(--content-top);
+    left: min(var(--content-left), calc(100vw - 9rem));
     z-index: 100;
     display: flex;
     align-items: center;
