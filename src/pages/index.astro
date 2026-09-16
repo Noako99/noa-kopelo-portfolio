@@ -27,15 +27,17 @@ const projects = [
 
 <BaseLayout title={siteConfig.title} description={siteConfig.description} image={noaAtaliaCover.src}>
   <section class="home">
-    <div class="intro">
-      <p class="kicker">Hi! I'm</p>
-      <h1>Noa Kopelo</h1>
-      <p class="intro-copy">{siteConfig.description}</p>
-    </div>
+    <div class="top-row">
+      <div class="intro">
+        <p class="kicker">Hi! I'm</p>
+        <h1>Noa Kopelo</h1>
+        <p class="intro-copy">{siteConfig.description}</p>
+      </div>
 
-    <p class="note">
-      I love working with rhythm, archives, and typography across video editing, motion design, and editorial layouts
-    </p>
+      <p class="note">
+        I love working with rhythm, archives, and typography across video editing, motion design, and editorial layouts
+      </p>
+    </div>
 
     <ul class="project-list" role="list">
       {projects.map((project) => (
@@ -72,13 +74,18 @@ const projects = [
     max-width: var(--max-width);
     margin-inline: auto;
     padding: 9.5rem var(--space-lg) 6rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xl);
+  }
+
+  .top-row {
     display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: var(--space-lg) var(--space-lg);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-lg);
   }
 
   .intro {
-    grid-column: 1 / 5;
     border: 1px solid var(--color-accent);
     padding: var(--space-lg);
     align-self: start;
@@ -113,7 +120,6 @@ const projects = [
   }
 
   .note {
-    grid-column: 8 / 13;
     border: 1px solid var(--color-accent);
     padding: var(--space-lg);
     font-family: var(--font-body);
@@ -124,10 +130,10 @@ const projects = [
     line-height: 1.6;
     color: var(--color-accent);
     align-self: start;
+    margin: 0;
   }
 
   .project-list {
-    grid-column: 5 / 13;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -195,7 +201,7 @@ const projects = [
   }
 
   .skills {
-    grid-column: 5 / 10;
+    max-width: 34rem;
     border: 1px solid var(--color-accent);
     padding: var(--space-lg);
     color: var(--color-accent);
@@ -211,11 +217,9 @@ const projects = [
   }
 
   .collab {
-    grid-column: 1 / 4;
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    align-self: end;
   }
 
   .collab-mark {
@@ -232,16 +236,12 @@ const projects = [
 
   @media (max-width: 900px) {
     .home {
-      grid-template-columns: 1fr;
       padding-top: 6rem;
+      gap: var(--space-xl);
     }
 
-    .intro,
-    .note,
-    .project-list,
-    .skills,
-    .collab {
-      grid-column: 1 / -1;
+    .top-row {
+      grid-template-columns: 1fr;
     }
 
     .project-list {
