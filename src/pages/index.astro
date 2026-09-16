@@ -27,17 +27,15 @@ const projects = [
 
 <BaseLayout title={siteConfig.title} description={siteConfig.description} image={noaAtaliaCover.src}>
   <section class="home">
-    <div class="top-row">
-      <div class="intro">
-        <p class="kicker">Hi! I'm</p>
-        <h1>Noa Kopelo</h1>
-        <p class="intro-copy">{siteConfig.description}</p>
-      </div>
-
-      <p class="note">
-        I love working with rhythm, archives, and typography across video editing, motion design, and editorial layouts
-      </p>
+    <div class="intro">
+      <p class="kicker">Hi! I'm</p>
+      <h1>Noa Kopelo</h1>
+      <p class="intro-copy">{siteConfig.description}</p>
     </div>
+
+    <p class="note">
+      I love working with rhythm, archives, and typography across video editing, motion design, and editorial layouts
+    </p>
 
     <ul class="project-list" role="list">
       {projects.map((project) => (
@@ -79,16 +77,10 @@ const projects = [
     gap: var(--space-2xl);
   }
 
-  .top-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: var(--space-lg);
-  }
-
   .intro {
+    max-width: 34rem;
     border: 1px solid var(--color-accent);
     padding: var(--space-lg);
-    align-self: start;
   }
 
   .kicker {
@@ -120,6 +112,7 @@ const projects = [
   }
 
   .note {
+    max-width: 34rem;
     border: 1px solid var(--color-accent);
     padding: var(--space-lg);
     font-family: var(--font-body);
@@ -129,7 +122,6 @@ const projects = [
     text-transform: uppercase;
     line-height: 1.6;
     color: var(--color-accent);
-    align-self: start;
     margin: 0;
   }
 
@@ -238,10 +230,6 @@ const projects = [
     .home {
       padding-top: 6rem;
       gap: var(--space-xl);
-    }
-
-    .top-row {
-      grid-template-columns: 1fr;
     }
 
     .project-list {
