@@ -1,0 +1,330 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import VimeoEmbed from '@components/project/VimeoEmbed.astro';
+
+/* How Figma crops the fill inside the box, in percentages of the box, exactly
+   as Figma reports them. Without it an image is shown whole where Figma shows
+   a zoomed-in part of it. */
+type Crop = { left: number; top: number; w: number; h: number };
+
+type Item = { x: number; y: number; w: number; h: number; depth?: number; lift?: number; rest?: number; grow?: number; crop?: Crop } & (
+  | { src: ImageMetadata; alt?: string }
+  | { video: string; controls?: boolean; formats?: string[]; slide?: boolean }
+  | { vimeo: string; title: string }
+  | { color: string; label?: string }
+);
+
+interface Props {
+  /* The Figma frame this reproduces. Everything below is in its coordinates. */
+  width: number;
+  height: number;
+  /* The frame y that sits at the top of this canvas: the project header
+     already draws everything above it, so that band is cut away. */
+  offsetY?: number;
+  /* Extra room under the last piece, in frame units. */
+  tail?: number;
+  items: Item[];
+}
+
+const { width, height, offsetY = 0, tail = 0, items } = Astro.props;
+
+/* Pieces drift at slightly different speeds as the page scrolls, so the
+   arrangement has depth instead of moving as one flat sheet. The speed comes
+   from where a piece sits in the frame, not from its place in the list, so two
+   pieces set side by side in Figma keep their shared line. */
+/* A smooth cycle rather than alternating extremes: neighbouring bands move
+   at close speeds, so pieces that sit near each other never drift into one
+   another. */
+const drifts = [0.07, 0.035, -0.02, -0.07, -0.02, 0.035];
+const driftFor = (y: number) => drifts[Math.floor(y / 380) % drifts.length];
+const bottom = items.length
+  ? Math.max(...items.map((i) => i.y + i.h)) + tail
+  : height;
+const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom) - offsetY;
+---
+
+<div class="project-canvas" style={`--fw:${width}; --fh:${canvasHeight};`} data-canvas>
+  {items.map((item) => (
+    <div
+      class="item"
+      class:list={[{ sized: item.rest != null }]}
+      style={`--x:${item.x}; --y:${item.y - offsetY}; --w:${item.w}; --h:${item.h};${item.lift ? ` --z:${item.lift};` : ''}${item.rest != null ? ` --rest:${item.rest}; --grow:${item.grow ?? 1};` : ''}`}
+      data-drift={item.depth ?? driftFor(item.y)}
+    >
+      {'vimeo' in item ? (
+        <VimeoEmbed id={item.vimeo} title={item.title} />
+      ) : 'video' in item ? (
+        'slide' in item && item.slide ? (
+          <span class="slide" data-slide>
+            <video autoplay muted loop playsinline preload="metadata" controls={item.controls}>
+              {(item.formats ?? ['webm', 'mp4']).map((format) => (
+                <source src={`${item.video}.${format}`} type={`video/${format}`} />
+              ))}
+            </video>
+          </span>
+        ) : (
+        <video autoplay muted loop playsinline preload="metadata" controls={item.controls}>
+          {(item.formats ?? ['webm', 'mp4']).map((format) => (
+            <source src={`${item.video}.${format}`} type={`video/${format}`} />
+          ))}
+        </video>
+        )
+      ) : 'color' in item ? (
+        <span class="swatch" style={`background:${item.color}`}>
+          {item.label && <span class="swatch-label">{item.label}</span>}
+        </span>
+      ) : 'crop' in item && item.crop ? (
+        <span class="crop">
+          <Image
+            src={item.src}
+            alt={item.alt ?? ''}
+            widths={[1600]}
+            sizes="100vw"
+            loading="lazy"
+            decoding="async"
+            style={`left:${item.crop.left}%; top:${item.crop.top}%; width:${item.crop.w}%; height:${item.crop.h}%;`}
+          />
+        </span>
+      ) : (
+        <Image src={item.src} alt={item.alt ?? ''} widths={[1600]} sizes="100vw" loading="lazy" decoding="async" />
+      )}
+    </div>
+  ))}
+
+  <!-- Anything that needs to sit in the frame but isn't a plain piece of
+       media: it inherits --ub, so it is placed in the same Figma units. -->
+  <slot />
+</div>
+
+<style>
+  /* The frame reproduced at the page's width: one Figma pixel of the frame is
+     100vw / its own width, so the arrangement is exact at any window size and
+     always reaches both edges. */
+  .project-canvas {
+    --ub: calc(100vw / var(--fw));
+    position: relative;
+    width: 100vw;
+    height: calc(var(--fh) * var(--ub));
+  }
+
+  .item {
+    position: absolute;
+    left: calc(var(--x) * var(--ub));
+    top: calc(var(--y) * var(--ub));
+    width: calc(var(--w) * var(--ub));
+    height: calc(var(--h) * var(--ub));
+    z-index: var(--z, 0);
+    will-change: transform;
+  }
+
+  .item :global(img),
+  .item video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* A piece that rests at the size of the smallest of its group and comes up
+     to its own size under the cursor. */
+  .item.sized :global(img) {
+    transform: scale(var(--rest, 1));
+    transition: transform 900ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .item.sized:hover :global(img),
+  .item.sized:focus-within :global(img) {
+    transform: scale(var(--grow, 1));
+  }
+
+  /* A film that slides inside its own frame: the frame keeps its place in the
+     column, so no gap moves, and the picture drifts within it. */
+  .slide {
+    display: block;
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .slide video {
+    position: absolute;
+    left: 0;
+    top: -9%;
+    width: 100%;
+    height: 118%;
+    object-fit: contain;
+    will-change: transform;
+  }
+
+  .crop {
+    display: block;
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .crop :global(img) {
+    position: absolute;
+    max-width: none;
+    object-fit: fill;
+  }
+
+  /* A colour from the project's palette, with its hex sitting under it the way
+     Figma sets it. */
+  .swatch {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+
+  .swatch-label {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    margin-top: calc(6 * var(--ub));
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: calc(16 * var(--ub));
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    color: var(--color-text);
+  }
+
+  /* On a phone the frame is unreadable at this scale, so it unwinds into a
+     single column in the order Figma stacks it. */
+  @media (max-width: 640px) {
+    .project-canvas {
+      width: auto;
+      height: auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+      padding: var(--space-xl) var(--space-lg) 0 var(--content-left);
+    }
+
+    .item {
+      position: static;
+      width: auto;
+      height: auto;
+      transform: none !important;
+    }
+
+    .item :global(img),
+    .item video {
+      height: auto;
+    }
+
+    .crop {
+      position: static;
+      aspect-ratio: var(--w) / var(--h);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .item {
+      transform: none !important;
+    }
+
+    .item.sized :global(img) {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const flat = window.matchMedia('(max-width: 640px)').matches;
+  const pieces = [...document.querySelectorAll<HTMLElement>('.project-canvas .item')];
+
+  if (!reduced && !flat && pieces.length) {
+    let ticking = false;
+
+    const frame = () => {
+      ticking = false;
+      const middle = window.innerHeight / 2;
+      for (const piece of pieces) {
+        const drift = parseFloat(piece.dataset.drift || '0');
+        if (!drift) continue;
+        const box = piece.getBoundingClientRect();
+        /* How far this piece's middle is from the middle of the window: a
+           piece below drifts one way, a piece above the other. */
+        const away = box.top + box.height / 2 - middle;
+        piece.style.transform = `translate3d(0, ${(-away * drift).toFixed(1)}px, 0)`;
+      }
+    };
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(frame);
+    };
+
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', onScroll);
+    frame();
+  }
+
+  /* The films that slide inside their frames. */
+  const slides = [...document.querySelectorAll<HTMLElement>('[data-slide]')];
+
+  if (!reduced && !flat && slides.length) {
+    let pending = false;
+
+    const move = () => {
+      pending = false;
+      const middle = window.innerHeight / 2;
+      for (const slide of slides) {
+        const box = slide.getBoundingClientRect();
+        if (box.bottom < -200 || box.top > window.innerHeight + 200) continue;
+        /* -1 well below the middle, +1 well above it. */
+        const away = (middle - (box.top + box.height / 2)) / (window.innerHeight / 2 + box.height / 2);
+        const film = slide.firstElementChild as HTMLElement | null;
+        if (film) film.style.transform = `translate3d(0, ${(Math.max(-1, Math.min(1, away)) * box.height * 0.09).toFixed(1)}px, 0)`;
+      }
+    };
+
+    const onMove = () => {
+      if (pending) return;
+      pending = true;
+      requestAnimationFrame(move);
+    };
+
+    addEventListener('scroll', onMove, { passive: true });
+    addEventListener('resize', onMove);
+    move();
+  }
+
+  /* Films start themselves when they come into view and stop when they leave.
+     Autoplay only gets past the browser while the track is muted, so it is
+     re-asserted here; the controls are there to turn the sound on. */
+  /* Only the canvas's own pieces — anything slotted in brings its own. */
+  const films = document.querySelectorAll<HTMLVideoElement>('.project-canvas > .item video[autoplay]');
+
+  if (films.length) {
+    const watch = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const film = entry.target as HTMLVideoElement;
+          if (entry.isIntersecting) {
+            if (!film.hasAttribute('data-unmuted')) film.muted = true;
+            film.play().catch(() => {});
+          } else {
+            film.pause();
+          }
+        }
+      },
+      { threshold: 0.25 }
+    );
+
+    for (const film of films) {
+      watch.observe(film);
+      /* Once a viewer turns the sound on, leave it on. */
+      film.addEventListener('volumechange', () => {
+        if (film.muted) film.removeAttribute('data-unmuted');
+        else film.setAttribute('data-unmuted', '');
+      });
+    }
+  }
+</script>

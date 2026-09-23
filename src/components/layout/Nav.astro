@@ -11,29 +11,48 @@ const { canvas = false } = Astro.props;
 
 <nav class:list={['site-nav', { canvas }]} aria-label="Main navigation">
   <a class="nav-link nav-cv" href={siteConfig.cvUrl} target="_blank" rel="noopener noreferrer">CV</a>
-  <button class="nav-link nav-contact" type="button" aria-expanded="false" aria-controls="contact-panel">
-    Contact
-  </button>
-  <div id="contact-panel" class="contact-panel" hidden>
-    <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
-    {siteConfig.social.map((link) => (
-      <a href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a>
-    ))}
+
+  <div class="contact">
+    <button
+      class="nav-link contact-toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="contact-links"
+    >
+      Contact
+    </button>
+
+    <div class="contact-links" id="contact-links">
+      {siteConfig.contact.map((link, i) => (
+        <a
+          class="contact-link"
+          href={link.href}
+          style={`--x:${link.x}; --i:${i};`}
+          tabindex="-1"
+          {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+        >
+          {link.label}
+        </a>
+      ))}
+    </div>
   </div>
 </nav>
 
 <style>
-  .site-nav {
+  /* Outside the Figma canvas there is no --u to inherit, so one Figma pixel
+     is just one CSS pixel and every coordinate below still reads literally. */
+  .site-nav:not(.canvas) {
+    --u: 1px;
     position: fixed;
     top: var(--content-top);
     left: min(var(--content-left), calc(100vw - 9rem));
     z-index: 100;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 2.6rem;
   }
 
-  /* Canvas mode: Figma puts CV at 47,35 and Contact at 110,35 inside the frame. */
+  /* Canvas mode: Figma puts CV at 47,35 and the Contact component at 110,35. */
   .site-nav.canvas {
     position: absolute;
     inset: 0;
@@ -41,31 +60,23 @@ const { canvas = false } = Astro.props;
     pointer-events: none;
   }
 
-  .site-nav.canvas .nav-link,
-  .site-nav.canvas .contact-panel {
-    position: absolute;
-    top: calc(35 * var(--u));
-    pointer-events: auto;
-    font-size: calc(20 * var(--u));
-  }
-
   .site-nav.canvas .nav-cv {
+    position: absolute;
     left: calc(47 * var(--u));
+    top: calc(35 * var(--u));
   }
 
-  .site-nav.canvas .nav-contact {
+  .site-nav.canvas .contact {
+    position: absolute;
     left: calc(110 * var(--u));
+    top: calc(35 * var(--u));
   }
 
-  .site-nav.canvas .contact-panel {
-    top: calc(75 * var(--u));
-    left: calc(47 * var(--u));
-  }
-
+  /* Figma: 20px General Sans Extralight, -1.4px tracking, uppercase. */
   .nav-link {
     font-family: var(--font-display);
     font-weight: 200;
-    font-size: 1.1rem;
+    font-size: calc(20 * var(--u));
     letter-spacing: -0.07em;
     text-transform: uppercase;
     color: var(--color-text);
@@ -73,62 +84,118 @@ const { canvas = false } = Astro.props;
     border: none;
     padding: 0;
     cursor: pointer;
+    pointer-events: auto;
+    white-space: nowrap;
   }
 
   .nav-link:hover {
     color: var(--color-accent);
   }
 
-  .contact-panel {
-    position: absolute;
-    top: 2.2rem;
-    left: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    padding: var(--space-md);
-    min-width: 220px;
+  .contact {
+    position: relative;
   }
 
-  .contact-panel a {
-    font-family: var(--font-label);
-    font-size: 0.85rem;
-    letter-spacing: 0.05em;
+  /* The open variant in Figma re-tracks CONTACT from -1.4px out to +4px, so the
+     word itself expands as the links arrive. */
+  .contact-toggle {
+    transition: letter-spacing var(--transition-normal);
+  }
+
+  .contact-toggle[aria-expanded='true'] {
+    letter-spacing: 0.2em;
+  }
+
+  /* The links sit at their hand-placed Figma offsets, measured from the
+     Contact component's own origin — the same in canvas and viewport mode. */
+  .contact-links {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+  }
+
+  .contact-link {
+    position: absolute;
+    top: 0;
+    left: calc(var(--x) * var(--u));
+    font-family: var(--font-display);
+    font-weight: 200;
+    font-size: calc(20 * var(--u));
+    letter-spacing: -0.02em;
     text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--color-accent);
+    opacity: 0;
+    transform: translateX(-0.75rem);
+    pointer-events: none;
+    transition:
+      opacity var(--transition-normal),
+      transform var(--transition-normal);
+    transition-delay: calc(var(--i) * 70ms);
+  }
+
+  .contact.is-open .contact-link {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  .contact-link:hover {
     color: var(--color-text);
   }
 
-  .contact-panel a:hover {
-    color: var(--color-accent);
-  }
-
-  /* Below the canvas breakpoint the canvas nav behaves like the regular one. */
+  /* ===== MOBILE =====
+     No room to open sideways, so the links stack under the word instead. */
   @media (max-width: 900px) {
     .site-nav.canvas {
+      --u: 1px;
       position: fixed;
       inset: auto;
       top: var(--content-top);
       left: var(--content-left);
       display: flex;
+      align-items: flex-start;
+      gap: 2.6rem;
       pointer-events: auto;
     }
 
-    .site-nav.canvas .nav-link {
+    .site-nav.canvas .nav-cv,
+    .site-nav.canvas .contact {
       position: static;
-      font-size: 1.1rem;
     }
 
-    .site-nav.canvas .contact-panel {
-      top: 2.2rem;
+    .site-nav.canvas .contact {
+      position: relative;
+    }
+
+    .contact-toggle[aria-expanded='true'] {
+      letter-spacing: -0.07em;
+    }
+
+    .contact-links {
+      position: absolute;
+      top: calc(100% + 0.75rem);
       left: 0;
-      font-size: inherit;
+      height: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .contact-link {
+      position: static;
+      transform: translateY(-0.4rem);
+      font-size: 1rem;
+    }
+
+    .contact.is-open .contact-link {
+      transform: none;
     }
   }
 
   @media (max-width: 640px) {
-    .site-nav {
+    .site-nav:not(.canvas) {
       top: 1.25rem;
       left: 1.25rem;
       gap: 1.5rem;
@@ -137,25 +204,30 @@ const { canvas = false } = Astro.props;
 </style>
 
 <script>
-  const button = document.querySelector<HTMLButtonElement>('.nav-contact');
-  const panel = document.getElementById('contact-panel');
+  const contact = document.querySelector<HTMLElement>('.contact');
+  const toggle = contact?.querySelector<HTMLButtonElement>('.contact-toggle');
+  const links = contact?.querySelectorAll<HTMLAnchorElement>('.contact-link');
 
-  button?.addEventListener('click', () => {
-    const isOpen = panel?.hasAttribute('hidden') === false;
-    if (isOpen) {
-      panel?.setAttribute('hidden', '');
-      button.setAttribute('aria-expanded', 'false');
-    } else {
-      panel?.removeAttribute('hidden');
-      button.setAttribute('aria-expanded', 'true');
-    }
+  const setOpen = (open: boolean) => {
+    contact?.classList.toggle('is-open', open);
+    toggle?.setAttribute('aria-expanded', String(open));
+    /* Keep the links out of the tab order while they are invisible. */
+    links?.forEach((link) => link.setAttribute('tabindex', open ? '0' : '-1'));
+  };
+
+  toggle?.addEventListener('click', () => {
+    setOpen(!contact?.classList.contains('is-open'));
   });
 
   document.addEventListener('click', (event) => {
     if (!(event.target instanceof Node)) return;
-    if (!button?.contains(event.target) && !panel?.contains(event.target)) {
-      panel?.setAttribute('hidden', '');
-      button?.setAttribute('aria-expanded', 'false');
+    if (!contact?.contains(event.target)) setOpen(false);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && contact?.classList.contains('is-open')) {
+      setOpen(false);
+      toggle?.focus();
     }
   });
 </script>

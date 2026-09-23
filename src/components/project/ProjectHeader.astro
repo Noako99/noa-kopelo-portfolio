@@ -1,128 +1,302 @@
 ---
 import Nav from '@components/layout/Nav.astro';
+import ProjectTags from '@components/project/ProjectTags.astro';
 import logoMark from '@assets/shared/logo-mark.svg';
+import { projectTags } from '@config/tags';
+import { projectLayout } from '@config/layout';
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+/* How Figma crops the fill inside the box, and how far the box itself is
+   turned, both taken straight from the design. */
+type Crop = { left: number; top: number; w: number; h: number };
+
+type Base = { x: number; y: number; w: number; h: number; crop?: Crop; rotate?: number };
+
+type Stay =
+  | ({ src: ImageMetadata } & Base)
+  | ({ video: string } & Base)
+  | ({ flipbook: true } & Base)
+  | ({ phone: true } & Base);
 
 interface Props {
+  slug: string;
   number: string;
   title: string;
   description: string;
-  tags: string[];
+  /* The pieces the Figma project frame keeps on screen beside the text. */
+  stays?: Stay[];
+  /* Taller than the 982 fold when a piece runs past it; the page then scrolls
+     rather than clipping. */
+  frameHeight?: number;
 }
 
-const { number, title, description, tags } = Astro.props;
+const { slug, number, title, description, stays = [], frameHeight = 982 } = Astro.props;
+const { title: titleBox, desc } = projectLayout[slug];
+const home = import.meta.env.BASE_URL;
 ---
 
-<Nav />
+<div class="canvas-wrap" class:list={[{ tall: frameHeight > 982 }]} style={`--fh:${frameHeight};`}>
+  <ProjectTags tags={projectTags[slug]} />
 
-<header class="project-header">
-  <ul class="tags-row" role="list">
-    {tags.map((tag) => <li>{tag}</li>)}
-  </ul>
+  <div class="canvas">
+    <Nav canvas />
 
-  <a href={import.meta.env.BASE_URL} class="brand">
-    Noa Kopelo
+    {stays.map((stay) => (
+      <div
+        class="stay"
+        class:list={[{ turned: !!stay.rotate, plain: 'flipbook' in stay || 'phone' in stay }]}
+        style={`--x:${stay.x}; --y:${stay.y}; --w:${stay.w}; --h:${stay.h};${stay.rotate ? ` --turn:${stay.rotate}deg;` : ''}`}
+      >
+        {'video' in stay ? (
+          <video autoplay muted loop playsinline preload="metadata">
+            <source src={`${stay.video}.webm`} type="video/webm" />
+            <source src={`${stay.video}.mp4`} type="video/mp4" />
+          </video>
+        ) : 'flipbook' in stay ? (
+          <slot name="flipbook" />
+        ) : 'phone' in stay ? (
+          <slot name="phone" />
+        ) : stay.crop ? (
+          <span class="crop">
+            <Image
+              src={stay.src}
+              alt=""
+              widths={[960, 1600]}
+              loading="eager"
+              style={`left:${stay.crop.left}%; top:${stay.crop.top}%; width:${stay.crop.w}%; height:${stay.crop.h}%;`}
+            />
+          </span>
+        ) : (
+          <Image src={stay.src} alt="" widths={[600, 960]} loading="eager" />
+        )}
+      </div>
+    ))}
+
+    <a class="name" href={home}>Noa Kopelo</a>
+
+    <div class="project-title" style={`--x:${titleBox.x}; --y:${titleBox.y}; --w:${titleBox.w};`}>
+      <span class="num">{number}</span>
+      <span class="title">{title}</span>
+    </div>
+
+    <p class="description" style={`--x:${desc.x}; --y:${desc.y}; --w:${desc.w};`}>{description}</p>
+
+    <!-- On a project page the mark sits beside the name at 649,255, and there
+         is no OPEN FOR COLLAB — both straight from the Figma project frames. -->
     <img src={logoMark.src} alt="" class="brand-mark" />
-  </a>
-
-  <div class="meta">
-    <p class="kicker">{number}</p>
-    <h1>{title}</h1>
   </div>
-
-  <p class="description">{description}</p>
-</header>
+</div>
 
 <style>
-  .project-header {
-    padding: 9.5rem var(--space-lg) var(--space-2xl) var(--content-left);
-    max-width: var(--canvas-width);
-    margin-inline: 0;
+  /* The same frame the homepage draws, so nothing jumps on the way in: the
+     project holds the place it had in the list and the other six are gone. */
+  .canvas-wrap {
+    --u: min(calc(100vw / 1728), calc(100vh / 982));
     position: relative;
-  }
-
-  .tags-row {
-    position: absolute;
-    top: 2.2rem;
-    right: var(--space-lg);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.4rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .tags-row li {
-    font-family: var(--font-label);
-    font-weight: 300;
-    font-size: 0.85rem;
-    letter-spacing: -0.05em;
-    text-transform: uppercase;
-    color: var(--color-accent);
-    white-space: nowrap;
-  }
-
-  .brand {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
+    justify-content: flex-start;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: var(--color-bg);
+  }
+
+  .canvas {
+    position: relative;
+    flex: none;
+    width: calc(1728 * var(--u));
+    height: calc(982 * var(--u));
+  }
+
+  /* A frame with something running past the fold: the page scrolls to it
+     instead of the wrap cutting it off, and the top keeps the position it has
+     on every other project page. */
+  .canvas-wrap.tall {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+    align-items: flex-start;
+    padding-top: max(0px, calc((100vh - 982 * var(--u)) / 2));
+  }
+
+  .canvas-wrap.tall .canvas {
+    height: calc(var(--fh) * var(--u));
+  }
+
+  /* Figma: 260,198, 371 wide — centred on 445.5, never wrapping. */
+  .name {
+    position: absolute;
+    left: calc(445.5 * var(--u));
+    top: calc(198 * var(--u));
+    transform: translateX(-50%);
+    white-space: nowrap;
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: clamp(2.75rem, 7vw, 5rem);
+    font-size: calc(80 * var(--u));
+    line-height: 1.35;
     letter-spacing: -0.07em;
-    color: var(--color-text);
     text-align: center;
+    color: var(--color-text);
   }
 
-  .brand-mark {
-    width: clamp(1rem, 2vw, 1.5rem);
-    height: auto;
+  .stay {
+    position: absolute;
+    left: calc(var(--x) * var(--u));
+    top: calc(var(--y) * var(--u));
+    width: calc(var(--w) * var(--u));
+    height: calc(var(--h) * var(--u));
+    overflow: hidden;
   }
 
-  .meta {
-    margin-top: var(--space-2xl);
-    display: flex;
-    align-items: baseline;
-    gap: 1rem;
+  /* A piece Figma turns on the page. */
+  .stay.turned {
+    transform: rotate(var(--turn));
   }
 
-  .kicker {
+  /* A slot that brings its own chrome — nothing is clipped off it. */
+  .stay.plain {
+    overflow: visible;
+  }
+
+  /* A fill Figma crops: the window is the box, the picture is placed inside it
+     at the scale and offset Figma gives. */
+  .crop {
+    display: block;
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .crop :global(img) {
+    position: absolute;
+    max-width: none;
+    object-fit: fill;
+  }
+
+  .stay :global(img),
+  .stay video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .project-title {
+    position: absolute;
+    left: calc(var(--x) * var(--u));
+    top: calc(var(--y) * var(--u));
+    width: calc(var(--w) * var(--u));
+  }
+
+  /* Figma: 18px, -1.26px tracking */
+  .num {
+    display: block;
     font-family: var(--font-display);
     font-weight: 200;
-    font-size: 1.15rem;
+    font-size: calc(18 * var(--u));
+    letter-spacing: -0.07em;
     color: var(--color-accent);
   }
 
-  .meta h1 {
+  .title {
+    display: block;
     font-family: var(--font-body);
     font-weight: 400;
-    font-size: 1.15rem;
+    font-size: calc(18 * var(--u));
     text-transform: uppercase;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.07em;
     line-height: 1.05;
   }
 
+  /* Figma: General Sans Regular 18px, 3.6px tracking, uppercase. The +3.6 on the
+     width offsets the trailing letter-space CSS adds and Figma does not. */
   .description {
-    margin-top: var(--space-md);
-    max-width: 24rem;
+    position: absolute;
+    left: calc(var(--x) * var(--u));
+    top: calc(var(--y) * var(--u));
+    width: calc((var(--w) + 3.6) * var(--u));
+    margin: 0;
     font-family: var(--font-body);
-    font-weight: 300;
-    font-size: 1.1rem;
-    letter-spacing: 0.06em;
+    font-weight: 400;
+    font-size: calc(18 * var(--u));
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    line-height: 1.6;
+    /* Figma sets this block 334 tall; at 1.375 it ran to 402 and fell past
+       the fold. */
+    line-height: 1.24;
+    color: var(--color-text);
+  }
+
+  .brand-mark {
+    position: absolute;
+    left: calc(649 * var(--u));
+    top: calc(255 * var(--u));
+    width: calc(30 * var(--u));
+    height: calc(28 * var(--u));
   }
 
   @media (max-width: 640px) {
-    .project-header {
-      padding-top: 6rem;
+    .canvas-wrap {
+      --u: 1px;
+      display: block;
+      width: auto;
+      height: auto;
+      overflow: visible;
     }
 
-    .tags-row {
+    .canvas {
+      width: auto;
+      height: auto;
+      padding: 6rem var(--space-lg) var(--space-xl) var(--content-left);
+    }
+
+    .stay {
       position: static;
+      width: auto;
+      height: auto;
       margin-bottom: var(--space-lg);
-      gap: 0.75rem 1rem;
+      transform: none !important;
+    }
+
+    .crop {
+      position: static;
+      aspect-ratio: var(--w) / var(--h);
+    }
+
+    .name,
+    .project-title,
+    .description,
+    .brand-mark {
+      position: static;
+      width: auto;
+      transform: none;
+      white-space: normal;
+      display: block;
+    }
+
+    .name {
+      font-size: clamp(2.5rem, 12vw, 4rem);
+      text-align: left;
+      margin-bottom: var(--space-lg);
+    }
+
+    .num,
+    .title {
+      font-size: 1.1rem;
+    }
+
+    .description {
+      margin-top: var(--space-md);
+      font-size: 1rem;
+      letter-spacing: 0.15em;
+    }
+
+    .brand-mark {
+      width: 1.25rem;
+      height: auto;
+      margin-top: var(--space-md);
     }
   }
 </style>

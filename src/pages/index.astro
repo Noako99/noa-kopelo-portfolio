@@ -1,45 +1,226 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
 import Nav from '@components/layout/Nav.astro';
+import ProjectTags from '@components/project/ProjectTags.astro';
 import { Image } from 'astro:assets';
 import { siteConfig } from '@config/site';
+import { projectTags } from '@config/tags';
 import logoMark from '@assets/shared/logo-mark.svg';
 
 import noaAtaliaCover from '@assets/projects/noa-atalia/cover.jpg';
-import primeMinisterCover from '@assets/projects/prime-minister/cover.jpg';
-import motionGraphicCover from '@assets/projects/motion-graphic/vinyl-day.jpg';
-import moreThanCover from '@assets/projects/more-than-i-love-my-life/main-1-poster.jpg';
-import secretsCover from '@assets/projects/secrets/hero.png';
-import threeGenerationsCover from '@assets/projects/3-generations/map-bg.jpg';
-import westBankCover from '@assets/projects/west-bank-barrier/booklet-spread.jpg';
+import noaAtaliaHoverBg from '@assets/projects/noa-atalia/hover-bg.jpg';
+import primeMinisterHoverBg from '@assets/projects/prime-minister/hover-bg.jpg';
+import secretsHoverBg from '@assets/projects/secrets/hover-bg.jpg';
+import moreHoverBg from '@assets/projects/more-than-i-love-my-life/hover-bg.jpg';
+import threeGenHoverBg from '@assets/projects/3-generations/hover-bg.jpg';
+
+import moreLayer7 from '@assets/projects/more-than-i-love-my-life/layer-71.png';
+import moreLayer8 from '@assets/projects/more-than-i-love-my-life/layer-8.png';
+import moreLayer14 from '@assets/projects/more-than-i-love-my-life/layer-14.png';
+import moreLayer16 from '@assets/projects/more-than-i-love-my-life/layer-16.png';
+
+import building1 from '@assets/projects/3-generations/building-1.png';
+import building2 from '@assets/projects/3-generations/building-2.png';
+import building3 from '@assets/projects/3-generations/building-3.png';
+import building4 from '@assets/projects/3-generations/building-4.png';
+import building5 from '@assets/projects/3-generations/building-5.png';
+import building6 from '@assets/projects/3-generations/building-6.png';
+import building7 from '@assets/projects/3-generations/building-7.png';
+
+
+import westBankHoverBg from '@assets/projects/west-bank-barrier/hover-bg.jpg';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
-/* x / y / w are the exact Figma coordinates inside the 1512×982 homepage frame. */
+/* Every x / y / w / h below is the literal Figma coordinate, taken from the
+   homepage frame (1728×982) and from each matching HOVER frame.
+
+   `bg` bleeds across the whole browser window — it is deliberately NOT bound to
+   the scaled canvas, so a hover fills the screen edge to edge on any viewport.
+   `cards` stay pinned to the canvas, since their positions only mean anything
+   relative to the 1728×982 frame. `mark` is the red rectangle around the title.
+   Either a bg or a card may be a looping video instead of a still. */
 const projects = [
-  { number: '01', title: 'Noa & Atalia', href: `${base}/projects/noa-atalia`, cover: noaAtaliaCover, x: 644, y: 400, w: 107 },
-  { number: '02', title: 'The Prime Minister Next Door', href: `${base}/projects/prime-minister-next-door`, cover: primeMinisterCover, x: 881, y: 400, w: 172 },
-  { number: '03', title: 'Motion Design', href: `${base}/projects/motion-design`, cover: motionGraphicCover, x: 1126, y: 400, w: 167 },
-  { number: '04', title: 'More Than I Love My Life', href: `${base}/projects/more-than-i-love-my-life`, cover: moreThanCover, x: 1342, y: 400, w: 150 },
-  { number: '05', title: 'Secrets', href: `${base}/projects/secrets`, cover: secretsCover, x: 644, y: 552, w: 74 },
-  { number: '06', title: '3 Generations', href: `${base}/projects/3-generations`, cover: threeGenerationsCover, x: 880, y: 552, w: 128 },
-  { number: '07', title: 'The West Bank Barrier', href: `${base}/projects/west-bank-barrier`, cover: westBankCover, x: 1127, y: 552, w: 117 },
+  {
+    slug: 'noa-atalia',
+    number: '01',
+    title: 'Noa & Atalia',
+    href: `${base}/projects/noa-atalia`,
+    x: 644, y: 400, w: 107,
+    tags: projectTags['noa-atalia'],
+    mark: { x: 634, y: 393, w: 201, h: 82 },
+    bg: { src: noaAtaliaHoverBg },
+    /* From "HOVER 1 fixed", with the top clip pushed further right. */
+    cards: [
+      { video: `${base}/media/noa-atalia-clip`, x: 1430, y: 122, w: 237, h: 322 },
+      { video: `${base}/media/car-fight`, x: 62, y: 582, w: 466, h: 262 },
+      { video: `${base}/media/noa-atalia-insta`, x: 869, y: 643, w: 478, h: 269 },
+    ],
+  },
+  {
+    slug: 'prime-minister-next-door',
+    number: '02',
+    title: 'The Prime Minister Next Door',
+    href: `${base}/projects/prime-minister-next-door`,
+    x: 881, y: 400, w: 172,
+    tags: projectTags['prime-minister-next-door'],
+    mark: { x: 867, y: 393, w: 201, h: 82 },
+    bg: { src: primeMinisterHoverBg },
+    cards: [
+      { video: `${base}/media/prime-minister-card`, x: 20, y: 335, w: 498, h: 280 },
+      /* A cut-out with no backing box, so it has to keep its alpha — video has
+         none, which is why this one stays a GIF. */
+      { gif: `${base}/media/prime-minister-bibi.gif`, x: 1380, y: 440, w: 320, h: 455 },
+    ],
+  },
+  {
+    slug: 'motion-design',
+    number: '03',
+    title: 'Motion Design',
+    href: `${base}/projects/motion-design`,
+    x: 1126, y: 400, w: 167,
+    tags: projectTags['motion-design'],
+    mark: { x: 1113, y: 392, w: 201, h: 82 },
+    /* Figma's "Pi7_GIF_CMP 1" — the GIF, re-encoded as a looping mp4. */
+    bg: { video: `${base}/media/motion-hover` },
+    cards: [],
+  },
+  {
+    slug: 'more-than-i-love-my-life',
+    number: '04',
+    title: 'More Than I Love My Life',
+    href: `${base}/projects/more-than-i-love-my-life`,
+    x: 1357, y: 400, w: 150,
+    tags: projectTags['more-than-i-love-my-life'],
+    mark: { x: 1344, y: 392, w: 177, h: 82 },
+    bg: { src: moreHoverBg },
+    cards: [
+      { src: moreLayer14, x: 816, y: 82, w: 190, h: 227 },
+      { video: `${base}/media/more-main1`, x: 1231, y: 100, w: 415, h: 233 },
+      { src: moreLayer7, x: 992, y: 196, w: 130, h: 173 },
+      { src: moreLayer16, x: 80, y: 348, w: 248, h: 321 },
+      { src: moreLayer8, x: 314, y: 503, w: 257, h: 352 },
+      { video: `${base}/media/more-main2`, x: 949, y: 679, w: 414, h: 233 },
+    ],
+  },
+  {
+    slug: 'secrets',
+    number: '05',
+    title: 'Secrets',
+    href: `${base}/projects/secrets`,
+    x: 644, y: 552, w: 74,
+    tags: projectTags['secrets'],
+    mark: { x: 631, y: 546, w: 201, h: 82 },
+    bg: { src: secretsHoverBg },
+    cards: [],
+  },
+  {
+    slug: '3-generations',
+    number: '06',
+    title: '3 Generations',
+    href: `${base}/projects/3-generations`,
+    x: 880, y: 552, w: 128,
+    tags: projectTags['3-generations'],
+    mark: { x: 867, y: 546, w: 201, h: 82 },
+    bg: { src: threeGenHoverBg },
+    cards: [
+      { src: building3, blend: 'screen', x: 344, y: -68, w: 382, h: 382 },
+      { src: building1, blend: 'screen', x: 838, y: 46, w: 382, h: 381 },
+      { src: building4, blend: 'screen', x: 1321, y: 134, w: 381, h: 382 },
+      { src: building2, blend: 'screen', x: 54, y: 249, w: 381, h: 382 },
+      { src: building5, blend: 'screen', x: 367, y: 582, w: 382, h: 382 },
+      { src: building6, blend: 'screen', x: 968, y: 440, w: 382, h: 382 },
+      { src: building7, blend: 'screen', x: 1305, y: 592, w: 382, h: 381 },
+    ],
+  },
+  {
+    slug: 'west-bank-barrier',
+    number: '07',
+    title: 'The West Bank Barrier',
+    href: `${base}/projects/west-bank-barrier`,
+    x: 1127, y: 552, w: 117,
+    tags: projectTags['west-bank-barrier'],
+    mark: { x: 1115, y: 546, w: 201, h: 82 },
+    bg: { src: westBankHoverBg },
+    /* Figma floats two tall slices of the booklet over this — not exported yet. */
+    cards: [],
+  },
 ];
 ---
 
-<BaseLayout title={siteConfig.title} description={siteConfig.description} image={noaAtaliaCover.src}>
+<BaseLayout title={siteConfig.title} description={siteConfig.description} image={noaAtaliaCover.src} bodyClass="home-fixed">
   <div class="canvas-wrap">
-    <div class="canvas">
+    <!-- ===== FULL-BLEED HOVER BACKDROP =====
+         Outside the scaled canvas on purpose: it covers the entire browser
+         window, so a hover fills the screen edge to edge whatever the viewport
+         shape is. -->
+    <div class="hover-bg-stack" aria-hidden="true">
+      {projects.map((project) =>
+        project.bg ? (
+          <div class="hover-bg" data-for={project.slug} style={project.bg.opacity ? `--bg-opacity:${project.bg.opacity};` : ''}>
+            {project.bg.video ? (
+              <video autoplay muted loop playsinline preload="metadata">
+                <source src={`${project.bg.video}.webm`} type="video/webm" />
+                <source src={`${project.bg.video}.mp4`} type="video/mp4" />
+              </video>
+            ) : (
+              <Image src={project.bg.src} alt="" widths={[1512, 2268]} sizes="100vw" quality={82} loading="eager" />
+            )}
+          </div>
+        ) : null
+      )}
+
+      <!-- The floating images stay pinned to the canvas — their Figma
+           coordinates only mean anything inside the 1728×982 frame. -->
+      <div class="hover-card-stack" aria-hidden="true">
+        {projects.map((project) => (
+          <div class="hover-cards" data-for={project.slug}>
+            {project.cards.map((card, i) => (
+              <div
+                class="hover-card"
+                data-blend={card.blend}
+                style={`--x:${card.x}; --y:${card.y}; --w:${card.w}; --h:${card.h}; --i:${i};`}
+              >
+                {card.gif ? (
+                  <img src={card.gif} alt="" loading="lazy" />
+                ) : card.video ? (
+                  <video autoplay muted loop playsinline preload="metadata">
+                    <source src={`${card.video}.webm`} type="video/webm" />
+                    <source src={`${card.video}.mp4`} type="video/mp4" />
+                  </video>
+                ) : (
+                  <Image src={card.src} alt="" widths={[600, 960]} loading="eager" />
+                )}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Per-project tag row. It hangs off the wrapper, not the canvas, so it
+         measures 20 from the right edge of the PAGE — the canvas is pinned left
+         and its right edge stops short of the glass on a wide screen. -->
+    {projects.map((project) => (
+      <div class="hover-tags" data-for={project.slug}>
+        <ProjectTags tags={project.tags} />
+      </div>
+    ))}
+
+    <div class="canvas" data-hover="">
       <Nav canvas />
 
-      <!-- Figma: red box 130,173 · 237×408 -->
+      <!-- Figma: the name is its own canvas element at 263,198 — it sits over the
+           red group rather than inside it, so it does not animate with it. -->
+      <h1 class="name">Noa Kopelo</h1>
+
+      <!-- Figma: red box "Group 1" 140,173 · 237×408 -->
       <div class="box intro-box">
         <p class="kicker-wide intro-kicker">Hi! I'm</p>
-        <h1 class="name">Noa Kopelo</h1>
         <p class="intro-copy">{siteConfig.description}</p>
       </div>
 
-      <!-- Figma: red box 1008,132 · 237×201 -->
+      <!-- Figma: red box "Group 3" 1008,132 · 237×201 -->
       <div class="box note-box">
         <p class="note-copy">
           I love working with rhythm, archives, and typography across video editing, motion design, and editorial
@@ -47,7 +228,7 @@ const projects = [
         </p>
       </div>
 
-      <!-- Figma: red box 644,648 · 404×237 -->
+      <!-- Figma: red box "Group 2" 644,648 · 404×237 -->
       <div class="box skills-box">
         <p class="kicker-wide skills-kicker">Skills &amp; Software</p>
         <p class="skills-copy">
@@ -59,12 +240,15 @@ const projects = [
       <ul class="project-list" role="list">
         {projects.map((project) => (
           <li class="project-item" style={`--x:${project.x}; --y:${project.y}; --w:${project.w};`}>
-            <a class="project-link" href={project.href}>
+            <a
+              class="project-link"
+              href={project.href}
+              data-slug={project.slug}
+              style={`--mx:${project.mark.x - project.x}; --my:${project.mark.y - project.y}; --mw:${project.mark.w}; --mh:${project.mark.h};`}
+            >
+              <span class="mark" aria-hidden="true"></span>
               <span class="num">{project.number}</span>
               <span class="title">{project.title}</span>
-              <span class="preview">
-                <Image src={project.cover} alt="" width={420} height={280} loading="eager" />
-              </span>
             </a>
           </li>
         ))}
@@ -79,37 +263,230 @@ const projects = [
 
 <style>
   /* ===== SCALED FIGMA CANVAS =====
-     --u is one Figma pixel. It equals 1px until the viewport drops below the
-     1512px canvas, then shrinks so the whole design scales proportionally.
-     Every coordinate below is the literal Figma x/y/size. */
+     The homepage is one locked screen: the 1728x982 frame scaled to fit the
+     window, never scrolling, never cropped. Every coordinate below is the
+     literal Figma x/y/size. */
   .canvas-wrap {
-    container-type: inline-size;
+    /* --u is one Figma pixel. It lives here, not on .canvas, because the hover
+       layers sit outside the canvas and need the same scale.
+
+       The scale fits BOTH axes, so the whole frame is always visible and nothing
+       is ever cropped. On a window wider than 1728/982 that leaves empty space
+       down the right-hand side — the design keeps its proportions rather than
+       stretching to the glass. */
+    --u: min(calc(100vw / 1728), calc(100vh / 982));
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: var(--color-bg);
+  }
+
+  /* The canvas is exactly one screen: the 1728x982 frame scaled to fit the
+     window on both axes, never scrolling. */
+  .canvas {
+    position: relative;
+    flex: none;
+    width: calc(1728 * var(--u));
+    height: calc(982 * var(--u));
+    /* Transparent and above the hover layers, so the backdrop shows through. */
+    z-index: 1;
+  }
+
+  /* ===== HOVER TAKEOVER =====
+     One layer per project, stacked behind the canvas text. Hovering a project
+     title fades its layer up to fill the whole frame, exactly as in the
+     HOVER 1–7 frames in Figma. */
+  /* Full-bleed: pinned to the window, not to the scaled canvas. */
+  .hover-bg-stack {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    /* Confines mix-blend-mode to this group: a blended card sees the backdrop
+       image below it and nothing further up the page. */
+    isolation: isolate;
+  }
+
+  .hover-bg {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 420ms ease,
+      visibility 0s linear 420ms;
+  }
+
+  .hover-bg.is-active {
+    opacity: var(--bg-opacity, 1);
+    visibility: visible;
+    transition:
+      opacity 420ms ease,
+      visibility 0s;
+  }
+
+  .hover-bg :global(img),
+  .hover-bg video {
+    display: block;
     width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Two scales at once. --uw spreads the cards across the full width of the
+     window, so they never look bunched into a narrow strip. Height, size and
+     vertical position stay on the canvas's --u, which keeps them level with the
+     type and stops them growing taller than the screen — scaling both axes off
+     the width is what pushed a top card into the tag row and cut the feet off a
+     bottom one. */
+  .hover-card-stack {
+    --uw: calc(100vw / 1728);
+    position: absolute;
+    left: 0;
+    top: calc(50% - 491 * var(--u));
+    width: 100vw;
+    height: calc(982 * var(--u));
     overflow: hidden;
   }
 
-  .canvas {
-    --u: min(1px, calc(100cqw / 1512));
-    position: relative;
-    width: calc(1512 * var(--u));
-    height: calc(982 * var(--u));
+  /* The group only shows and hides. It must not carry its own opacity: a value
+     between 0 and 1 opens a stacking context, which cuts a blended card off from
+     the backdrop for the whole fade and then snaps it back at the end. */
+  .hover-cards {
+    position: absolute;
+    inset: 0;
+    visibility: hidden;
+    transition: visibility 0s linear 420ms;
   }
 
-  /* An inset shadow rather than a border: a border would push the absolutely
-     positioned children 1px in, since they resolve against the padding box. */
+  .hover-cards.is-active {
+    visibility: visible;
+    transition: visibility 0s;
+  }
+
+  /* They come up a beat after the backdrop, one after another. */
+  .hover-card {
+    position: absolute;
+    left: calc(var(--x) * var(--uw));
+    top: calc(var(--y) * var(--u));
+    width: calc(var(--w) * var(--u));
+    height: calc(var(--h) * var(--u));
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(calc(12 * var(--u)));
+    transition:
+      opacity 420ms ease,
+      transform 420ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .hover-cards.is-active .hover-card {
+    opacity: 1;
+    transform: none;
+    transition-delay: calc(120ms + var(--i) * 70ms);
+  }
+
+  /* Figma blends the 3 Generations buildings onto the map rather than stacking
+     them opaquely — without this they read as flat pasted squares. */
+  .hover-card[data-blend='screen'] {
+    mix-blend-mode: screen;
+    /* For the same reason, a blended card never fades — it slides in already
+       blended rather than arriving opaque and popping. */
+    opacity: 1;
+    transition: transform 420ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  /* contain, not cover: a card must never crop its picture. The backdrop still
+     covers, because that one is meant to bleed. */
+  .hover-card :global(img),
+  .hover-card img,
+  .hover-card video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .hover-tags {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    /* It spans the whole page, so it must not intercept the hover it reacts to. */
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 420ms ease,
+      visibility 0s linear 420ms;
+  }
+
+  .hover-tags.is-active {
+    opacity: 1;
+    visibility: visible;
+    transition:
+      opacity 420ms ease,
+      visibility 0s;
+  }
+
+  /* ===== RED GROUPS =====
+     They rise in one after another on load, in Figma's own order, and step
+     aside the moment a hover takes over the screen. */
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      transform: translateY(calc(28 * var(--u)));
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
   .box {
     position: absolute;
+    /* Below the name: Group 1 overlaps it, and the type reads on top. */
+    z-index: 1;
     box-shadow: inset 0 0 0 1px var(--color-accent);
+    opacity: 0;
+    animation: rise-in 900ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+    animation-delay: calc(var(--delay) * 1ms);
+  }
+
+  /* Once the entrance has played, the boxes drop the animation for good and are
+     driven by a plain transition — otherwise clearing the hover class restarts
+     the whole staggered entrance, delays and all. */
+  .canvas.entered .box {
+    opacity: 1;
+    animation: none;
+    transition: opacity 320ms ease;
+  }
+
+  .canvas.entered.is-hovering .box {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .box {
+      opacity: 1;
+      animation: none;
+    }
   }
 
   .intro-box {
-    left: calc(130 * var(--u));
+    /* Group 1. Its right edge lands just past where the "a" of "Noa" begins
+       (the a starts at 358.4 in frame units, the box ends at 365). */
+    --delay: 300;
+    left: calc(127 * var(--u));
     top: calc(173 * var(--u));
     width: calc(237 * var(--u));
     height: calc(408 * var(--u));
   }
 
   .note-box {
+    --delay: 2700; /* Group 3 */
     left: calc(1008 * var(--u));
     top: calc(132 * var(--u));
     width: calc(237 * var(--u));
@@ -117,6 +494,7 @@ const projects = [
   }
 
   .skills-box {
+    --delay: 1500; /* Group 2 */
     left: calc(644 * var(--u));
     top: calc(648 * var(--u));
     width: calc(404 * var(--u));
@@ -132,10 +510,13 @@ const projects = [
   }
 
   .name {
+    /* Figma: 260,198, 371 wide — centred on 445.5, never wrapping. */
     position: absolute;
-    left: calc(133 * var(--u));
-    top: calc(25 * var(--u));
-    width: calc(371 * var(--u));
+    left: calc(445.5 * var(--u));
+    top: calc(198 * var(--u));
+    transform: translateX(-50%);
+    white-space: nowrap;
+    z-index: 2;
     font-family: var(--font-display);
     font-weight: 500;
     font-size: calc(80 * var(--u));
@@ -204,6 +585,8 @@ const projects = [
   }
 
   .project-list {
+    position: relative;
+    z-index: 3;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -220,6 +603,25 @@ const projects = [
     position: relative;
     display: block;
     color: var(--color-text);
+  }
+
+  /* Figma's Rectangle 13 — the red frame that marks the hovered project. Its
+     offset and size come straight from each HOVER frame. */
+  .mark {
+    position: absolute;
+    left: calc(var(--mx) * var(--u));
+    top: calc(var(--my) * var(--u));
+    width: calc(var(--mw) * var(--u));
+    height: calc(var(--mh) * var(--u));
+    box-shadow: inset 0 0 0 1px var(--color-accent);
+    opacity: 0;
+    transition: opacity 240ms ease;
+    pointer-events: none;
+  }
+
+  .project-link:hover .mark,
+  .project-link:focus-visible .mark {
+    opacity: 1;
   }
 
   /* Figma: 18px, -1.26px tracking */
@@ -242,42 +644,13 @@ const projects = [
     line-height: 1.05;
   }
 
-  .project-link:hover .title,
-  .project-link:focus-visible .title {
-    color: var(--color-accent);
-  }
-
-  .preview {
-    position: absolute;
-    bottom: calc(100% + 0.5rem);
-    left: 0;
-    width: calc(260 * var(--u));
-    aspect-ratio: 3 / 2;
-    overflow: hidden;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity var(--transition-normal);
-    z-index: 10;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-  }
-
-  .preview :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .project-link:hover .preview,
-  .project-link:focus-visible .preview {
-    opacity: 1;
-  }
-
   .collab-mark {
     position: absolute;
     left: calc(47 * var(--u));
     top: calc(915 * var(--u));
     width: calc(30 * var(--u));
     height: calc(28 * var(--u));
+    z-index: 3;
   }
 
   /* Figma: 20px General Sans Extralight, -1.4px tracking */
@@ -287,19 +660,25 @@ const projects = [
     top: calc(922 * var(--u));
     width: calc(169 * var(--u));
     margin: 0;
+    z-index: 3;
     font-family: var(--font-display);
     font-weight: 200;
     font-size: calc(20 * var(--u));
     letter-spacing: -0.07em;
+    text-transform: uppercase;
     color: var(--color-text);
   }
 
   /* ===== MOBILE =====
      Below the canvas breakpoint the design stops scaling and becomes a
-     normal stacked layout, since 16px Figma text would be ~9px on a phone. */
+     normal stacked layout, since 16px Figma text would be ~9px on a phone.
+     There is no hover on a touch screen, so the takeover is dropped entirely. */
   @media (max-width: 900px) {
     .canvas-wrap {
-      container-type: normal;
+      --u: 1px;
+      display: block;
+      width: auto;
+      height: auto;
       overflow: visible;
     }
 
@@ -311,6 +690,12 @@ const projects = [
       flex-direction: column;
       gap: var(--space-xl);
       padding: 6rem var(--space-lg) var(--space-2xl);
+    }
+
+    .hover-bg-stack,
+    .hover-card-stack,
+    .hover-tags {
+      display: none;
     }
 
     .box {
@@ -333,6 +718,8 @@ const projects = [
     }
 
     .name {
+      transform: none;
+      white-space: normal;
       font-size: clamp(2.5rem, 12vw, 4rem);
       text-align: left;
       margin-block: var(--space-sm);
@@ -368,13 +755,13 @@ const projects = [
       width: auto;
     }
 
+    .mark {
+      display: none;
+    }
+
     .num,
     .title {
       font-size: 1.1rem;
-    }
-
-    .preview {
-      display: none;
     }
 
     .collab-mark,
@@ -399,3 +786,55 @@ const projects = [
     }
   }
 </style>
+
+<script>
+  const canvas = document.querySelector<HTMLElement>('.canvas');
+  const links = document.querySelectorAll<HTMLAnchorElement>('.project-link');
+  const layers = document.querySelectorAll<HTMLElement>('.hover-bg, .hover-cards, .hover-tags');
+
+  /* One shared switch: the backdrop, the floating cards and the tag row for a
+     project all carry the same data-for, so a single slug lights up all three.
+     Each video offers WebM first and falls back to mp4, and only loads its
+     metadata up front — the frames arrive when a hover actually asks. */
+  const show = (slug: string | null) => {
+    if (!canvas) return;
+    canvas.classList.toggle('is-hovering', Boolean(slug));
+    canvas.dataset.hover = slug ?? '';
+
+    layers.forEach((layer) => {
+      const active = layer.dataset.for === slug;
+      layer.classList.toggle('is-active', active);
+
+      layer.querySelectorAll<HTMLVideoElement>('video').forEach((video) => {
+        if (active) {
+          /* Autoplay is only permitted for a muted video, and a hover is not a
+             user gesture — so muting is re-asserted here before every play. */
+          video.muted = true;
+          void video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      });
+    });
+  };
+
+  /* The red groups rise in exactly once per page load. */
+  const boxes = document.querySelectorAll<HTMLElement>('.box');
+  const markEntered = () => canvas?.classList.add('entered');
+  let settled = 0;
+  boxes.forEach((box) =>
+    box.addEventListener('animationend', () => {
+      if (++settled >= boxes.length) markEntered();
+    }, { once: true })
+  );
+  /* No animation fires under reduced motion, so nothing would ever settle. */
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) markEntered();
+
+  links.forEach((link) => {
+    const slug = link.dataset.slug ?? null;
+    link.addEventListener('mouseenter', () => show(slug));
+    link.addEventListener('focus', () => show(slug));
+    link.addEventListener('mouseleave', () => show(null));
+    link.addEventListener('blur', () => show(null));
+  });
+</script>

@@ -1,82 +1,48 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
 import ProjectHeader from '@components/project/ProjectHeader.astro';
-import { Image } from 'astro:assets';
+import PhoneCarousel from '@components/project/PhoneCarousel.astro';
 import { siteConfig } from '@config/site';
-import deadsea from '@assets/projects/motion-graphic/deadsea.png';
-import rujum from '@assets/projects/motion-graphic/rujum.jpg';
-import vipPassengers from '@assets/projects/motion-graphic/vip-passengers.jpg';
 import vinylDay from '@assets/projects/motion-graphic/vinyl-day.jpg';
-import flight from '@assets/projects/motion-graphic/flight.png';
-import passport from '@assets/projects/motion-graphic/passport.jpg';
-import ringsInsta from '@assets/projects/motion-graphic/rings-insta.jpg';
 
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const title = 'Motion Design';
 const description =
   'A collection of motion design projects, animated posters, and video experiments created for various events, cultural platforms, and personal explorations.';
 
+/* The seven pieces, one at a time, in a phone you page through. */
+const films = [
+  { src: `${base}/media/motion-deadsea`, title: 'Dead Sea' },
+  { src: `${base}/media/motion-rujum`, title: 'Rujum' },
+  { src: `${base}/media/motion-passport`, title: 'Passport' },
+  { src: `${base}/media/motion-vip-passengers`, title: "Nosi'im Nichbadim" },
+  { src: `${base}/media/motion-vinyl-day`, title: 'Vinyl Day' },
+  { src: `${base}/media/motion-flight`, title: 'Flight' },
+  { src: `${base}/media/motion-rings`, title: 'Rings' },
+];
+
+/* It stands in the gap between the name, which ends at 631, and the title,
+   which starts at 1126 — centred on 878. 914 frame units is 800px on a 900px
+   screen, which runs past the 982 fold, so the frame is made tall enough to
+   hold it and the page scrolls. 9:19.5, so the width follows the height. */
+const PHONE_TOP = 380;
+const PHONE_HEIGHT = 914;
+const PHONE_WIDTH = Math.round((PHONE_HEIGHT * 9) / 19.5);
+const PHONE_LEFT = Math.round(878 - PHONE_WIDTH / 2);
+const FRAME_HEIGHT = PHONE_TOP + PHONE_HEIGHT + 120;
 ---
 
 <BaseLayout title={`${title} — ${siteConfig.name}`} description={description} image={vinylDay.src}>
   <ProjectHeader
+    slug="motion-design"
     number="03"
     title={title}
     description={description}
-    tags={['Motion Graphics', 'Animated Posters', 'Motion Identity']}
-  />
-
-  <section class="media">
-    <div class="poster-grid">
-      <figure><Image src={deadsea} alt="Dead Sea animated poster" width={600} /></figure>
-      <figure><Image src={rujum} alt="Rujum animated poster" width={600} /></figure>
-      <figure><Image src={vipPassengers} alt="VIP passengers motion graphic" width={600} /></figure>
-      <figure><Image src={vinylDay} alt="Vinyl Day event poster" width={600} /></figure>
-      <figure><Image src={flight} alt="Flight motion graphic" width={600} /></figure>
-      <figure><Image src={passport} alt="Passport motion graphic" width={600} /></figure>
-    </div>
-    <figure class="rings">
-      <Image src={ringsInsta} alt="Rings Instagram motion graphic" width={400} />
-    </figure>
-  </section>
+    frameHeight={FRAME_HEIGHT}
+    stays={[
+      { phone: true as const, x: PHONE_LEFT, y: PHONE_TOP, w: PHONE_WIDTH, h: PHONE_HEIGHT },
+    ]}
+  >
+    <PhoneCarousel slot="phone" films={films} label="Motion pieces" />
+  </ProjectHeader>
 </BaseLayout>
-
-<style>
-  .media {
-    max-width: var(--canvas-width);
-    margin-inline: 0;
-    padding: 0 var(--space-lg) var(--space-2xl) var(--content-left);
-  }
-
-  .poster-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-lg);
-  }
-
-  figure {
-    margin: 0;
-  }
-
-  figure :global(img) {
-    width: 100%;
-    height: auto;
-    display: block;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-  }
-
-  .rings {
-    max-width: 16rem;
-    margin: var(--space-xl) auto 0;
-  }
-
-  .rings :global(img) {
-    aspect-ratio: 4 / 5;
-  }
-
-  @media (max-width: 720px) {
-    .poster-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-</style>

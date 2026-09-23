@@ -1,10 +1,12 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
 import ProjectHeader from '@components/project/ProjectHeader.astro';
+import ParallaxMedia from '@components/project/ParallaxMedia.astro';
 import { Image } from 'astro:assets';
 import { siteConfig } from '@config/site';
 import cover from '@assets/projects/noa-atalia/cover.jpg';
 
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const title = 'Noa & Atalia';
 const description =
   'Noa & Atalia is a short documentary film exploring the interplay between human connection and memory through a complex sisterly relationship. The accidental discovery of forgotten family archive footage sparks a series of candid, year-long recorded conversations, weaving personal history with intimate dialogue.';
@@ -12,34 +14,34 @@ const description =
 
 <BaseLayout title={`${title} — ${siteConfig.name}`} description={description} image={cover.src}>
   <ProjectHeader
+    slug="noa-atalia"
     number="01"
     title={title}
     description={description}
-    tags={['Documentary', 'Video Editing', 'Archival Film', 'Storytelling']}
+    stays={[
+      /* Figma keeps these two beside the text: "2 27" and "2-6 (0-05-19-20) 1". */
+      /* Exactly where "HOVER 1 fixed" puts it, so it does not jump on the way in. */
+      { video: `${base}/media/noa-atalia-clip`, x: 1430, y: 122, w: 237, h: 322 },
+      { video: `${base}/media/car-fight`, x: 62, y: 582, w: 466, h: 262 },
+    ]}
   />
 
-  <section class="media">
-    <figure>
-      <Image src={cover} alt="Still from the Noa & Atalia documentary" width={900} />
+  <ParallaxMedia>
+    <figure class="film">
+      <video autoplay muted loop playsinline controls preload="metadata">
+        <source src={`${base}/media/noa-atalia-teaser.webm`} type="video/webm" />
+        <source src={`${base}/media/noa-atalia-teaser.mp4`} type="video/mp4" />
+      </video>
     </figure>
-  </section>
+  </ParallaxMedia>
 </BaseLayout>
 
 <style>
-  .media {
-    max-width: var(--canvas-width);
-    margin-inline: 0;
-    padding: 0 var(--space-lg) var(--space-2xl) var(--content-left);
-  }
-
-  figure {
+  .film {
     margin: 0;
-    max-width: 32rem;
   }
 
-  figure :global(img) {
-    width: 100%;
+  .film video {
     height: auto;
-    display: block;
   }
 </style>

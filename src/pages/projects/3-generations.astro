@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
 import ProjectHeader from '@components/project/ProjectHeader.astro';
-import { Image } from 'astro:assets';
+import ProjectCanvas from '@components/project/ProjectCanvas.astro';
 import { siteConfig } from '@config/site';
 import building1 from '@assets/projects/3-generations/building-1.png';
 import building2 from '@assets/projects/3-generations/building-2.png';
@@ -13,165 +13,43 @@ import avatar1 from '@assets/projects/3-generations/avatar-1.png';
 import avatar2 from '@assets/projects/3-generations/avatar-2.png';
 import avatar3 from '@assets/projects/3-generations/avatar-3.png';
 
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const title = '3 Generations';
 const description =
   'An interactive web experience mapping Jerusalem through the personal memories and everyday spaces of three generations of women. Blending family archives, lived geography, and interactive storytelling, the project explores how a single city shifts across time and personal history.';
 
-const palette = [
-  { hex: '#ED9A6E', name: 'ED9A6E' },
-  { hex: '#ECE2CF', name: 'ECE2CF' },
-  { hex: '#DCD7B9', name: 'DCD7B9' },
-  { hex: '#CFD6BB', name: 'CFD6BB' },
-  { hex: '#E2ECF4', name: 'E2ECF4' },
-];
+/* Straight off the Figma frame "3 Generations" (1512x3117). */
+const pieces = [
+  /* The palette, top to bottom, at 108 with its hex underneath. */
+  { color: '#E2ECF4', label: 'E2ECF4', x: 108, y: 1040, w: 99, h: 95 },
+  { color: '#CFD6BB', label: 'CFD6BB', x: 108, y: 1181, w: 99, h: 95 },
+  { color: '#DCD7B9', label: 'DCD7B9', x: 108, y: 1318, w: 99, h: 95 },
+  { color: '#ECE2CF', label: 'ECE2CF', x: 108, y: 1455, w: 99, h: 95 },
+  { color: '#ED9A6E', label: 'ED9A6E', x: 108, y: 1593, w: 99, h: 95 },
 
-const years = [
-  { image: avatar1, label: '2022' },
-  { image: avatar2, label: '1989' },
-  { image: avatar3, label: '1956' },
+  { video: `${base}/media/three-generations`, controls: true, formats: ['mp4'], x: 292, y: 1030, w: 1130, h: 701 },
+  /* Figma lays them out "Untitled-1-03", "-01", "-02" from left to right. */
+  { src: avatar3, alt: 'Jerusalem, 2022', x: 89, y: 1789, w: 421, h: 421 },
+  { src: avatar1, alt: 'Jerusalem, 1989', x: 545, y: 1789, w: 421, h: 421 },
+  { src: avatar2, alt: 'Jerusalem, 1956', x: 1001, y: 1789, w: 421, h: 421 },
 ];
 ---
 
 <BaseLayout title={`${title} — ${siteConfig.name}`} description={description} image={mapBg.src}>
   <ProjectHeader
+    slug="3-generations"
     number="06"
     title={title}
     description={description}
-    tags={['UI Design', 'Interactive Web', 'Digital Archiving', 'Storytelling']}
+    stays={[
+      /* The five buildings, exactly where Figma scatters them over the fold. */
+      { src: building3, x: 301, y: -68, w: 382, h: 382 },
+      { src: building1, x: 733, y: 46, w: 382, h: 381 },
+      { src: building4, x: 1156, y: 134, w: 381, h: 382 },
+      { src: building2, x: 47, y: 249, w: 381, h: 382 },
+      { src: building5, x: 321, y: 582, w: 382, h: 382 },
+    ]}
   />
 
-  <section class="media">
-    <div class="buildings-row">
-      <Image src={building1} alt="" width={220} />
-      <Image src={building2} alt="" width={220} />
-      <Image src={building3} alt="" width={220} />
-      <Image src={building4} alt="" width={220} />
-      <Image src={building5} alt="" width={220} />
-    </div>
-
-    <div class="hero-row">
-      <ul class="palette" role="list">
-        {palette.map((color) => (
-          <li>
-            <span class="swatch" style={`background:${color.hex}`}></span>
-            <span class="hex">{color.name}</span>
-          </li>
-        ))}
-      </ul>
-      <figure class="hero"><Image src={mapBg} alt="Interactive Jerusalem map" width={1100} /></figure>
-    </div>
-
-    <div class="years-row">
-      {years.map((year) => (
-        <figure>
-          <Image src={year.image} alt={`Jerusalem, ${year.label}`} width={420} />
-          <figcaption>{year.label}</figcaption>
-        </figure>
-      ))}
-    </div>
-  </section>
+  <ProjectCanvas width={1512} height={3117} offsetY={990} tail={200} items={pieces} />
 </BaseLayout>
-
-<style>
-  .media {
-    max-width: var(--canvas-width);
-    margin-inline: 0;
-    padding: 0 var(--space-lg) var(--space-2xl) var(--content-left);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xl);
-  }
-
-  figure {
-    margin: 0;
-  }
-
-  figure :global(img) {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  .buildings-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-lg);
-    justify-content: center;
-  }
-
-  .buildings-row :global(img) {
-    width: 8rem;
-    height: auto;
-  }
-
-  .hero-row {
-    display: grid;
-    grid-template-columns: 9rem 1fr;
-    gap: var(--space-lg);
-    align-items: stretch;
-  }
-
-  .palette {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-  }
-
-  .palette li {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .swatch {
-    display: block;
-    width: 100%;
-    aspect-ratio: 4 / 5;
-  }
-
-  .hex {
-    font-family: var(--font-body);
-    font-weight: 300;
-    font-size: 0.75rem;
-    letter-spacing: 0.15em;
-    margin-top: 0.35rem;
-  }
-
-  .hero {
-    background: #dce7f0;
-  }
-
-  .years-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-lg);
-  }
-
-  .years-row figcaption {
-    margin-top: var(--space-sm);
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: 1.1rem;
-  }
-
-  @media (max-width: 720px) {
-    .hero-row {
-      grid-template-columns: 1fr;
-    }
-
-    .palette {
-      flex-direction: row;
-      flex-wrap: wrap;
-    }
-
-    .palette li {
-      width: 4rem;
-    }
-
-    .years-row {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>

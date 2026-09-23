@@ -1,0 +1,54 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  /* Autoplays muted by default, the way Vimeo's own embed code arrives. */
+  autoplay?: boolean;
+}
+
+const { id, title, autoplay = true } = Astro.props;
+const params = new URLSearchParams({
+  badge: '0',
+  autopause: '0',
+  player_id: '0',
+  app_id: '58479',
+  ...(autoplay ? { autoplay: '1', muted: '1' } : {}),
+});
+---
+
+<figure class="vimeo">
+  <div class="frame">
+    <iframe
+      src={`https://player.vimeo.com/video/${id}?${params}`}
+      title={title}
+      loading="lazy"
+      frameborder="0"
+      allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+    ></iframe>
+  </div>
+</figure>
+
+<style>
+  .vimeo {
+    margin: 0;
+  }
+
+  /* 16:9 held before the iframe loads, so nothing below it jumps when the
+     video arrives. aspect-ratio rather than a percentage padding, because a
+     percentage resolves against the parent's width and so ignores any cap put
+     on the player itself. */
+  .frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+  }
+
+  .frame iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+</style>

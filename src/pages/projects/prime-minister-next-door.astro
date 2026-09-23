@@ -1,10 +1,13 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
 import ProjectHeader from '@components/project/ProjectHeader.astro';
+import VimeoEmbed from '@components/project/VimeoEmbed.astro';
+import ParallaxMedia from '@components/project/ParallaxMedia.astro';
 import { Image } from 'astro:assets';
 import { siteConfig } from '@config/site';
 import cover from '@assets/projects/prime-minister/cover.jpg';
 
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const title = 'The Prime Minister Next Door';
 const description =
   "A mixed-media motion explainer examining the absurd reality of living 300 meters from the Israeli Prime Minister's residence. Through layered textures, archival footage, and motion design, the piece unpacks the bizarre intersections between personal daily life and heavy national politics.";
@@ -12,34 +15,19 @@ const description =
 
 <BaseLayout title={`${title} — ${siteConfig.name}`} description={description} image={cover.src}>
   <ProjectHeader
+    slug="prime-minister-next-door"
     number="02"
     title={title}
     description={description}
-    tags={['Explainer', 'Image-making', 'Motion Design', 'Storytelling']}
+    stays={[
+      /* Figma keeps "frame2 1" at 20,335. */
+      { video: `${base}/media/prime-minister-card`, x: 20, y: 335, w: 498, h: 280 },
+    ]}
   />
 
-  <section class="media">
-    <figure>
-      <Image src={cover} alt="Still from The Prime Minister Next Door" width={900} />
-    </figure>
-  </section>
+  <ParallaxMedia>
+    <VimeoEmbed id="1209460267" title="למה ראש הממשלה שכן שלי?" />
+  </ParallaxMedia>
 </BaseLayout>
 
-<style>
-  .media {
-    max-width: var(--canvas-width);
-    margin-inline: 0;
-    padding: 0 var(--space-lg) var(--space-2xl) var(--content-left);
-  }
 
-  figure {
-    margin: 0;
-    max-width: 32rem;
-  }
-
-  figure :global(img) {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-</style>

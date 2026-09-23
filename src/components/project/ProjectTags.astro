@@ -1,0 +1,138 @@
+---
+interface Props {
+  /* Each tag carries its own x, straight from the Figma frame. */
+  tags: { label: string; x: number }[];
+  /* Homepage passes nothing: it inherits --u from the scaled canvas. Project
+     pages pass `standalone` so the row reproduces the same scale on its own. */
+  standalone?: boolean;
+}
+
+const { tags, standalone = false } = Astro.props;
+
+/* One row along the top of the page: it ends 20 from the RIGHT EDGE OF THE
+   WINDOW, with 30 between one label and the next.
+
+   Anchored to the window, not to the canvas. The canvas is pinned to the left,
+   so its left edge and the window's coincide — which is why CV reads correctly
+   at 47. Its right edge does not: on a wide window the canvas stops short and
+   leaves a strip. Measuring these labels from the canvas therefore put them
+   20 inside the wrong edge. CV hugs the left of the page; these hug the right. */
+---
+
+<div class="project-tags" aria-hidden="true">
+  {tags.map((tag) => <span class="tag">{tag.label}</span>)}
+</div>
+
+<!-- Add ?debug to the URL to print where the tags actually land, in Figma
+     units, measured in your own browser with your own font. -->
+<div class="tag-debug" hidden></div>
+
+<style>
+  .project-tags {
+    /* 491 is half the 982 frame, so 50% - 491u is the canvas's own top edge.
+       --tag-top is the row's y inside the frame: the same 35 as CV, which now
+       shares its size, so the two sit on one baseline. */
+    --tag-top: 35;
+    position: absolute;
+    top: calc(50% - (491 - var(--tag-top)) * var(--u));
+    right: calc(20 * var(--u));
+    z-index: 100;
+    display: flex;
+    gap: calc(30 * var(--u));
+    pointer-events: none;
+  }
+
+  /* General Sans ExtraLight at 20 — the size of CV and CONTACT — in #d20000. */
+  .tag {
+    font-family: var(--font-display);
+    font-weight: 200;
+    font-size: calc(20 * var(--u));
+    letter-spacing: -0.07em;
+    line-height: 1.6;
+    white-space: nowrap;
+    color: var(--color-accent);
+  }
+
+  .tag-debug {
+    position: fixed;
+    left: 1rem;
+    bottom: 1rem;
+    z-index: 999;
+    max-width: 30rem;
+    padding: 0.75rem 1rem;
+    background: #111;
+    color: #fff;
+    font-family: ui-monospace, monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    white-space: pre;
+    border-radius: 4px;
+  }
+
+  @media (max-width: 900px) {
+    .project-tags {
+      position: static;
+      flex-wrap: wrap;
+      gap: 0.75rem 1rem;
+      pointer-events: auto;
+    }
+
+    .project-tags {
+      --u: 1px;
+      margin-bottom: var(--space-lg);
+    }
+
+    .project-tags .tag {
+      font-size: 0.95rem;
+    }
+  }
+</style>
+
+<script>
+  /* Measurement overlay. It only runs when ?debug is in the URL, and it reports
+     every number in Figma units so the values can be compared with the file
+     directly. Nothing here affects the normal page. */
+  if (new URLSearchParams(location.search).has('debug')) {
+    const report = () => {
+      const row = [...document.querySelectorAll<HTMLElement>('.project-tags')].find(
+        (el) => el.getBoundingClientRect().width > 0 && getComputedStyle(el).visibility === 'visible'
+      );
+      const box = document.querySelector<HTMLElement>('.tag-debug');
+      if (!row || !box) return;
+
+      const tags = [...row.querySelectorAll<HTMLElement>('.tag')];
+      if (!tags.length) return;
+
+      /* One Figma pixel, read back off the rendered type. */
+      const u = parseFloat(getComputedStyle(tags[0]).fontSize) / 20;
+      const frame = document.querySelector<HTMLElement>('.canvas');
+      const frameRight = frame ? frame.getBoundingClientRect().right : row.getBoundingClientRect().right;
+      const frameLeft = frame ? frame.getBoundingClientRect().left : 0;
+      const f = (px: number) => (px / u).toFixed(1);
+
+      const lines = tags.map((t) => {
+        const r = t.getBoundingClientRect();
+        return `  ${t.textContent?.padEnd(18)} x=${f(r.left - frameLeft).padStart(7)}  w=${f(r.width).padStart(6)}`;
+      });
+      const last = tags[tags.length - 1].getBoundingClientRect();
+      const gaps = tags.slice(1).map((t, i) => {
+        const prev = tags[i].getBoundingClientRect();
+        return f(t.getBoundingClientRect().left - prev.right);
+      });
+
+      box.hidden = false;
+      box.textContent = [
+        `font  ${getComputedStyle(tags[0]).fontFamily.split(',')[0]} ${getComputedStyle(tags[0]).fontWeight} @ ${f(parseFloat(getComputedStyle(tags[0]).fontSize))}`,
+        `scale 1 figma px = ${u.toFixed(4)} css px`,
+        ...lines,
+        `  gaps: ${gaps.join(', ')}`,
+        `  right margin: ${f(frameRight - last.right)}`,
+      ].join('\n');
+    };
+
+    addEventListener('load', report);
+    addEventListener('resize', report);
+    addEventListener('mouseover', report);
+    document.fonts?.ready.then(report);
+  }
+</script>

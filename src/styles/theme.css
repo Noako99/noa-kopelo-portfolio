@@ -1,11 +1,59 @@
 @import "tailwindcss";
-@import url('https://api.fontshare.com/v2/css?f[]=general-sans@200,300,400,500,600,700&display=swap');
+/* General Sans is served from the project itself rather than a CDN: the text no
+   longer depends on an outside host being up, and it cannot reflow on load. */
+@font-face {
+  font-family: 'General Sans';
+  src: url('/noa-kopelo-portfolio/fonts/GeneralSans-Extralight.otf') format('opentype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'General Sans';
+  src: url('/noa-kopelo-portfolio/fonts/GeneralSans-Light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'General Sans';
+  src: url('/noa-kopelo-portfolio/fonts/GeneralSans-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'General Sans';
+  src: url('/noa-kopelo-portfolio/fonts/GeneralSans-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'General Sans';
+  src: url('/noa-kopelo-portfolio/fonts/GeneralSans-Semibold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'General Sans';
+  src: url('/noa-kopelo-portfolio/fonts/GeneralSans-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 /* ===== DESIGN TOKENS =====
    Edit these to change the entire look of your site.
    All components reference these variables. */
 
 :root {
+  /* One Figma pixel of the 1728x982 frame, as a page-wide fallback: the
+     canvases redefine it on themselves, but anything laid out against the
+     design outside a canvas needs it too. */
+  --u: min(calc(100vw / 1728), calc(100vh / 982));
+
   /* Colors — from the Figma design system */
   --color-bg: #fafaf4;
   --color-text: #000000;
@@ -28,10 +76,10 @@
   --space-xl: 4rem;
   --space-2xl: 8rem;
 
-  /* Layout — matches the Figma canvas (1512×982). Content is left-anchored
+  /* Layout — matches the Figma canvas (1728×982). Content is left-anchored
      at the same fixed offset as the canvas, not centered: on screens wider
      than the canvas, the extra space stays empty on the right. */
-  --canvas-width: 94.5rem; /* 1512px */
+  --canvas-width: 108rem; /* 1728px */
   --content-left: 2.9375rem; /* 47px, matches the "CV" position in Figma */
   --content-top: 2.8125rem; /* 45px, matches the "CV" position in Figma */
   --max-width: 1400px;
@@ -58,6 +106,20 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Pages that are exactly one screen tall (the homepage). The canvas scales
+   itself to fit, so there is nothing to scroll to. */
+body.home-fixed {
+  height: 100vh;
+  overflow: hidden;
+}
+
+@media (max-width: 900px) {
+  body.home-fixed {
+    height: auto;
+    overflow: visible;
+  }
 }
 
 /* Reduced motion */

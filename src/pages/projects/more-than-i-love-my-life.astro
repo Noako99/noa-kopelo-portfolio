@@ -1,109 +1,60 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
 import ProjectHeader from '@components/project/ProjectHeader.astro';
-import { Image } from 'astro:assets';
-import { siteConfig } from '@config/site';
+import ProjectCanvas from '@components/project/ProjectCanvas.astro';
+import ParallaxMedia from '@components/project/ParallaxMedia.astro';
+import VimeoEmbed from '@components/project/VimeoEmbed.astro';
+
 import main1 from '@assets/projects/more-than-i-love-my-life/main-1-poster.jpg';
 import main3 from '@assets/projects/more-than-i-love-my-life/main-3-poster.jpg';
 import six from '@assets/projects/more-than-i-love-my-life/six.png';
 import untitledArtwork from '@assets/projects/more-than-i-love-my-life/untitled-artwork-2.png';
 import layer15 from '@assets/projects/more-than-i-love-my-life/layer-15.png';
-import elevenEleven from '@assets/projects/more-than-i-love-my-life/eleven-eleven.jpg';
+import elevenEleven from '@assets/projects/more-than-i-love-my-life/eleven-eleven.png';
 import layer14 from '@assets/projects/more-than-i-love-my-life/layer-14.png';
-import layer7 from '@assets/projects/more-than-i-love-my-life/layer-7.jpg';
-import layer8 from '@assets/projects/more-than-i-love-my-life/layer-8.png';
+import layer71 from '@assets/projects/more-than-i-love-my-life/layer-71.png';
+import layer81 from '@assets/projects/more-than-i-love-my-life/layer-81.png';
 import layer9 from '@assets/projects/more-than-i-love-my-life/layer-9.png';
 import layer16 from '@assets/projects/more-than-i-love-my-life/layer-16.png';
+import { siteConfig } from '@config/site';
 
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const title = 'More Than I Love My Life';
 const description =
   "A fictional TV title sequence for David Grossman's 'More Than I Love My Life'. Layers of archival footage and experimental editing unpack raw memory, emotion, and complex family bonds. The mixed-media sequence blends hand-crafted typography, archival film, photography, and AI-generated imagery, driven by a deliberate rhythm that echoes generational trauma.";
+
+/* Every coordinate is read straight off the Figma project frame (1512x5525).
+   The archival photographs at the end climb at speeds that grow down the run,
+   so they gather into a pile as the page is scrolled. */
+const pieces = [
+  { src: main1, alt: 'Title sequence still', x: 137, y: 1744, w: 606, h: 341 },
+  { src: main3, alt: 'Title sequence still', x: 768, y: 1744, w: 606, h: 341 },
+  /* Figma zooms the fill right in on the lettering. */
+  { src: six, alt: 'Title sequence typography', x: 422, y: 2153, w: 736, h: 355,
+    crop: { left: -89.46, top: -90.79, w: 266.24, h: 284 } },
+  { src: untitledArtwork, alt: 'Title sequence artwork', x: 219, y: 2423, w: 1098, h: 603,
+    crop: { left: -47.27, top: -0.01, w: 153.64, h: 144.12 } },
+  { src: layer15, alt: 'Archival photograph', x: 462, y: 3070, w: 375, h: 526, depth: 0.10, lift: 1 },
+  { src: elevenEleven, alt: 'Archival photograph', x: 665, y: 3338, w: 729, h: 958, depth: 0.15, lift: 2 },
+  { src: layer14, alt: 'Archival photograph', x: 60, y: 3365, w: 458, h: 586, depth: 0.19, lift: 3 },
+  { src: layer71, alt: 'Archival photograph', x: 153, y: 3942, w: 531, h: 708, depth: 0.25, lift: 4 },
+  { src: layer81, alt: 'Archival photograph', x: 773, y: 4161, w: 416, h: 571, depth: 0.29, lift: 5 },
+  { src: layer9, alt: 'Archival photograph', x: 372, y: 4913, w: 669, h: 501, depth: 0.40, lift: 7 },
+  { src: layer16, alt: 'Archival photograph', x: 184, y: 4556, w: 376, h: 527, depth: 0.35, lift: 6 },
+];
 ---
 
 <BaseLayout title={`${title} — ${siteConfig.name}`} description={description} image={main1.src}>
   <ProjectHeader
+    slug="more-than-i-love-my-life"
     number="04"
     title={title}
     description={description}
-    tags={['Title Sequence', 'Image-making', 'Motion Design', 'Storytelling']}
   />
 
-  <section class="media">
-    <div class="stills-row">
-      <figure><Image src={main1} alt="Title sequence still 1" width={700} /></figure>
-      <figure><Image src={main3} alt="Title sequence still 2" width={700} /></figure>
-    </div>
+  <ParallaxMedia>
+    <VimeoEmbed id="1216161109" title="More than I love my life — Title sequence" />
+  </ParallaxMedia>
 
-    <figure class="wide"><Image src={six} alt="Title sequence typography detail" width={1100} /></figure>
-    <figure class="wide"><Image src={untitledArtwork} alt="Title sequence artwork" width={1400} /></figure>
-
-    <div class="archive-collage">
-      <figure class="c1"><Image src={layer15} alt="Archival family photograph" width={500} /></figure>
-      <figure class="c2"><Image src={elevenEleven} alt="Archival family photograph" width={900} /></figure>
-      <figure class="c3"><Image src={layer14} alt="Archival family photograph" width={500} /></figure>
-      <figure class="c4"><Image src={layer7} alt="Archival family photograph" width={700} /></figure>
-      <figure class="c5"><Image src={layer8} alt="Archival family photograph" width={450} /></figure>
-      <figure class="c6"><Image src={layer9} alt="Archival family photograph" width={650} /></figure>
-      <figure class="c7"><Image src={layer16} alt="Archival family photograph" width={400} /></figure>
-    </div>
-  </section>
+  <ProjectCanvas width={1512} height={5525} offsetY={1700} tail={140} items={pieces} />
 </BaseLayout>
-
-<style>
-  .media {
-    max-width: var(--canvas-width);
-    margin-inline: 0;
-    padding: 0 var(--space-lg) var(--space-2xl) var(--content-left);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xl);
-  }
-
-  figure {
-    margin: 0;
-  }
-
-  figure :global(img) {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  .stills-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-lg);
-  }
-
-  .archive-collage {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-lg) var(--space-md);
-    align-items: end;
-    padding-block: var(--space-lg);
-  }
-
-  .c1 { grid-column: 1 / 2; transform: rotate(-2deg); }
-  .c2 { grid-column: 2 / 4; }
-  .c3 { grid-column: 1 / 2; transform: rotate(1.5deg); }
-  .c4 { grid-column: 2 / 3; }
-  .c5 { grid-column: 3 / 4; transform: rotate(-1deg); }
-  .c6 { grid-column: 4 / 5; grid-row: span 2; transform: rotate(2deg); }
-  .c7 { grid-column: 1 / 3; }
-
-  @media (max-width: 720px) {
-    .stills-row {
-      grid-template-columns: 1fr;
-    }
-
-    .archive-collage {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .c1, .c2, .c3, .c4, .c5, .c6, .c7 {
-      grid-column: auto;
-      grid-row: auto;
-      transform: none;
-    }
-  }
-</style>

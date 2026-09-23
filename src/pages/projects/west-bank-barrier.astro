@@ -1,78 +1,85 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
 import ProjectHeader from '@components/project/ProjectHeader.astro';
-import { Image } from 'astro:assets';
+import ProjectCanvas from '@components/project/ProjectCanvas.astro';
+import Flipbook from '@components/project/Flipbook.astro';
 import { siteConfig } from '@config/site';
 import bookletDetail from '@assets/projects/west-bank-barrier/booklet-detail.jpg';
-import bookletSpread from '@assets/projects/west-bank-barrier/booklet-spread.jpg';
-import mockup1 from '@assets/projects/west-bank-barrier/mockup-1.jpg';
-import mockup2 from '@assets/projects/west-bank-barrier/mockup-2.jpg';
-import mockup3 from '@assets/projects/west-bank-barrier/mockup-3.jpg';
-import mockup4 from '@assets/projects/west-bank-barrier/mockup-4.jpg';
+import page1 from '@assets/projects/west-bank-barrier/booklet/page-01.png';
+import page2 from '@assets/projects/west-bank-barrier/booklet/page-02.png';
+import page3 from '@assets/projects/west-bank-barrier/booklet/page-03.png';
+import page4 from '@assets/projects/west-bank-barrier/booklet/page-04.png';
+import page5 from '@assets/projects/west-bank-barrier/booklet/page-05.png';
+import page6 from '@assets/projects/west-bank-barrier/booklet/page-06.png';
+import screen1 from '@assets/projects/west-bank-barrier/screen-1.png';
+import screen2 from '@assets/projects/west-bank-barrier/screen-2.png';
+import screen3 from '@assets/projects/west-bank-barrier/screen-3.png';
+import screen4 from '@assets/projects/west-bank-barrier/screen-4.png';
 
+/* The spreads Noa picked, as she exported them — NoaKopelo_Booklet 16, 3:1,
+   4, 8, 9 and 11, untouched. */
+const spreads = [page1, page2, page3, page4, page5, page6];
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const title = 'The West Bank Barrier';
 const description =
   'An interactive landing page and editorial booklet based on the Wikipedia entry for the West Bank Barrier. Exploring the tension between factual documentation and spatial reality, the piece isolates and magnifies clinical sentences to expose their underlying weight. Informed by deep archival and photographic research, the actual geographic trajectory of the barrier dictates the editorial system, functioning as a physical and visual divider across the layout.';
+
+/* In the frame's own units (1512 wide), one gap of 300 between every block:
+   the booklet's flip-through, then the film of the site, narrower and centred,
+   then the screens from it. */
+const GAP = 240;
+
+/* The canvas starts at 1050, so the flip-through opens a full gap below the
+   fold rather than right up against it. */
+const BOOK_TOP_OF_CANVAS = 1050;
+const bookTop = BOOK_TOP_OF_CANVAS + GAP;
+const bookWidth = 1250;
+const bookLeft = Math.round((1512 - bookWidth) / 2);
+const bookHeight = Math.round(bookWidth / (1389 / 982));
+const filmTop = bookTop + bookHeight + GAP;
+/* The film runs narrower than the flip-through above it, centred in the frame. */
+const filmWidth = 1100;
+const filmLeft = Math.round((1512 - filmWidth) / 2);
+const filmHeight = Math.round(filmWidth / (1432 / 900));
+const screenTop = filmTop + filmHeight + GAP;
+const screenTop2 = screenTop + 486;                 /* Figma's own row step */
+
+/* Every block drifts at the same speed, so the 420 between them never changes.
+   The film's parallax happens inside its own frame instead — the picture
+   slides within it while the frame holds its place in the column. */
+const DRIFT = 0.04;
+
+/* The laptop fills 64% of the first export and 96.6% of the other three. At
+   rest all four sit at the first one's size; under the cursor all four grow by
+   the same amount, the first one included. */
+const REST = 0.6404 / 0.9656;
+const GROW = 1 / REST;
+
+const pieces = [
+  { video: `${base}/media/booklet-flip`, formats: ['mp4'], x: bookLeft, y: bookTop, w: bookWidth, h: bookHeight, depth: DRIFT },
+  { video: `${base}/media/west-bank-barrier`, formats: ['mp4'], controls: true, x: filmLeft, y: filmTop, w: filmWidth, h: filmHeight, depth: DRIFT, slide: true },
+  { src: screen1, alt: 'The site, on a laptop', x: 113, y: screenTop, w: 640, h: 480, depth: DRIFT, rest: 1, grow: GROW },
+  { src: screen2, alt: 'The site, on a laptop', x: 759, y: screenTop, w: 640, h: 480, depth: DRIFT, rest: REST, grow: 1 },
+  { src: screen3, alt: 'The site, on a laptop', x: 113, y: screenTop2, w: 640, h: 480, depth: DRIFT, rest: REST, grow: 1 },
+  { src: screen4, alt: 'The site, on a laptop', x: 759, y: screenTop2, w: 640, h: 480, depth: DRIFT, rest: REST, grow: 1 },
+];
 ---
 
-<BaseLayout title={`${title} — ${siteConfig.name}`} description={description} image={bookletSpread.src}>
+<BaseLayout title={`${title} — ${siteConfig.name}`} description={description} image={bookletDetail.src}>
   <ProjectHeader
+    slug="west-bank-barrier"
     number="07"
     title={title}
     description={description}
-    tags={['Web Design', 'Typography', 'Content Redesign', 'Editorial Design']}
-  />
+    stays={[
+      /* "Component 1" — the flip-through — where Figma instances it, beside
+         the title and across the fold. */
+      { flipbook: true as const, x: 7, y: 422, w: 1072, h: 630 },
+    ]}
+  >
+    <Flipbook slot="flipbook" spreads={spreads} alt="West Bank Barrier booklet spread" label="The booklet" />
+  </ProjectHeader>
 
-  <section class="media">
-    <figure class="detail"><Image src={bookletDetail} alt="West Bank Barrier booklet spread, detail" width={1100} /></figure>
-    <figure class="spread"><Image src={bookletSpread} alt="West Bank Barrier editorial spread" width={1400} /></figure>
-
-    <div class="mockup-grid">
-      <figure><Image src={mockup1} alt="West Bank Barrier website mockup 1" width={700} /></figure>
-      <figure><Image src={mockup2} alt="West Bank Barrier website mockup 2" width={700} /></figure>
-      <figure><Image src={mockup3} alt="West Bank Barrier website mockup 3" width={700} /></figure>
-      <figure><Image src={mockup4} alt="West Bank Barrier website mockup 4" width={700} /></figure>
-    </div>
-  </section>
+  <ProjectCanvas width={1512} height={5141} offsetY={BOOK_TOP_OF_CANVAS} tail={GAP} items={pieces} />
 </BaseLayout>
-
-<style>
-  .media {
-    max-width: var(--canvas-width);
-    margin-inline: 0;
-    padding: 0 var(--space-lg) var(--space-2xl) var(--content-left);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xl);
-  }
-
-  figure {
-    margin: 0;
-  }
-
-  figure :global(img) {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  .detail {
-    max-width: 40rem;
-  }
-
-  .spread {
-    background: #000;
-  }
-
-  .mockup-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-lg);
-  }
-
-  @media (max-width: 640px) {
-    .mockup-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>

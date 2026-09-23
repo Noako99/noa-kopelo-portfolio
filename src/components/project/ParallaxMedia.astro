@@ -1,0 +1,125 @@
+---
+/* A piece of media that climbs over the text as the page scrolls — the
+   "בגלילה עולה על הקיים בparallax" note in the Figma frames — and then pins
+   itself once it is fully on screen, so it can be watched without fighting the
+   scroll. It is sized in proportion to the window rather than filling it. */
+interface Props {
+  /* How far it climbs, as a share of how far the page has scrolled. */
+  rate?: number;
+  /* Share of the window height it is allowed to occupy. */
+  height?: number;
+  /* Hold it still once it has fully arrived. */
+  pin?: boolean;
+}
+
+const { rate = 0.35, height = 0.9, pin = true } = Astro.props;
+---
+
+<div class="parallax" class:list={[{ pin }]} style={`--rate:${rate}; --h:${height};`} data-parallax>
+  <div class="inner">
+    <slot />
+  </div>
+</div>
+
+<style>
+  /* The page's own width less the Figma margin on each side, centred on the
+     window rather than on the left-anchored canvas, and starting below the
+     fold so it climbs into view instead of already sitting in it. */
+  .parallax {
+    position: relative;
+    z-index: 2;
+    width: calc(100vw - 2 * 81 * var(--u));
+    margin-inline: auto;
+    margin-top: calc(90 * var(--u));
+    will-change: transform;
+  }
+
+  .parallax.pin .inner {
+    position: sticky;
+    top: calc((100vh - var(--h) * 100vh) / 2);
+  }
+
+  /* Proportional to the window, never edge to edge: the media keeps its own
+     shape and is capped at a share of the viewport height. */
+  .inner :global(img),
+  .inner :global(video),
+  .inner :global(.frame) {
+    max-height: calc(var(--h) * 100vh);
+    margin-inline: auto;
+  }
+
+  .inner :global(.frame) {
+    /* A 16:9 box tall enough to respect the cap, centred in the column. */
+    max-width: calc(var(--h) * 100vh * 16 / 9);
+  }
+
+  .inner :global(img),
+  .inner :global(video) {
+    width: auto;
+    max-width: 100%;
+    display: block;
+  }
+
+  @media (max-width: 640px) {
+    .parallax {
+      width: auto;
+      margin: var(--space-xl) var(--space-lg) 0 var(--content-left);
+    }
+
+    .inner :global(img),
+    .inner :global(video),
+    .inner :global(.frame) {
+      max-height: none;
+      max-width: none;
+    }
+
+    .parallax.pin .inner {
+      position: static;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .parallax {
+      margin-top: var(--space-xl);
+    }
+
+    .parallax.pin .inner {
+      position: static;
+    }
+  }
+</style>
+
+<script>
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const blocks = [...document.querySelectorAll<HTMLElement>('[data-parallax]')];
+
+  if (!reduced && blocks.length) {
+    let ticking = false;
+
+    const frame = () => {
+      ticking = false;
+      for (const block of blocks) {
+        const rate = parseFloat(getComputedStyle(block).getPropertyValue('--rate')) || 0.35;
+        const box = block.getBoundingClientRect();
+        /* Only climbs while it is on screen, and stops once it has fully
+           arrived — from there the sticky rule holds it in place. */
+        const travelled = Math.min(
+          Math.max(0, window.innerHeight - box.top),
+          window.innerHeight
+        );
+        const inner = block.firstElementChild as HTMLElement | null;
+        if (inner) inner.style.transform = `translate3d(0, ${-(travelled * rate).toFixed(1)}px, 0)`;
+      }
+    };
+
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(frame);
+    };
+
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', onScroll);
+    frame();
+  }
+</script>
