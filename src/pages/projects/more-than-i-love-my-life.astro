@@ -25,23 +25,26 @@ const description =
   "A fictional TV title sequence for David Grossman's 'More Than I Love My Life'. Layers of archival footage and experimental editing unpack raw memory, emotion, and complex family bonds. The mixed-media sequence blends hand-crafted typography, archival film, photography, and AI-generated imagery, driven by a deliberate rhythm that echoes generational trauma.";
 
 /* Every coordinate is read straight off the Figma project frame (1512x5525).
-   The archival photographs at the end climb at speeds that grow down the run,
-   so they gather into a pile as the page is scrolled. */
+   Everything below the film climbs at a speed that grows the further down it
+   starts — the stills, the lettering and the archival photographs alike — so
+   the whole run gathers into a pile as the page is scrolled, later pieces over
+   earlier ones. Pieces that share a line in Figma share a speed, so they stay
+   on it. */
 const pieces = [
-  { src: main1, alt: 'Title sequence still', x: 137, y: 1744, w: 606, h: 341 },
-  { src: main3, alt: 'Title sequence still', x: 768, y: 1744, w: 606, h: 341 },
+  { src: main1, alt: 'Title sequence still', x: 137, y: 1744, w: 606, h: 341, depth: 0.05, lift: 1 },
+  { src: main3, alt: 'Title sequence still', x: 768, y: 1744, w: 606, h: 341, depth: 0.05, lift: 1 },
   /* Figma zooms the fill right in on the lettering. */
-  { src: six, alt: 'Title sequence typography', x: 422, y: 2153, w: 736, h: 355,
+  { src: six, alt: 'Title sequence typography', x: 422, y: 2153, w: 736, h: 355, depth: 0.12, lift: 2,
     crop: { left: -89.46, top: -90.79, w: 266.24, h: 284 } },
-  { src: untitledArtwork, alt: 'Title sequence artwork', x: 219, y: 2423, w: 1098, h: 603,
+  { src: untitledArtwork, alt: 'Title sequence artwork', x: 219, y: 2423, w: 1098, h: 603, depth: 0.19, lift: 3,
     crop: { left: -47.27, top: -0.01, w: 153.64, h: 144.12 } },
-  { src: layer15, alt: 'Archival photograph', x: 462, y: 3070, w: 375, h: 526, depth: 0.08, lift: 1 },
-  { src: elevenEleven, alt: 'Archival photograph', x: 665, y: 3338, w: 729, h: 958, depth: 0.17, lift: 2 },
-  { src: layer14, alt: 'Archival photograph', x: 60, y: 3365, w: 458, h: 586, depth: 0.26, lift: 3 },
-  { src: layer71, alt: 'Archival photograph', x: 153, y: 3942, w: 531, h: 708, depth: 0.35, lift: 4 },
-  { src: layer81, alt: 'Archival photograph', x: 773, y: 4161, w: 416, h: 571, depth: 0.44, lift: 5 },
-  { src: layer9, alt: 'Archival photograph', x: 372, y: 4913, w: 669, h: 501, depth: 0.62, lift: 7 },
-  { src: layer16, alt: 'Archival photograph', x: 184, y: 4556, w: 376, h: 527, depth: 0.53, lift: 6 },
+  { src: layer15, alt: 'Archival photograph', x: 462, y: 3070, w: 375, h: 526, depth: 0.26, lift: 4 },
+  { src: elevenEleven, alt: 'Archival photograph', x: 665, y: 3338, w: 729, h: 958, depth: 0.33, lift: 5 },
+  { src: layer14, alt: 'Archival photograph', x: 60, y: 3365, w: 458, h: 586, depth: 0.33, lift: 6 },
+  { src: layer71, alt: 'Archival photograph', x: 153, y: 3942, w: 531, h: 708, depth: 0.42, lift: 7 },
+  { src: layer81, alt: 'Archival photograph', x: 773, y: 4161, w: 416, h: 571, depth: 0.49, lift: 8 },
+  { src: layer9, alt: 'Archival photograph', x: 372, y: 4913, w: 669, h: 501, depth: 0.65, lift: 10 },
+  { src: layer16, alt: 'Archival photograph', x: 184, y: 4556, w: 376, h: 527, depth: 0.57, lift: 9 },
 ];
 ---
 
@@ -63,5 +66,5 @@ const pieces = [
     <VimeoEmbed id="1216161109" title="More than I love my life — Title sequence" />
   </ParallaxMedia>
 
-  <ProjectCanvas width={1512} height={5525} offsetY={1700} tail={140} items={pieces} />
+  <ProjectCanvas width={1512} height={5525} offsetY={1730} tail={140} items={pieces} />
 </BaseLayout>
