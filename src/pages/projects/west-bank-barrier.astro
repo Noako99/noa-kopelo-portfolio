@@ -28,7 +28,7 @@ const description =
 /* In the frame's own units (1512 wide), one gap of 300 between every block:
    the booklet's flip-through, then the film of the site, narrower and centred,
    then the screens from it. */
-const GAP = 240;
+const GAP = 130;
 
 /* The canvas starts at 1050, so the flip-through opens a full gap below the
    fold rather than right up against it. */
@@ -45,10 +45,12 @@ const filmHeight = Math.round(filmWidth / (1432 / 900));
 const screenTop = filmTop + filmHeight + GAP;
 const screenTop2 = screenTop + 486;                 /* Figma's own row step */
 
-/* Every block drifts at the same speed, so the 420 between them never changes.
-   The film's parallax happens inside its own frame instead — the picture
-   slides within it while the frame holds its place in the column. */
+/* The flip-through and the film drift together, so the gap between them holds,
+   and the film's own parallax happens inside its frame. The screens below
+   climb at speeds that grow down the run, so they gather onto one another as
+   the page is scrolled. */
 const DRIFT = 0.04;
+const GATHER = [0.06, 0.11, 0.17, 0.23];
 
 /* The laptop fills 64% of the first export and 96.6% of the other three. At
    rest all four sit at the first one's size; under the cursor all four grow by
@@ -59,10 +61,10 @@ const GROW = 1 / REST;
 const pieces = [
   { video: `${base}/media/booklet-flip`, formats: ['mp4'], x: bookLeft, y: bookTop, w: bookWidth, h: bookHeight, depth: DRIFT },
   { video: `${base}/media/west-bank-barrier`, formats: ['mp4'], controls: true, x: filmLeft, y: filmTop, w: filmWidth, h: filmHeight, depth: DRIFT, slide: true },
-  { src: screen1, alt: 'The site, on a laptop', x: 113, y: screenTop, w: 640, h: 480, depth: DRIFT, rest: 1, grow: GROW },
-  { src: screen2, alt: 'The site, on a laptop', x: 759, y: screenTop, w: 640, h: 480, depth: DRIFT, rest: REST, grow: 1 },
-  { src: screen3, alt: 'The site, on a laptop', x: 113, y: screenTop2, w: 640, h: 480, depth: DRIFT, rest: REST, grow: 1 },
-  { src: screen4, alt: 'The site, on a laptop', x: 759, y: screenTop2, w: 640, h: 480, depth: DRIFT, rest: REST, grow: 1 },
+  { src: screen1, alt: 'The site, on a laptop', x: 113, y: screenTop, w: 640, h: 480, depth: GATHER[0], lift: 1, rest: 1, grow: GROW },
+  { src: screen2, alt: 'The site, on a laptop', x: 759, y: screenTop, w: 640, h: 480, depth: GATHER[1], lift: 2, rest: REST, grow: 1 },
+  { src: screen3, alt: 'The site, on a laptop', x: 113, y: screenTop2, w: 640, h: 480, depth: GATHER[2], lift: 3, rest: REST, grow: 1 },
+  { src: screen4, alt: 'The site, on a laptop', x: 759, y: screenTop2, w: 640, h: 480, depth: GATHER[3], lift: 4, rest: REST, grow: 1 },
 ];
 ---
 
