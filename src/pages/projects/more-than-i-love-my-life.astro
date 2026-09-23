@@ -16,6 +16,7 @@ import layer71 from '@assets/projects/more-than-i-love-my-life/layer-71.png';
 import layer81 from '@assets/projects/more-than-i-love-my-life/layer-81.png';
 import layer9 from '@assets/projects/more-than-i-love-my-life/layer-9.png';
 import layer16 from '@assets/projects/more-than-i-love-my-life/layer-16.png';
+import layer8 from '@assets/projects/more-than-i-love-my-life/layer-8.png';
 import { siteConfig } from '@config/site';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -50,6 +51,12 @@ const pieces = [
     number="04"
     title={title}
     description={description}
+    stays={[
+      /* The two left-hand pieces of "HOVER 4" keep their places on the way in,
+         so nothing jumps between the hover and the page. */
+      { src: layer16, x: 80, y: 348, w: 248, h: 321 },
+      { src: layer8, x: 314, y: 503, w: 257, h: 352 },
+    ]}
   />
 
   <ParallaxMedia>
