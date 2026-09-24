@@ -53,9 +53,14 @@ const { canvas = false } = Astro.props;
   }
 
   /* Canvas mode: Figma puts CV at 47,35 and the Contact component at 110,35. */
+  /* Above the name, which is a 371x108 block sitting right where the contact
+     links open across: without this it covered them and swallowed the clicks,
+     so the email opened nothing. The layer itself lets every click through —
+     only the links and the two words take one. */
   .site-nav.canvas {
     position: absolute;
     inset: 0;
+    z-index: 110;
     display: block;
     pointer-events: none;
   }
