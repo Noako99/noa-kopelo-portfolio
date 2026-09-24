@@ -241,17 +241,37 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
   if (!reduced && !flat && pieces.length) {
     let ticking = false;
 
+    /* The piece's resting middle, measured once off the layout. Reading it
+       back off getBoundingClientRect every frame fed each frame's own
+       transform into the next one, which is what tore the arrangement apart:
+       a piece far down the page was already hundreds of pixels out of place
+       before it had been scrolled to at all. */
+    let rest: number[] = [];
+    const measure = () => {
+      rest = pieces.map((piece) => piece.offsetTop + piece.offsetHeight / 2);
+    };
+
+    /* TRAVEL is how far the deepest piece rides up over its whole pass, so
+       `depth` reads as a fraction of it. The run is laid out at its Figma
+       spacing and every piece starts there, because progress is 0 until the
+       piece is near the window — the gaps are the ones the file draws, and
+       the pile closes as it is scrolled rather than arriving pre-collapsed. */
+    const TRAVEL = 700;
+
     const frame = () => {
       ticking = false;
+      const canvas = pieces[0].offsetParent as HTMLElement | null;
+      const canvasTop = canvas ? canvas.getBoundingClientRect().top + window.scrollY : 0;
+      const reach = window.innerHeight * 0.9;
       const middle = window.innerHeight / 2;
-      for (const piece of pieces) {
+      for (let i = 0; i < pieces.length; i++) {
+        const piece = pieces[i];
         const drift = parseFloat(piece.dataset.drift || '0');
         if (!drift) continue;
-        const box = piece.getBoundingClientRect();
-        /* How far this piece's middle is from the middle of the window: a
-           piece below drifts one way, a piece above the other. */
-        const away = box.top + box.height / 2 - middle;
-        piece.style.transform = `translate3d(0, ${(-away * drift).toFixed(1)}px, 0)`;
+        /* -1 well below the window, 0 at its middle, +1 well above it. */
+        const away = canvasTop + rest[i] - window.scrollY - middle;
+        const progress = Math.max(0, Math.min(1, (reach - away) / (2 * reach)));
+        piece.style.transform = `translate3d(0, ${(-drift * TRAVEL * progress).toFixed(1)}px, 0)`;
       }
     };
 
@@ -262,7 +282,11 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
     };
 
     addEventListener('scroll', onScroll, { passive: true });
-    addEventListener('resize', onScroll);
+    addEventListener('resize', () => {
+      measure();
+      onScroll();
+    });
+    measure();
     frame();
   }
 

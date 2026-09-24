@@ -30,7 +30,10 @@ const { rate = 0.35, height = 0.9, pin = true } = Astro.props;
     z-index: 2;
     width: calc(100vw - 2 * 81 * var(--u));
     margin-inline: auto;
-    margin-top: calc(90 * var(--u));
+    /* 68 rendered pixels at the 1512 frame width — the same gap the canvas
+       below keeps between one block and the next, so the run reads as one
+       evenly spaced column from the title down. */
+    margin-top: calc(78 * var(--u));
     will-change: transform;
   }
 
