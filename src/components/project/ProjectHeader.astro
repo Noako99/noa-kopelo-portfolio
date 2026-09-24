@@ -137,9 +137,11 @@ const home = import.meta.env.BASE_URL;
   /* The tag row is placed at 50% of the wrap, which is the frame's own middle
      on every other page. A tall wrap is no longer 982 high, so 50% falls far
      down it. Here the row is measured from the top of the canvas instead —
-     the wrap's padding plus the same 35 — so it lands on the CV baseline. */
+     the wrap's padding plus the same --tag-top every other page uses, so it
+     lands on the CV baseline. (It read 35 here, which is CV's box, not the
+     tag's, and put the red 4 units above CV on 03.) */
   .canvas-wrap.tall :global(.project-tags) {
-    top: calc(max(0px, (100vh - 982 * var(--u)) / 2) + 35 * var(--u));
+    top: calc(max(0px, (100vh - 982 * var(--u)) / 2) + var(--tag-top) * var(--u));
   }
 
   /* Figma: 260,198, 371 wide — centred on 445.5, never wrapping. */

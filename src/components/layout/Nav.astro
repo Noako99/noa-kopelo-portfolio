@@ -103,7 +103,11 @@ const { canvas = false } = Astro.props;
 
   /* The open variant in Figma re-tracks CONTACT from -1.4px out to +4px, so the
      word itself expands as the links arrive. */
+  /* A block, like CV. As an inline button it sat on the line of its 16px
+     wrapper, whose baseline falls lower than a 20u word's, and CONTACT rode
+     8 units below CV. */
   .contact-toggle {
+    display: block;
     transition: letter-spacing var(--transition-normal);
   }
 

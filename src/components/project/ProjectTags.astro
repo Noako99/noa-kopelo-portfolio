@@ -30,9 +30,11 @@ const { tags, standalone = false } = Astro.props;
 <style>
   .project-tags {
     /* 491 is half the 982 frame, so 50% - 491u is the canvas's own top edge.
-       --tag-top is the row's y inside the frame: 40, where the file sets the
-       single line it has become. */
-    --tag-top: 40;
+       --tag-top is the row's y inside the frame. The file sets it at 40, but an
+       18 line at 1.33 carries its baseline 0.78 lower in its box than CV's 20
+       line does in its box at 35, so at 40 the red ran under CV and CONTACT.
+       39.22 puts all three on one baseline, measured in the browser. */
+    --tag-top: 39.22;
     position: absolute;
     top: calc(50% - (491 - var(--tag-top)) * var(--u));
     right: calc(20 * var(--u));
@@ -45,6 +47,7 @@ const { tags, standalone = false } = Astro.props;
      file sets it 523 wide ending at 1708 — 20 from the right edge, which is
      where this row already hangs. */
   .tag {
+    display: block;
     font-family: var(--font-display);
     font-weight: 300;
     font-size: calc(18 * var(--u));
