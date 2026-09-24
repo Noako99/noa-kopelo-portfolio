@@ -214,7 +214,7 @@ const projects = [
 
       <!-- Figma: the name is its own canvas element at 263,198 — it sits over the
            red group rather than inside it, so it does not animate with it. -->
-      <h1 class="name">Noa Kopelo</h1>
+      <h1 class="name"><a href={`mailto:${siteConfig.email}`}>Noa Kopelo</a></h1>
 
       <!-- Figma "Group 8", 618,245 · 198x35: the red pennant that opens out of
            the end of the name when the name is hovered. Its left edge carries
@@ -542,6 +542,13 @@ const projects = [
     left: calc(138 * var(--u));
     top: calc(12 * var(--u));
     white-space: nowrap;
+  }
+
+  /* The name is the invitation the pennant spells out, so it opens a mail to
+     her — it carries none of a link's own colour or underline. */
+  .name a {
+    color: inherit;
+    text-decoration: none;
   }
 
   .name {
