@@ -681,7 +681,9 @@ const projects = [
     top: calc(245 * var(--u));
     width: calc(198 * var(--u));
     height: calc(35 * var(--u));
-    z-index: 3;
+    /* Under the name, as the file stacks it: the pennant slides out from
+       behind the last letter rather than over it. */
+    z-index: 1;
     display: flex;
     align-items: center;
     padding-left: calc(19 * var(--u));
