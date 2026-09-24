@@ -262,8 +262,17 @@ const projects = [
         ))}
       </ul>
 
-      <!-- Figma: logo 47,915 · 30×28 -->
-      <img src={logoMark.src} alt="" class="collab-mark" />
+      <!-- Figma: logo 47,915 · 30×28, with the face she drew inside the arch —
+           eyes at (12,17) and (18,17) with radius 1, and an 8-wide smile
+           starting at (11,21). The face only shows while the pennant is open. -->
+      <span class="collab-mark">
+        <img src={logoMark.src} alt="" />
+        <svg class="mark-face" viewBox="0 0 30 28" aria-hidden="true">
+          <circle cx="12" cy="17" r="1" />
+          <circle cx="18" cy="17" r="1" />
+          <path d="M 11 21 C 12.185 22.509 15.444 24.622 19 21" />
+        </svg>
+      </span>
     </div>
   </div>
 </BaseLayout>
@@ -487,8 +496,9 @@ const projects = [
       transition: none;
     }
 
-    .name:hover ~ .collab-mark,
-    .name:focus-visible ~ .collab-mark {
+    .canvas:has(.name:hover) .collab-mark,
+    .canvas:has(.name:focus-visible) .collab-mark,
+    .collab-mark:hover {
       animation: none;
     }
   }
@@ -669,7 +679,34 @@ const projects = [
     width: calc(30 * var(--u));
     height: calc(28 * var(--u));
     z-index: 3;
+    display: block;
     transform-origin: 50% 100%;
+  }
+
+  .collab-mark img,
+  .mark-face {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* The face sits in the gap between the arch's legs, where the page's own
+     background shows through, so it is drawn in the same red as the mark. */
+  .mark-face {
+    opacity: 0;
+    transition: opacity 220ms ease;
+  }
+
+  .mark-face circle {
+    fill: var(--color-accent);
+  }
+
+  .mark-face path {
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-width: 1;
+    stroke-linecap: round;
   }
 
   /* Figma "Group 8": the pennant at 618,245, moved one to 619 at her ask, 198 wide and 35 tall, its left
@@ -699,17 +736,28 @@ const projects = [
     transition: clip-path 460ms cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
-  .name:hover ~ .collab-banner,
-  .name:focus-visible ~ .collab-banner,
+  /* The name and the mark do the same thing, and the mark comes first in the
+     DOM, so the state is read off the canvas with :has rather than with a
+     sibling combinator. */
+  .canvas:has(.name:hover) .collab-banner,
+  .canvas:has(.name:focus-visible) .collab-banner,
+  .canvas:has(.collab-mark:hover) .collab-banner,
   .collab-banner.open {
     clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, calc(4.5 / var(--bw) * 100%) 51.43%);
   }
 
-  /* Vector 6, the mark in the bottom-left corner: while the name is hovered it
-     rocks gently from side to side on its own base, a few degrees either way. */
-  .name:hover ~ .collab-mark,
-  .name:focus-visible ~ .collab-mark {
+  /* Vector 6 rocks gently from side to side on its own base, a few degrees
+     either way, and its face appears for as long as the hover lasts. */
+  .canvas:has(.name:hover) .collab-mark,
+  .canvas:has(.name:focus-visible) .collab-mark,
+  .collab-mark:hover {
     animation: mark-sway 2.4s ease-in-out infinite;
+  }
+
+  .canvas:has(.name:hover) .mark-face,
+  .canvas:has(.name:focus-visible) .mark-face,
+  .collab-mark:hover .mark-face {
+    opacity: 1;
   }
 
   @keyframes mark-sway {
@@ -846,7 +894,12 @@ const projects = [
 
     .collab-mark {
       width: 1.25rem;
-      height: auto;
+      /* 30 x 28 in the file. */
+      height: 1.167rem;
+    }
+
+    .mark-face {
+      opacity: 1;
     }
 
     .collab-label {
