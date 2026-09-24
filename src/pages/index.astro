@@ -49,7 +49,9 @@ const projects = [
     x: 644, y: 400, w: 107,
     tags: projectTags['noa-atalia'],
     mark: { x: 634, y: 393, w: 201, h: 82 },
-    bg: { src: noaAtaliaHoverBg },
+    /* Half strength, so the page's own cream lightens it and the type over it
+       still reads. */
+    bg: { src: noaAtaliaHoverBg, opacity: 0.5 },
     /* From "HOVER 1 fixed", with the top clip pushed further right. */
     cards: [
       { video: `${base}/media/noa-atalia-clip`, x: 1430, y: 122, w: 237, h: 322 },
