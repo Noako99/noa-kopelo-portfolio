@@ -709,21 +709,23 @@ const projects = [
     stroke-linecap: round;
   }
 
-  /* Figma "Group 8": the pennant at 618,245, 35 tall, its left edge notched at
-     (4.5,18). It is clipped away to nothing until the name is hovered, then
-     unrolls left to right out of the end of "Kopelo".
+  /* Figma "Group 8": the pennant beside the name, 35 tall, unrolling left to
+     right out of the end of "Kopelo" while the name is hovered.
 
-     The file tucks it under the name, but the "o" is round: behind its curve
-     there is nothing to hide the red, so a crescent of it showed above and
-     below the letter. It starts at 628 instead — the rightmost point of the
-     rendered glyph is 627.82 — so the red only ever appears past the name. */
+     The file notches its left edge 4.5 deep at mid-height, which is the right
+     idea — the shape has to be cut in where the round "o" bulges out — but
+     that "o" bulges 9, not 4.5, so a crescent of red showed around it. The
+     edge here follows the letter instead: the final o's ink is measured at
+     589.18..630.78 across and 239.66..283.66 down, an ellipse centred on
+     (609.98, 261.66) with radii 20.8 and 22, and these five depths are that
+     ellipse sampled at the pennant's top, quarters, middle and bottom. The
+     red therefore never leaves the letter, and still starts behind it. */
   .collab-banner {
     position: absolute;
-    left: calc(628 * var(--u));
+    left: calc(621 * var(--u));
     top: calc(245 * var(--u));
-    /* 198 in the file, plus 10 at her ask. The notch stays 4.5 wide whatever
-       the pennant's length, so it is a share of --bw. */
-    --bw: 208;
+    /* Her length, kept: the pennant still ends at 836. */
+    --bw: 215;
     width: calc(var(--bw) * var(--u));
     height: calc(35 * var(--u));
     /* Under the name, as the file stacks it: the pennant slides out from
@@ -736,8 +738,8 @@ const projects = [
     pointer-events: none;
     /* Clipped rather than scaled, so the red unrolls to the right while the
        letters behind it keep their own shape instead of stretching out of it.
-       The notch is 4.5 wide and 18 of the 35 down, which is the 51.43%. */
-    clip-path: polygon(0 0, 0 0, 0 100%, 0 100%, 0 51.43%);
+       The closed shape carries the same seven points, all held at the left. */
+    clip-path: polygon(0 0, 0 0, 0 100%, 0 100%, 0 75%, 0 50%, 0 25%);
     transition: clip-path 460ms cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
@@ -748,7 +750,15 @@ const projects = [
   .canvas:has(.name:focus-visible) .collab-banner,
   .canvas:has(.collab-mark:hover) .collab-banner,
   .collab-banner.open {
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, calc(4.5 / var(--bw) * 100%) 51.43%);
+    clip-path: polygon(
+      calc(2.56 / var(--bw) * 100%) 0,
+      100% 0,
+      100% 100%,
+      calc(0.47 / var(--bw) * 100%) 100%,
+      calc(7.7 / var(--bw) * 100%) 75%,
+      calc(9.77 / var(--bw) * 100%) 50%,
+      calc(8.39 / var(--bw) * 100%) 25%
+    );
   }
 
   /* Vector 6 rocks gently from side to side on its own base, a few degrees
