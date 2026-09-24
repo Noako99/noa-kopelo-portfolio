@@ -476,17 +476,16 @@ const projects = [
   }
 
   /* ===== RED GROUPS =====
-     They slide in fast, one after another, in Figma's own order: Group 1 from
-     the left, Group 2 from below, Group 3 from the left. Each box sets where
-     it comes from in --from-x / --from-y. They step aside the moment a hover
-     takes over the screen. */
+     They slide into the frame from outside it, fast, one after another, in
+     Figma's own order: Group 1 from the left, Group 2 from below, Group 3 from
+     the left. No fade — each is simply off the glass until it arrives. Each box
+     sets its own start in --from-x / --from-y, as a length. They step aside the
+     moment a hover takes over the screen. */
   @keyframes rise-in {
     from {
-      opacity: 0;
-      transform: translate(calc(var(--from-x, 0) * var(--u)), calc(var(--from-y, 0) * var(--u)));
+      transform: translate(var(--from-x, 0px), var(--from-y, 0px));
     }
     to {
-      opacity: 1;
       transform: none;
     }
   }
@@ -496,8 +495,7 @@ const projects = [
     /* Below the name: Group 1 overlaps it, and the type reads on top. */
     z-index: 1;
     box-shadow: inset 0 0 0 1px var(--color-accent);
-    opacity: 0;
-    animation: rise-in 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: rise-in 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
     animation-delay: calc(var(--delay) * 1ms);
   }
 
@@ -538,7 +536,8 @@ const projects = [
     /* Group 1. Its right edge lands just past where the "a" of "Noa" begins
        (the a starts at 358.4 in frame units, the box ends at 365). */
     --delay: 200;
-    --from-x: -160;
+    /* The canvas is pinned to the window's left edge, so x + w clears it. */
+    --from-x: calc(-1 * (127 + 237) * var(--u));
     left: calc(127 * var(--u));
     top: calc(173 * var(--u));
     width: calc(237 * var(--u));
@@ -547,7 +546,7 @@ const projects = [
 
   .note-box {
     --delay: 680; /* Group 3 */
-    --from-x: -160;
+    --from-x: calc(-1 * (1008 + 237) * var(--u));
     left: calc(1008 * var(--u));
     top: calc(132 * var(--u));
     width: calc(237 * var(--u));
@@ -556,7 +555,10 @@ const projects = [
 
   .skills-box {
     --delay: 440; /* Group 2 */
-    --from-y: 160;
+    /* The canvas sits centred in the window, so the window's bottom edge is
+       50vh + 491u below the canvas's middle; the box's top, at 648, has to
+       travel to there. */
+    --from-y: calc(50vh + (491 - 648) * var(--u));
     left: calc(644 * var(--u));
     top: calc(648 * var(--u));
     width: calc(404 * var(--u));
@@ -909,6 +911,10 @@ const projects = [
       padding: var(--space-lg);
       box-shadow: none;
       border: 1px solid var(--color-accent);
+      /* Stacked in the flow there is no frame edge to come in from, so each
+         box just rises a little into its place. */
+      --from-x: 0px;
+      --from-y: 1.5rem;
     }
 
     .intro-kicker,
