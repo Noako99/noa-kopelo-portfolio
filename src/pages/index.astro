@@ -679,7 +679,10 @@ const projects = [
     position: absolute;
     left: calc(619 * var(--u));
     top: calc(245 * var(--u));
-    width: calc(198 * var(--u));
+    /* 198 in the file, plus 76 — 2cm at 96dpi — at her ask. The notch stays
+       4.5 wide whatever the pennant's length, so it is a share of --bw. */
+    --bw: 274;
+    width: calc(var(--bw) * var(--u));
     height: calc(35 * var(--u));
     /* Under the name, as the file stacks it: the pennant slides out from
        behind the last letter rather than over it. */
@@ -691,8 +694,7 @@ const projects = [
     pointer-events: none;
     /* Clipped rather than scaled, so the red unrolls to the right while the
        letters behind it keep their own shape instead of stretching out of it.
-       The notch is 4.5 of the 198, which is the 2.273%, and 18 of the 35,
-       which is the 51.43%. */
+       The notch is 4.5 wide and 18 of the 35 down, which is the 51.43%. */
     clip-path: polygon(0 0, 0 0, 0 100%, 0 100%, 0 51.43%);
     transition: clip-path 460ms cubic-bezier(0.22, 0.61, 0.36, 1);
   }
@@ -700,7 +702,7 @@ const projects = [
   .name:hover ~ .collab-banner,
   .name:focus-visible ~ .collab-banner,
   .collab-banner.open {
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 2.273% 51.43%);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, calc(4.5 / var(--bw) * 100%) 51.43%);
   }
 
   /* Vector 6, the mark in the bottom-left corner: while the name is hovered it
