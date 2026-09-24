@@ -42,12 +42,13 @@ const { tags, standalone = false } = Astro.props;
     pointer-events: none;
   }
 
-  /* General Sans ExtraLight at 20 — the size of CV and CONTACT — in #d20000. */
+  /* General Sans ExtraLight at 20 — the size of CV and CONTACT — in #d20000,
+     at the same -0.04em tracking as the rest of the ExtraLight. */
   .tag {
     font-family: var(--font-display);
     font-weight: 200;
     font-size: calc(20 * var(--u));
-    letter-spacing: -0.07em;
+    letter-spacing: -0.04em;
     line-height: 1.6;
     white-space: nowrap;
     color: var(--color-accent);

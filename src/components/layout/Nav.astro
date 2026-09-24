@@ -72,12 +72,12 @@ const { canvas = false } = Astro.props;
     top: calc(35 * var(--u));
   }
 
-  /* Figma: 20px General Sans Extralight, -1.4px tracking, uppercase. */
+  /* Figma: 20px General Sans Extralight, -1.4px tracking — set to -0.8px (-0.04em) at her ask. */
   .nav-link {
     font-family: var(--font-display);
     font-weight: 200;
     font-size: calc(20 * var(--u));
-    letter-spacing: -0.07em;
+    letter-spacing: -0.04em;
     text-transform: uppercase;
     color: var(--color-text);
     background: none;
@@ -170,7 +170,7 @@ const { canvas = false } = Astro.props;
     }
 
     .contact-toggle[aria-expanded='true'] {
-      letter-spacing: -0.07em;
+      letter-spacing: -0.04em;
     }
 
     .contact-links {
