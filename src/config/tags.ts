@@ -1,12 +1,14 @@
 // ===== PROJECT TAGS =====
-// The red labels along the top edge. `x` is each label's own coordinate inside
-// the 1728-wide Figma frame, copied verbatim from the HOVER frames — the
-// homepage hover and the project page both read from here, so the labels never
-// move when a project is opened.
+// The red words along the top edge. The file now sets them as ONE line divided
+// by slashes — "HOVER 1 fixed" carries a single text node reading
+// "DOCUMENTARY / VIDEO EDITING / ARCHIVAL FILM / STORYTELLING" — so the row is
+// joined in the component and only the order here matters. The homepage hover
+// and the project page both read from this file, so the line never changes
+// when a project is opened.
 //
-// The frame was 1512 wide originally and was widened to 1728. Everything held to
-// the right edge moved with it, which is exactly the 216 seen between the old
-// coordinates and the ones in "HOVER 1 fixed" (1046 -> 1262, 1406 -> 1622).
+// `x` is each word's old individual coordinate inside the 1728-wide frame. It
+// is no longer used for placement — the line hangs 20 from the right edge —
+// but it is kept as the record of where each word came from.
 
 export type ProjectTag = { label: string; x: number };
 

@@ -20,7 +20,7 @@ const { tags, standalone = false } = Astro.props;
 ---
 
 <div class="project-tags" aria-hidden="true">
-  {tags.map((tag) => <span class="tag">{tag.label}</span>)}
+  <span class="tag">{tags.map((tag) => tag.label).join(' / ')}</span>
 </div>
 
 <!-- Add ?debug to the URL to print where the tags actually land, in Figma
@@ -30,27 +30,28 @@ const { tags, standalone = false } = Astro.props;
 <style>
   .project-tags {
     /* 491 is half the 982 frame, so 50% - 491u is the canvas's own top edge.
-       --tag-top is the row's y inside the frame: the same 35 as CV, which now
-       shares its size, so the two sit on one baseline. */
-    --tag-top: 35;
+       --tag-top is the row's y inside the frame: 40, where the file sets the
+       single line it has become. */
+    --tag-top: 40;
     position: absolute;
     top: calc(50% - (491 - var(--tag-top)) * var(--u));
     right: calc(20 * var(--u));
     z-index: 100;
-    display: flex;
-    gap: calc(30 * var(--u));
     pointer-events: none;
   }
 
-  /* General Sans ExtraLight at 20 — the size of CV and CONTACT — in #d20000,
-     at the same -0.04em tracking as the rest of the ExtraLight. */
+  /* One line now, not a row of separate labels: General Sans Light at 18,
+     uppercase, -4% tracking, in #d20000, the words divided by slashes. The
+     file sets it 523 wide ending at 1708 — 20 from the right edge, which is
+     where this row already hangs. */
   .tag {
     font-family: var(--font-display);
-    font-weight: 200;
-    font-size: calc(20 * var(--u));
+    font-weight: 300;
+    font-size: calc(18 * var(--u));
     letter-spacing: -0.04em;
-    line-height: 1.6;
+    line-height: 1.33;
     white-space: nowrap;
+    text-transform: uppercase;
     color: var(--color-accent);
   }
 
@@ -73,8 +74,6 @@ const { tags, standalone = false } = Astro.props;
   @media (max-width: 900px) {
     .project-tags {
       position: static;
-      flex-wrap: wrap;
-      gap: 0.75rem 1rem;
       pointer-events: auto;
     }
 
@@ -85,6 +84,7 @@ const { tags, standalone = false } = Astro.props;
 
     .project-tags .tag {
       font-size: 0.95rem;
+      white-space: normal;
     }
   }
 </style>
