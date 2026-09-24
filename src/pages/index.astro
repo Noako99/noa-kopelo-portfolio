@@ -159,7 +159,11 @@ const projects = [
     <div class="hover-bg-stack" aria-hidden="true">
       {projects.map((project) =>
         project.bg ? (
-          <div class="hover-bg" data-for={project.slug} style={project.bg.opacity ? `--bg-opacity:${project.bg.opacity};` : ''}>
+          <div
+            class="hover-bg"
+            data-for={project.slug}
+            data-blend={project.cards.some((card) => card.blend) ? '' : undefined}
+            style={project.bg.opacity ? `--bg-opacity:${project.bg.opacity};` : ''}>
             {project.bg.video ? (
               <video autoplay muted loop playsinline preload="metadata">
                 <source src={`${project.bg.video}.webm`} type="video/webm" />
@@ -176,7 +180,11 @@ const projects = [
            coordinates only mean anything inside the 1728×982 frame. -->
       <div class="hover-card-stack" aria-hidden="true">
         {projects.map((project) => (
-          <div class="hover-cards" data-for={project.slug}>
+          <div
+            class="hover-cards"
+            data-for={project.slug}
+            data-blend={project.cards.some((card) => card.blend) ? '' : undefined}
+          >
             {project.cards.map((card, i) => (
               <div
                 class="hover-card"
@@ -351,6 +359,14 @@ const projects = [
       visibility 0s;
   }
 
+  /* A screen blend draws a card against whatever is under it. While the map
+     was still fading up there was nothing under the buildings, so they came
+     in in full colour and only turned to the pale Figma look 420ms later. The
+     map behind them therefore arrives at once rather than fading. */
+  .hover-bg[data-blend].is-active {
+    transition: none;
+  }
+
   .hover-bg :global(img),
   .hover-bg video {
     display: block;
@@ -388,6 +404,12 @@ const projects = [
   .hover-cards.is-active {
     visibility: visible;
     transition: visibility 0s;
+  }
+
+  /* And on the way out they go with the hover, not after the map has faded
+     from under them, which would flash them in colour again. */
+  .hover-cards[data-blend]:not(.is-active) {
+    transition: none;
   }
 
   /* They come up a beat after the backdrop, one after another. */
