@@ -1,44 +1,49 @@
 @import "tailwindcss";
 /* General Sans is served from the project itself rather than a CDN: the text no
-   longer depends on an outside host being up, and it cannot reflow on load. */
+   longer depends on an outside host being up, and it cannot reflow on load.
+   The paths start at the domain root. They still carried the old
+   /noa-kopelo-portfolio/ folder after the move to noakopelo.com, so every font
+   404'd: Chrome quietly fell back to a copy installed on her own Mac, while
+   Safari, which never lends a page a user-installed font, drew the whole site
+   in the system face, with other weights and other widths. */
 @font-face {
   font-family: 'General Sans';
-  src: url('/noa-kopelo-portfolio/fonts/GeneralSans-Extralight.otf') format('opentype');
+  src: url('/fonts/GeneralSans-Extralight.otf') format('opentype');
   font-weight: 200;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'General Sans';
-  src: url('/noa-kopelo-portfolio/fonts/GeneralSans-Light.otf') format('opentype');
+  src: url('/fonts/GeneralSans-Light.otf') format('opentype');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'General Sans';
-  src: url('/noa-kopelo-portfolio/fonts/GeneralSans-Regular.otf') format('opentype');
+  src: url('/fonts/GeneralSans-Regular.otf') format('opentype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'General Sans';
-  src: url('/noa-kopelo-portfolio/fonts/GeneralSans-Medium.otf') format('opentype');
+  src: url('/fonts/GeneralSans-Medium.otf') format('opentype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'General Sans';
-  src: url('/noa-kopelo-portfolio/fonts/GeneralSans-Semibold.otf') format('opentype');
+  src: url('/fonts/GeneralSans-Semibold.otf') format('opentype');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'General Sans';
-  src: url('/noa-kopelo-portfolio/fonts/GeneralSans-Bold.otf') format('opentype');
+  src: url('/fonts/GeneralSans-Bold.otf') format('opentype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;

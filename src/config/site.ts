@@ -6,7 +6,7 @@ export const siteConfig = {
   title: 'Noa Kopelo — Portfolio',
   description:
     "I'm a designer working across motion, video, and print. I turn concepts into layered visual stories, balancing structured systems with expressive movement.",
-  url: 'https://Noako99.github.io/noa-kopelo-portfolio',
+  url: 'https://noakopelo.com',
   email: 'noako0992@gmail.com',
   cvUrl: 'https://drive.google.com/file/d/1YoQPMxF3qaXyeelE48KVvBPzY9012u6J/view?usp=sharing',
 
