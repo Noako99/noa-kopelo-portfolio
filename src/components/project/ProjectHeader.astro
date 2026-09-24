@@ -83,8 +83,17 @@ const home = import.meta.env.BASE_URL;
     <p class="description" style={`--x:${desc.x}; --y:${desc.y}; --w:${desc.w};`}>{description}</p>
 
     <!-- On a project page the mark sits beside the name at 649,255, and there
-         is no OPEN FOR COLLAB — both straight from the Figma project frames. -->
-    <img src={logoMark.src} alt="" class="brand-mark" />
+         is no OPEN FOR COLLAB — both straight from the Figma project frames.
+         It carries the same face as the home page: eyes at (12,17) and (18,17)
+         with radius 1, and an 8-wide smile from (11,21). -->
+    <span class="brand-mark">
+      <img src={logoMark.src} alt="" />
+      <svg class="mark-face" viewBox="0 0 30 28" aria-hidden="true">
+        <circle cx="12" cy="17" r="1" />
+        <circle cx="18" cy="17" r="1" />
+        <path d="M 11 21 C 12.185 22.509 15.444 24.622 19 21" />
+      </svg>
+    </span>
   </div>
 </div>
 
@@ -249,6 +258,66 @@ const home = import.meta.env.BASE_URL;
     top: calc(255 * var(--u));
     width: calc(30 * var(--u));
     height: calc(28 * var(--u));
+    display: block;
+    transform-origin: 50% 100%;
+  }
+
+  .brand-mark img,
+  .mark-face {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* The face sits in the gap between the arch's legs, where the page's own
+     background shows through, so it is drawn in the same red as the mark. */
+  .mark-face {
+    opacity: 0;
+    transition: opacity 220ms ease;
+  }
+
+  .mark-face circle {
+    fill: var(--color-accent);
+  }
+
+  .mark-face path {
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-width: 1;
+    stroke-linecap: round;
+  }
+
+  /* The same greeting as the home page: hovering the name — or the mark —
+     rocks it on its own base and brings up the face. */
+  .canvas:has(.name:hover) .brand-mark,
+  .canvas:has(.name:focus-visible) .brand-mark,
+  .brand-mark:hover {
+    animation: mark-sway 2.4s ease-in-out infinite;
+  }
+
+  .canvas:has(.name:hover) .mark-face,
+  .canvas:has(.name:focus-visible) .mark-face,
+  .brand-mark:hover .mark-face {
+    opacity: 1;
+  }
+
+  @keyframes mark-sway {
+    0%,
+    100% {
+      transform: rotate(-5deg);
+    }
+    50% {
+      transform: rotate(5deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .canvas:has(.name:hover) .brand-mark,
+    .canvas:has(.name:focus-visible) .brand-mark,
+    .brand-mark:hover {
+      animation: none;
+    }
   }
 
   @media (max-width: 640px) {
@@ -308,9 +377,16 @@ const home = import.meta.env.BASE_URL;
     }
 
     .brand-mark {
+      /* Its own containing block, so the face stays on it. */
+      position: relative;
       width: 1.25rem;
-      height: auto;
+      /* 30 x 28 in the file. */
+      height: 1.167rem;
       margin-top: var(--space-md);
+    }
+
+    .mark-face {
+      opacity: 1;
     }
   }
 </style>
