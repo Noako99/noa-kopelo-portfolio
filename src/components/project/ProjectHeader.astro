@@ -82,8 +82,8 @@ const home = import.meta.env.BASE_URL;
 
     <p class="description" style={`--x:${desc.x}; --y:${desc.y}; --w:${desc.w};`}>{description}</p>
 
-    <!-- On a project page the mark sits beside the name at 649,255, and there
-         is no OPEN FOR COLLAB — both straight from the Figma project frames.
+    <!-- The mark keeps the corner it has on the home page, 47,915, rather than
+         standing beside the name. There is no OPEN FOR COLLAB here.
          It carries the same face as the home page: eyes at (12,17) and (18,17)
          with radius 1, and an 8-wide smile from (11,21). -->
     <span class="brand-mark">
@@ -254,8 +254,8 @@ const home = import.meta.env.BASE_URL;
 
   .brand-mark {
     position: absolute;
-    left: calc(649 * var(--u));
-    top: calc(255 * var(--u));
+    left: calc(47 * var(--u));
+    top: calc(915 * var(--u));
     width: calc(30 * var(--u));
     height: calc(28 * var(--u));
     display: block;
