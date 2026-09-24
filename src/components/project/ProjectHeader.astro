@@ -85,15 +85,16 @@ const home = import.meta.env.BASE_URL;
     <!-- The mark keeps the corner it has on the home page, 47,915, rather than
          standing beside the name. There is no OPEN FOR COLLAB here.
          It carries the same face as the home page: eyes at (12,17) and (18,17)
-         with radius 1, and an 8-wide smile from (11,21). -->
-    <span class="brand-mark">
+         with radius 1, and an 8-wide smile from (11,21). It stays on that spot
+         as the page scrolls, and takes you back home. -->
+    <a class="brand-mark" href={home} aria-label="Back to the home page">
       <img src={logoMark.src} alt="" />
       <svg class="mark-face" viewBox="0 0 30 28" aria-hidden="true">
         <circle cx="12" cy="17" r="1" />
         <circle cx="18" cy="17" r="1" />
         <path d="M 11 21 C 12.185 22.509 15.444 24.622 19 21" />
       </svg>
-    </span>
+    </a>
   </div>
 </div>
 
@@ -254,10 +255,16 @@ const home = import.meta.env.BASE_URL;
     color: var(--color-text);
   }
 
+  /* Pinned to the window at the spot it has in the frame, so it rides down
+     with the scroll instead of leaving with the first screen. The canvas is
+     pinned to the window's left edge and centred in its height, so 47,915 in
+     the frame is 47u from the left and 50vh + (915 - 491)u from the top. The
+     tall pages pad the canvas by that same half, so it holds there too. */
   .brand-mark {
-    position: absolute;
+    position: fixed;
+    z-index: 100;
     left: calc(47 * var(--u));
-    top: calc(915 * var(--u));
+    top: calc(50vh + (915 - 491) * var(--u));
     width: calc(30 * var(--u));
     height: calc(28 * var(--u));
     display: block;
