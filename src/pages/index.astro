@@ -478,7 +478,7 @@ const projects = [
   /* ===== RED GROUPS =====
      They slide into the frame from outside it, fast, one after another, in
      Figma's own order: Group 1 from the left, Group 2 from below, Group 3 from
-     the left. No fade — each is simply off the glass until it arrives. Each box
+     above. No fade — each is simply off the glass until it arrives. Each box
      sets its own start in --from-x / --from-y, as a length. They step aside the
      moment a hover takes over the screen. */
   @keyframes rise-in {
@@ -546,7 +546,9 @@ const projects = [
 
   .note-box {
     --delay: 680; /* Group 3 */
-    --from-x: calc(-1 * (1008 + 237) * var(--u));
+    /* From above: the window's top edge is 50vh - 491u above the canvas's
+       middle, and the box's bottom, at 132 + 201, has to clear it. */
+    --from-y: calc((491 - 132 - 201) * var(--u) - 50vh);
     left: calc(1008 * var(--u));
     top: calc(132 * var(--u));
     width: calc(237 * var(--u));
