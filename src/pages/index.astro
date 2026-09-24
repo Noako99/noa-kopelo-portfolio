@@ -672,6 +672,14 @@ const projects = [
     line-height: 1.05;
   }
 
+  /* One line each, as the file sets them — their Figma boxes are a shade
+     narrower than the type needs once it is rendered here, which broke them
+     over two. There is a clear column to the right of both. */
+  .project-link[data-slug='noa-atalia'] .title,
+  .project-link[data-slug='3-generations'] .title {
+    white-space: nowrap;
+  }
+
   .collab-mark {
     position: absolute;
     left: calc(47 * var(--u));
@@ -738,9 +746,27 @@ const projects = [
     pointer-events: none;
     /* Clipped rather than scaled, so the red unrolls to the right while the
        letters behind it keep their own shape instead of stretching out of it.
-       The closed shape carries the same seven points, all held at the left. */
-    clip-path: polygon(0 0, 0 0, 0 100%, 0 100%, 0 75%, 0 50%, 0 25%);
-    transition: clip-path 460ms cubic-bezier(0.22, 0.61, 0.36, 1);
+
+       Closed, the two right-hand corners come back to the letter's own curve
+       rather than to the element's left edge — collapsing them to 0 walked
+       them past the o, and a sliver of red showed on the way in and out. The
+       five edge points never move at all. */
+    clip-path: polygon(
+      calc(2.56 / var(--bw) * 100%) 0,
+      calc(2.56 / var(--bw) * 100%) 0,
+      calc(0.47 / var(--bw) * 100%) 100%,
+      calc(0.47 / var(--bw) * 100%) 100%,
+      calc(7.7 / var(--bw) * 100%) 75%,
+      calc(9.77 / var(--bw) * 100%) 50%,
+      calc(8.39 / var(--bw) * 100%) 25%
+    );
+    /* What is left of the shape when it is closed is the hair between that
+       chord and the curve, which the letter covers — but it is switched off
+       at the end of the roll anyway, and back on at the very start of it. */
+    opacity: 0;
+    transition:
+      clip-path 460ms cubic-bezier(0.22, 0.61, 0.36, 1),
+      opacity 0s linear 460ms;
   }
 
   /* The name and the mark do the same thing, and the mark comes first in the
@@ -750,6 +776,10 @@ const projects = [
   .canvas:has(.name:focus-visible) .collab-banner,
   .canvas:has(.collab-mark:hover) .collab-banner,
   .collab-banner.open {
+    opacity: 1;
+    transition:
+      clip-path 460ms cubic-bezier(0.22, 0.61, 0.36, 1),
+      opacity 0s linear;
     clip-path: polygon(
       calc(2.56 / var(--bw) * 100%) 0,
       100% 0,
@@ -904,6 +934,7 @@ const projects = [
     .collab-banner {
       height: auto;
       clip-path: none;
+      opacity: 1;
       padding: 0.35rem 0.7rem;
     }
 
