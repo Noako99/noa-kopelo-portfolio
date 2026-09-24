@@ -709,12 +709,17 @@ const projects = [
     stroke-linecap: round;
   }
 
-  /* Figma "Group 8": the pennant at 618,245, moved one to 619 at her ask, 198 wide and 35 tall, its left
-     edge notched at (4.5,18). It is clipped away to nothing until the name is
-     hovered, then unrolls left to right out of the end of "Kopelo". */
+  /* Figma "Group 8": the pennant at 618,245, 35 tall, its left edge notched at
+     (4.5,18). It is clipped away to nothing until the name is hovered, then
+     unrolls left to right out of the end of "Kopelo".
+
+     The file tucks it under the name, but the "o" is round: behind its curve
+     there is nothing to hide the red, so a crescent of it showed above and
+     below the letter. It starts at 628 instead — the rightmost point of the
+     rendered glyph is 627.82 — so the red only ever appears past the name. */
   .collab-banner {
     position: absolute;
-    left: calc(619 * var(--u));
+    left: calc(628 * var(--u));
     top: calc(245 * var(--u));
     /* 198 in the file, plus 10 at her ask. The notch stays 4.5 wide whatever
        the pennant's length, so it is a share of --bw. */
