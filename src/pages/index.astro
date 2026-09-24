@@ -214,6 +214,14 @@ const projects = [
            red group rather than inside it, so it does not animate with it. -->
       <h1 class="name">Noa Kopelo</h1>
 
+      <!-- Figma "Group 8", 618,245 · 198x35: the red pennant that opens out of
+           the end of the name when the name is hovered. Its left edge carries
+           the notch the file draws — (0,35) in to (4.5,18) and back out to
+           (0,0) — so it reads as a tag pinned to the last letter. -->
+      <div class="collab-banner" aria-hidden="true">
+        <p class="collab-label">Open for collab :)</p>
+      </div>
+
       <!-- Figma: red box "Group 1" 140,173 · 237×408 -->
       <div class="box intro-box">
         <p class="kicker-wide intro-kicker">Hi! I'm</p>
@@ -254,9 +262,8 @@ const projects = [
         ))}
       </ul>
 
-      <!-- Figma: logo 47,915 · 30×28 — label 267,922 -->
+      <!-- Figma: logo 47,915 · 30×28 -->
       <img src={logoMark.src} alt="" class="collab-mark" />
-      <p class="collab-label">Open for collab :)</p>
     </div>
   </div>
 </BaseLayout>
@@ -473,6 +480,17 @@ const projects = [
       opacity: 1;
       animation: none;
     }
+
+    /* The pennant still arrives on hover, it just does not unroll, and the
+       mark holds still. */
+    .collab-banner {
+      transition: none;
+    }
+
+    .name:hover ~ .collab-mark,
+    .name:focus-visible ~ .collab-mark {
+      animation: none;
+    }
   }
 
   .intro-box {
@@ -651,22 +669,66 @@ const projects = [
     width: calc(30 * var(--u));
     height: calc(28 * var(--u));
     z-index: 3;
+    transform-origin: 50% 100%;
   }
 
-  /* Figma: 20px General Sans Extralight, -1.4px tracking — set to -0.8px (-0.04em) at her ask. */
-  .collab-label {
+  /* Figma "Group 8": the pennant at 618,245, 198 wide and 35 tall, its left
+     edge notched at (4.5,18). It is clipped away to nothing until the name is
+     hovered, then unrolls left to right out of the end of "Kopelo". */
+  .collab-banner {
     position: absolute;
-    left: calc(267 * var(--u));
-    top: calc(922 * var(--u));
-    width: calc(169 * var(--u));
-    margin: 0;
+    left: calc(618 * var(--u));
+    top: calc(245 * var(--u));
+    width: calc(198 * var(--u));
+    height: calc(35 * var(--u));
     z-index: 3;
+    display: flex;
+    align-items: center;
+    padding-left: calc(19 * var(--u));
+    background: var(--color-accent);
+    pointer-events: none;
+    /* Clipped rather than scaled, so the red unrolls to the right while the
+       letters behind it keep their own shape instead of stretching out of it.
+       The notch is 4.5 of the 198, which is the 2.273%, and 18 of the 35,
+       which is the 51.43%. */
+    clip-path: polygon(0 0, 0 0, 0 100%, 0 100%, 0 51.43%);
+    transition: clip-path 460ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .name:hover ~ .collab-banner,
+  .name:focus-visible ~ .collab-banner,
+  .collab-banner.open {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 2.273% 51.43%);
+  }
+
+  /* Vector 6, the mark in the bottom-left corner: while the name is hovered it
+     rocks gently from side to side on its own base, a few degrees either way. */
+  .name:hover ~ .collab-mark,
+  .name:focus-visible ~ .collab-mark {
+    animation: mark-sway 2.4s ease-in-out infinite;
+  }
+
+  @keyframes mark-sway {
+    0%,
+    100% {
+      transform: rotate(-5deg);
+    }
+    50% {
+      transform: rotate(5deg);
+    }
+  }
+
+  /* Figma: 20px General Sans Extralight, -1.4px tracking — set to -0.8px
+     (-0.04em) at her ask — in the background colour, 19 in from the left. */
+  .collab-label {
+    margin: 0;
+    white-space: nowrap;
     font-family: var(--font-display);
     font-weight: 200;
     font-size: calc(20 * var(--u));
     letter-spacing: -0.04em;
     text-transform: uppercase;
-    color: var(--color-text);
+    color: var(--color-bg);
   }
 
   /* ===== MOBILE =====
@@ -746,7 +808,7 @@ const projects = [
     }
 
     .collab-mark,
-    .collab-label {
+    .collab-banner {
       order: 2;
     }
 
@@ -764,10 +826,18 @@ const projects = [
       font-size: 1.1rem;
     }
 
+    /* No hover on a phone, so the pennant is simply there, unclipped. */
     .collab-mark,
+    .collab-banner,
     .collab-label {
       position: static;
       width: auto;
+    }
+
+    .collab-banner {
+      height: auto;
+      clip-path: none;
+      padding: 0.35rem 0.7rem;
     }
 
     .collab-mark {
