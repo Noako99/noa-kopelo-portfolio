@@ -12,11 +12,9 @@ export const projectLayout: Record<string, { title: Box; desc: Box }> = {
   'prime-minister-next-door': { title: { x: 881, y: 400, w: 172 }, desc: { x: 885, y: 570, w: 349 } },
   'motion-design': { title: { x: 1126, y: 400, w: 167 }, desc: { x: 1126, y: 571, w: 349 } },
   'more-than-i-love-my-life': { title: { x: 1357, y: 400, w: 150 }, desc: { x: 1357, y: 572, w: 349 } },
-  /* The description starts in the title's own column: at 895 it sat a long way
-     right of the 05 and read as a separate block. In that column it has to
-     clear the title, which ends at 600, so it begins at 620 — and its 290 run
-     ends at 910, inside the 982 fold. */
-  secrets: { title: { x: 644, y: 552, w: 74 }, desc: { x: 644, y: 620, w: 349 } },
+  /* The description stays beside the title, not under it: its top is brought
+     up to 552, the title's own line, so the two start together. */
+  secrets: { title: { x: 644, y: 552, w: 74 }, desc: { x: 895, y: 552, w: 349 } },
   '3-generations': { title: { x: 880, y: 552, w: 128 }, desc: { x: 1143, y: 574, w: 349 } },
   'west-bank-barrier': { title: { x: 1127, y: 552, w: 117 }, desc: { x: 1127, y: 716, w: 349 } },
 };
