@@ -933,13 +933,20 @@ const projects = [
     color: var(--color-bg);
   }
 
-  /* ===== MOBILE =====
-     Below the canvas breakpoint the design stops scaling and becomes a
-     normal stacked layout, since 16px Figma text would be ~9px on a phone.
-     There is no hover on a touch screen, so the takeover is dropped entirely. */
-  @media (max-width: 900px) {
+  /* ===== PHONE =====
+     Drawn on a 390-wide phone frame (--u becomes --m, one of its pixels, so
+     the list's 18 and the mark's 17.38 read as they are). One column on the
+     20 margins: the bar (CV, the corner mark, CONTACT), the name with its
+     pennant hanging off its end, then the red groups in a zigzag — Group 1
+     left, Group 3 right, the list, Group 2 left, Group 9 right — each at its
+     own width. There is no hover on a phone, so the project that crosses the
+     middle of the screen as the list is scrolled takes the hover instead:
+     its backdrop fills the glass behind the list, the groups step aside, and
+     its mark comes up over its number. */
+  @media (max-width: 640px) {
     .canvas-wrap {
-      --u: 1px;
+      --u: var(--m);
+      --ux: var(--m);
       display: block;
       width: auto;
       height: auto;
@@ -947,36 +954,112 @@ const projects = [
     }
 
     .canvas {
-      --u: 1px;
       width: auto;
       height: auto;
       display: flex;
       flex-direction: column;
-      gap: var(--space-xl);
-      padding: 6rem var(--space-lg) var(--space-2xl);
+      padding: calc(96 * var(--m)) calc(20 * var(--m)) calc(56 * var(--m));
     }
 
-    .hover-bg-stack,
+    /* The backdrop is pinned to the glass, behind everything; the cards and
+       the tag row belong to the desktop frame and stay off. */
+    .hover-bg-stack {
+      position: fixed;
+      z-index: 0;
+    }
+
     .hover-card-stack,
     .hover-tags {
       display: none;
     }
 
+    .name {
+      order: 1;
+      position: relative;
+      left: auto;
+      top: auto;
+      transform: none;
+      font-size: calc(62 * var(--m));
+      line-height: 1.1;
+      text-align: left;
+    }
+
+    /* Always out on a phone, where nothing can be hovered: hanging off the
+       name's end at the right margin, the notch still on its left. */
+    .collab-banner {
+      order: 2;
+      position: relative;
+      left: auto;
+      top: auto;
+      align-self: flex-end;
+      width: calc(var(--bw) * 0.84 * var(--m));
+      height: calc(30 * var(--m));
+      margin-top: calc(4 * var(--m));
+      padding-left: calc(16 * var(--m));
+      opacity: 1;
+      transition: none;
+      clip-path: polygon(
+        calc(2.56 / var(--bw) * 100%) 0,
+        100% 0,
+        100% 100%,
+        calc(0.47 / var(--bw) * 100%) 100%,
+        calc(7.7 / var(--bw) * 100%) 75%,
+        calc(9.77 / var(--bw) * 100%) 50%,
+        calc(8.39 / var(--bw) * 100%) 25%
+      );
+    }
+
+    .collab-label {
+      font-size: calc(14 * var(--m));
+    }
+
+    /* The red groups, each sized to its words, on alternate margins. */
     .box {
-      position: static;
-      width: auto;
+      position: relative;
+      left: auto;
+      top: auto;
       height: auto;
-      padding: var(--space-lg);
-      box-shadow: none;
-      border: 1px solid var(--color-accent);
-      /* Stacked in the flow there is no frame edge to come in from, so each
-         box just rises a little into its place. */
+      padding: calc(16 * var(--m)) calc(16 * var(--m)) calc(18 * var(--m));
       --from-x: 0px;
-      --from-y: 1.5rem;
+      --from-y: calc(24 * var(--m));
+    }
+
+    .intro-box {
+      order: 3;
+      width: calc(262 * var(--m));
+      margin-top: calc(28 * var(--m));
+    }
+
+    .note-box {
+      order: 4;
+      width: calc(250 * var(--m));
+      margin-top: calc(24 * var(--m));
+      align-self: flex-end;
+    }
+
+    .project-list {
+      order: 5;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: calc(20 * var(--m));
+      row-gap: calc(34 * var(--m));
+      margin: calc(64 * var(--m)) 0 calc(64 * var(--m));
+      padding: 0;
+    }
+
+    .skills-box {
+      order: 6;
+      width: calc(300 * var(--m));
+    }
+
+    .ai-box {
+      order: 7;
+      width: calc(262 * var(--m));
+      margin-top: calc(24 * var(--m));
+      align-self: flex-end;
     }
 
     .intro-kicker,
-    .name,
     .intro-copy,
     .note-copy,
     .skills-kicker,
@@ -986,12 +1069,10 @@ const projects = [
       width: auto;
     }
 
-    .name {
-      transform: none;
-      white-space: normal;
-      font-size: clamp(2.5rem, 12vw, 4rem);
-      text-align: left;
-      margin-block: var(--space-sm);
+    .intro-kicker,
+    .skills-kicker {
+      text-align: right;
+      margin-bottom: calc(12 * var(--m));
     }
 
     .intro-copy,
@@ -999,77 +1080,40 @@ const projects = [
     .skills-copy,
     .ai-copy,
     .kicker-wide {
-      font-size: 1rem;
-      letter-spacing: 0.15em;
-    }
-
-    /* DOM order puts the skills box before the projects; on mobile the
-       reading order is intro → note → projects → skills → AI → collab. */
-    .project-list {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-lg);
-    }
-
-    .skills-box,
-    .ai-box {
-      order: 1;
-    }
-
-    .collab-mark,
-    .collab-banner {
-      order: 2;
+      font-size: calc(12 * var(--m));
+      letter-spacing: 0.16em;
+      line-height: 1.45;
     }
 
     .project-item {
-      position: static;
+      position: relative;
+      left: auto;
+      top: auto;
       width: auto;
     }
 
-    .mark {
-      display: none;
+    /* The item crossing the middle of the screen wears the hover's mark. */
+    .project-item.is-active .mark {
+      opacity: 1;
     }
 
     .num,
     .title {
-      font-size: 1.1rem;
+      font-size: calc(15 * var(--m));
     }
 
-    /* No hover on a phone, so the pennant is simply there, unclipped. */
-    .collab-mark,
-    .collab-banner,
-    .collab-label {
-      position: static;
-      width: auto;
+    .project-link[data-slug='noa-atalia'] .title,
+    .project-link[data-slug='3-generations'] .title {
+      white-space: normal;
     }
 
-    .collab-banner {
-      height: auto;
-      clip-path: none;
-      opacity: 1;
-      padding: 0.35rem 0.7rem;
-    }
-
+    /* The corner mark takes the middle of the bar, as on the project pages. */
     .collab-mark {
-      /* Its own containing block, so the face stays on it. */
-      position: relative;
-      width: 1.25rem;
-      /* 30 x 28 in the file. */
-      height: 1.167rem;
-    }
-
-    .mark-face {
-      opacity: 1;
-    }
-
-    .collab-label {
-      font-size: 1rem;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .project-list {
-      grid-template-columns: 1fr;
+      position: absolute;
+      left: calc(50% - 12 * var(--m));
+      top: calc(20 * var(--m));
+      width: calc(24 * var(--m));
+      height: calc(22.4 * var(--m));
     }
   }
 </style>
@@ -1123,11 +1167,65 @@ const projects = [
   /* No animation fires under reduced motion, so nothing would ever settle. */
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) markEntered();
 
+  const phone = window.matchMedia('(max-width: 640px)');
+
   links.forEach((link) => {
     const slug = link.dataset.slug ?? null;
-    link.addEventListener('mouseenter', () => show(slug));
-    link.addEventListener('focus', () => show(slug));
-    link.addEventListener('mouseleave', () => show(null));
-    link.addEventListener('blur', () => show(null));
+    link.addEventListener('mouseenter', () => !phone.matches && show(slug));
+    link.addEventListener('focus', () => !phone.matches && show(slug));
+    link.addEventListener('mouseleave', () => !phone.matches && show(null));
+    link.addEventListener('blur', () => !phone.matches && show(null));
   });
+
+  /* On a phone the scroll does the hovering. The stretch of scroll from a
+     tenth of a window before the list reaches the middle of the screen to a
+     quarter after it has passed is cut into seven equal turns — a tenth, not
+     more, before it, so the first screen opens clear and 01 does not light up
+     before anything has been scrolled — one per
+     project in the list's own order — both columns, so the right-hand one
+     gets its turn too, which "nearest the middle" would never give it. The
+     project whose turn it is lights up exactly as a hover does. */
+  const list = document.querySelector<HTMLElement>('.project-list');
+  const items = [...document.querySelectorAll<HTMLElement>('.project-item')];
+  let turn: string | null = null;
+  let pending = false;
+
+  const pick = () => {
+    pending = false;
+    if (!phone.matches || !list) return;
+    const middle = window.innerHeight / 2;
+    const box = list.getBoundingClientRect();
+    const from = box.top - window.innerHeight * 0.1;
+    /* It ends a quarter of a window past the list — or where the middle of
+       the screen can reach at all, if the page runs out first, so that the
+       last project still gets its turn. */
+    const bottomY = document.documentElement.scrollHeight - window.innerHeight;
+    const furthest = bottomY - window.scrollY + middle - 1;
+    const to = Math.min(box.bottom + window.innerHeight * 0.25, furthest);
+    const span = to - from;
+    const t = (middle - from) / span;
+    const at = t >= 0 && t < 1 ? Math.floor(t * items.length) : -1;
+    const slug = at >= 0 ? items[at].querySelector<HTMLElement>('.project-link')?.dataset.slug ?? null : null;
+    if (slug === turn) return;
+    turn = slug;
+    items.forEach((item, i) => item.classList.toggle('is-active', i === at));
+    show(slug);
+  };
+
+  const onScroll = () => {
+    if (pending) return;
+    pending = true;
+    requestAnimationFrame(pick);
+  };
+
+  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('resize', onScroll);
+  phone.addEventListener('change', () => {
+    if (!phone.matches) {
+      turn = null;
+      items.forEach((item) => item.classList.remove('is-active'));
+      show(null);
+    } else onScroll();
+  });
+  pick();
 </script>
