@@ -241,7 +241,11 @@ const projects = [
       <!-- Figma: red box "Group 1" 140,173 · 237×408 -->
       <div class="box intro-box">
         <p class="kicker-wide intro-kicker">Hi! I'm</p>
-        <p class="intro-copy">{siteConfig.description}</p>
+        <!-- Figma's phone frame breaks the copy after its first sentence. -->
+        <p class="intro-copy">
+          {siteConfig.description.split('. ')[0]}.<br class="phone-break" />
+          {siteConfig.description.split('. ').slice(1).join('. ')}
+        </p>
       </div>
 
       <!-- Figma: red box "Group 3" 1008,132 · 237×201 -->
@@ -933,13 +937,18 @@ const projects = [
     color: var(--color-bg);
   }
 
+  /* A line break only the phone frame draws. */
+  .phone-break {
+    display: none;
+  }
+
   /* ===== PHONE =====
-     Drawn on a 390-wide phone frame (--u becomes --m, one of its pixels, so
-     the list's 18 and the mark's 17.38 read as they are). One column on the
-     20 margins: the bar (CV, the corner mark, CONTACT), the name with its
-     pennant hanging off its end, then the red groups in a zigzag — Group 1
-     left, Group 3 right, the list, Group 2 left, Group 9 right — each at its
-     own width. There is no hover on a phone, so the project that crosses the
+     Drawn on Figma's 402-wide "iPhone 17" frame (node 256:98; --u becomes
+     --m, one of its pixels, so the file's numbers read as they are). The top
+     is the frame's own: CONTACT left, the mark in the middle, CV right; Group
+     1 at 20,83, 200 x 336, with the name at 69 across it. Then, on the 20
+     margins, Group 3 right, the list, Group 2 left, Group 9 right, and the
+     OPEN FOR COLLAB pennant as a red band across the foot of the page. There is no hover on a phone, so the project that crosses the
      middle of the screen as the list is scrolled takes the hover instead:
      its backdrop fills the glass behind the list, the groups step aside, and
      its mark comes up over its number. */
@@ -958,7 +967,12 @@ const projects = [
       height: auto;
       display: flex;
       flex-direction: column;
-      padding: calc(96 * var(--m)) calc(20 * var(--m)) calc(56 * var(--m));
+      /* Group 1 runs to 419; the rest follows 44 under it. */
+      padding: calc(463 * var(--m)) calc(20 * var(--m)) 0;
+    }
+
+    .phone-break {
+      display: inline;
     }
 
     /* The backdrop is pinned to the glass, behind everything; the cards and
@@ -973,44 +987,32 @@ const projects = [
       display: none;
     }
 
+    /* Figma: 69 Medium, -4.83 tracking, centred on 211 at 121 — over Group
+       1, which it crosses. */
     .name {
-      order: 1;
-      position: relative;
-      left: auto;
-      top: auto;
-      transform: none;
-      font-size: calc(62 * var(--m));
-      line-height: 1.1;
-      text-align: left;
+      left: calc(211 * var(--m));
+      top: calc(121 * var(--m));
+      font-size: calc(69 * var(--m));
     }
 
-    /* Always out on a phone, where nothing can be hovered: hanging off the
-       name's end at the right margin, the notch still on its left. */
+    /* A red band across the foot of the page, edge to edge, always there. */
     .collab-banner {
-      order: 2;
+      order: 99;
       position: relative;
       left: auto;
       top: auto;
-      align-self: flex-end;
-      width: calc(var(--bw) * 0.84 * var(--m));
-      height: calc(30 * var(--m));
-      margin-top: calc(4 * var(--m));
-      padding-left: calc(16 * var(--m));
+      align-self: stretch;
+      width: auto;
+      height: calc(48 * var(--m));
+      margin: calc(72 * var(--m)) calc(-20 * var(--m)) 0;
+      padding-left: calc(20 * var(--m));
       opacity: 1;
       transition: none;
-      clip-path: polygon(
-        calc(2.56 / var(--bw) * 100%) 0,
-        100% 0,
-        100% 100%,
-        calc(0.47 / var(--bw) * 100%) 100%,
-        calc(7.7 / var(--bw) * 100%) 75%,
-        calc(9.77 / var(--bw) * 100%) 50%,
-        calc(8.39 / var(--bw) * 100%) 25%
-      );
+      clip-path: none;
     }
 
     .collab-label {
-      font-size: calc(14 * var(--m));
+      font-size: calc(18 * var(--m));
     }
 
     /* The red groups, each sized to its words, on alternate margins. */
@@ -1024,16 +1026,19 @@ const projects = [
       --from-y: calc(24 * var(--m));
     }
 
+    /* Figma's Group 1, where the frame draws it. */
     .intro-box {
-      order: 3;
-      width: calc(262 * var(--m));
-      margin-top: calc(28 * var(--m));
+      position: absolute;
+      left: calc(20 * var(--m));
+      top: calc(83 * var(--m));
+      width: calc(200 * var(--m));
+      height: calc(336 * var(--m));
+      padding: 0;
     }
 
     .note-box {
       order: 4;
       width: calc(250 * var(--m));
-      margin-top: calc(24 * var(--m));
       align-self: flex-end;
     }
 
@@ -1059,8 +1064,6 @@ const projects = [
       align-self: flex-end;
     }
 
-    .intro-kicker,
-    .intro-copy,
     .note-copy,
     .skills-kicker,
     .skills-copy,
@@ -1069,20 +1072,45 @@ const projects = [
       width: auto;
     }
 
-    .intro-kicker,
     .skills-kicker {
       text-align: right;
       margin-bottom: calc(12 * var(--m));
     }
 
+    /* Group 1's words where the frame sets them: HI! I'M at 136.35,93.12
+       and the copy at 39,214, 156 wide (+ the 2.4 tracking CSS adds at the
+       end of a line) — both against the box's own corner at 20,83. */
+    .intro-kicker {
+      left: calc(116.35 * var(--m));
+      top: calc(10.12 * var(--m));
+      width: calc(70 * var(--m));
+    }
+
+    .intro-copy {
+      left: calc(19 * var(--m));
+      top: calc(131 * var(--m));
+      width: calc(158.4 * var(--m));
+      line-height: 1.35;
+    }
+
+    .note-copy,
+    .skills-copy,
+    .ai-copy {
+      line-height: 1.45;
+    }
+
+    /* Figma: 12 Light, 2.4 tracking; the kickers at 4.8. */
     .intro-copy,
     .note-copy,
     .skills-copy,
-    .ai-copy,
+    .ai-copy {
+      font-size: calc(12 * var(--m));
+      letter-spacing: 0.2em;
+    }
+
     .kicker-wide {
       font-size: calc(12 * var(--m));
-      letter-spacing: 0.16em;
-      line-height: 1.45;
+      letter-spacing: 0.4em;
     }
 
     .project-item {
@@ -1107,13 +1135,13 @@ const projects = [
       white-space: normal;
     }
 
-    /* The corner mark takes the middle of the bar, as on the project pages. */
+    /* Figma: Vector 6 at 186,34, 30 x 28 — the middle of the bar. */
     .collab-mark {
       position: absolute;
-      left: calc(50% - 12 * var(--m));
-      top: calc(20 * var(--m));
-      width: calc(24 * var(--m));
-      height: calc(22.4 * var(--m));
+      left: calc(50% - 15 * var(--m));
+      top: calc(34 * var(--m));
+      width: calc(30 * var(--m));
+      height: calc(28 * var(--m));
     }
   }
 </style>

@@ -8,7 +8,7 @@ import VimeoEmbed from '@components/project/VimeoEmbed.astro';
    a zoomed-in part of it. */
 type Crop = { left: number; top: number; w: number; h: number };
 
-/* `m` places a piece by hand on a phone, in the 390-wide phone frame, from the
+/* `m` places a piece by hand on a phone, in the 402-wide phone frame, from the
    top of the canvas; its height follows its own shape. For pieces the file
    sets side by side at a width a phone cannot give them both. */
 type Mobile = { x: number; y: number; w: number };
@@ -209,9 +209,9 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
   }
 
   /* ===== PHONE =====
-     The frame keeps its composition on a phone, redrawn for the 390-wide
+     The frame keeps its composition on a phone, redrawn for the 402-wide
      phone frame (--m is one of its pixels): every piece is scaled by --k,
-     large enough to read, but no wider than the 350 column; the frame's
+     large enough to read, but no wider than the 362 column; the frame's
      vertical spacing is scaled by the same --k, so pieces stacked in the file
      overlap here exactly as they do there; and each piece keeps its place
      across the width in proportion — its middle at the same share of the
@@ -220,20 +220,20 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
      phone's version of the arrangement, not a single column. */
   @media (max-width: 640px) {
     .project-canvas {
-      --k: 0.37;
+      --k: 0.38;
       --ub: calc(var(--k) * var(--m));
       width: 100%;
       height: calc(var(--fh) * var(--ub));
     }
 
     .item {
-      --iw: min(calc(var(--w) * var(--ub)), calc(350 * var(--m)));
+      --iw: min(calc(var(--w) * var(--ub)), calc(362 * var(--m)));
       width: var(--iw);
-      height: min(calc(var(--h) * var(--ub)), calc(350 * var(--h) / var(--w) * var(--m)));
+      height: min(calc(var(--h) * var(--ub)), calc(362 * var(--h) / var(--w) * var(--m)));
       left: clamp(
         calc(20 * var(--m)),
-        calc((20 + (var(--x) + var(--w) / 2) * 350 / var(--fw)) * var(--m) - var(--iw) / 2),
-        calc(370 * var(--m) - var(--iw))
+        calc((20 + (var(--x) + var(--w) / 2) * 362 / var(--fw)) * var(--m) - var(--iw) / 2),
+        calc(382 * var(--m) - var(--iw))
       );
       top: calc(var(--y) * var(--ub));
     }

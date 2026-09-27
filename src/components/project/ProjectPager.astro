@@ -7,6 +7,8 @@
    you go. The list wraps: after 07 comes 01. */
 import { Image } from 'astro:assets';
 import { projectOrder } from '@config/projects';
+import { projectTags } from '@config/tags';
+import ProjectTags from '@components/project/ProjectTags.astro';
 
 interface Props {
   slug: string;
@@ -61,6 +63,11 @@ const links = [
       <span class="pager-label">{label}</span>
     </a>
   ))}
+
+  <!-- On a phone the project's tag row closes the page, under PREV / NEXT. -->
+  <div class="pager-tags">
+    <ProjectTags tags={projectTags[slug]} />
+  </div>
 </nav>
 
 <style>
@@ -202,10 +209,26 @@ const links = [
 
   /* On a phone: the two words on the 20 margins, clear of the corner mark
      that sits under them at the bottom left. */
+  .pager-tags {
+    display: none;
+  }
+
   @media (max-width: 640px) {
     .pager {
       --u: var(--m);
-      padding: calc(56 * var(--m)) calc(20 * var(--m)) calc(72 * var(--m));
+      flex-wrap: wrap;
+      padding: calc(56 * var(--m)) calc(20 * var(--m)) calc(40 * var(--m));
+    }
+
+    .pager-tags {
+      display: block;
+      flex-basis: 100%;
+      margin-top: calc(36 * var(--m));
+    }
+
+    .pager-tags :global(.project-tags) {
+      position: static;
+      pointer-events: auto;
     }
 
     .pager-label {
