@@ -14,12 +14,15 @@ import layer15 from '@assets/projects/more-than-i-love-my-life/layer-15.png';
 import elevenEleven from '@assets/projects/more-than-i-love-my-life/eleven-eleven.png';
 import layer14 from '@assets/projects/more-than-i-love-my-life/layer-14.png';
 import layer71 from '@assets/projects/more-than-i-love-my-life/layer-71.png';
-import layer81 from '@assets/projects/more-than-i-love-my-life/layer-81.png';
-import layer9 from '@assets/projects/more-than-i-love-my-life/layer-9.png';
 import layer16 from '@assets/projects/more-than-i-love-my-life/layer-16.png';
 import layer8 from '@assets/projects/more-than-i-love-my-life/layer-8.png';
 import layer12 from '@assets/projects/more-than-i-love-my-life/layer-12.png';
-import layer5 from '@assets/projects/more-than-i-love-my-life/layer-5.png';
+import layer2 from '@assets/projects/more-than-i-love-my-life/layer-2.png';
+import layer3 from '@assets/projects/more-than-i-love-my-life/layer-3.png';
+import layer4 from '@assets/projects/more-than-i-love-my-life/layer-4.png';
+import layer6 from '@assets/projects/more-than-i-love-my-life/layer-6.png';
+import layer7 from '@assets/projects/more-than-i-love-my-life/layer-7-2.png';
+import layer13 from '@assets/projects/more-than-i-love-my-life/layer-13.png';
 import { siteConfig } from '@config/site';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -37,7 +40,16 @@ const description =
    Every gap in the run is 68: the film to the stills, the stills to the
    lettering, the lettering to the photographs. The photographs keep the
    overlaps the file draws between themselves — that pile is the design — but
-   the boundaries between the blocks are all the same. */
+   the boundaries between the blocks are all the same.
+
+   The photographs are laid out as Figma's "More Than I Love My Life" frame
+   (node 142:401) draws them, the whole pile lifted 15 so it opens 68 under
+   the lettering (the frame leaves 83). Turned ones give the picture's own
+   size, centred on the turned box Figma reports. They climb a little faster
+   row by row — gently, so the pile keeps the file's arrangement as it
+   gathers — and stack in the file's order: Layer 7 underneath, Layer 2 on
+   top. */
+const PILE = -15;
 const pieces = [
   { src: main1, alt: 'Title sequence still', x: 137, y: 1744, w: 606, h: 341, depth: 0.05, lift: 1 },
   { src: main3, alt: 'Title sequence still', x: 768, y: 1744, w: 606, h: 341, depth: 0.05, lift: 1 },
@@ -46,13 +58,17 @@ const pieces = [
     crop: { left: -89.46, top: -90.79, w: 266.24, h: 284 } },
   { src: untitledArtwork, alt: 'Title sequence artwork', x: 219, y: 2423, w: 1098, h: 603, depth: 0.19, lift: 3,
     crop: { left: -47.27, top: -0.01, w: 153.64, h: 144.12 } },
-  { src: layer15, alt: 'Archival photograph', x: 462, y: 3094, w: 375, h: 526, depth: 0.26, lift: 4 },
-  { src: elevenEleven, alt: 'Archival photograph', x: 665, y: 3362, w: 729, h: 958, depth: 0.33, lift: 5 },
-  { src: layer14, alt: 'Archival photograph', x: 60, y: 3389, w: 458, h: 586, depth: 0.33, lift: 6 },
-  { src: layer71, alt: 'Archival photograph', x: 153, y: 3966, w: 531, h: 708, depth: 0.42, lift: 7 },
-  { src: layer81, alt: 'Archival photograph', x: 773, y: 4185, w: 416, h: 571, depth: 0.49, lift: 8 },
-  { src: layer16, alt: 'Archival photograph', x: 184, y: 4580, w: 376, h: 527, depth: 0.57, lift: 9 },
-  /* Layer 91 (layer-9.png) has moved up to the opening frame. */
+  { src: layer7, alt: 'Archival photograph', x: 1023.49, y: 4198 + PILE, w: 375, h: 529, depth: 0.34, lift: 1 },
+  { src: layer15, alt: 'Archival photograph', x: 147, y: 3109 + PILE, w: 375, h: 526, depth: 0.24, lift: 4 },
+  { src: elevenEleven, alt: 'Archival photograph', x: 650, y: 3109 + PILE, w: 729, h: 958, depth: 0.24, lift: 5 },
+  { src: layer14, alt: 'Archival photograph', x: 349, y: 3539 + PILE, w: 458, h: 586, depth: 0.27, lift: 6 },
+  { src: layer71, alt: 'Archival photograph', x: 83, y: 3832 + PILE, w: 531, h: 708, depth: 0.3, lift: 7 },
+  /* Turned 7.87°: 379 x 532, centred on 675.49,3977 448.29 x 578.90. */
+  { src: layer6, alt: 'Archival photograph', x: 710.14, y: 4000.45 + PILE, w: 379, h: 532, rotate: 7.87, depth: 0.32, lift: 8 },
+  { src: layer13, alt: 'Archival photograph', x: 462.49, y: 4495 + PILE, w: 456, h: 588, depth: 0.36, lift: 9 },
+  { src: layer4, alt: 'Archival photograph', x: 832.49, y: 4727 + PILE, w: 382, h: 532, depth: 0.38, lift: 10 },
+  /* Turned -3.67°: 390 x 527, centred on 137,4397.04 422.97 x 550.91. */
+  { src: layer2, alt: 'Archival photograph', x: 153.49, y: 4409.0 + PILE, w: 390, h: 527, rotate: -3.67, depth: 0.36, lift: 11 },
 ];
 ---
 
@@ -63,17 +79,19 @@ const pieces = [
     title={title}
     description={description}
     stays={[
-      /* The two left-hand pieces of "HOVER 4" keep their places on the way in,
-         so nothing jumps between the hover and the page. */
-      { src: layer16, x: 80, y: 348, w: 248, h: 321 },
-      { src: layer8, x: 314, y: 503, w: 257, h: 352 },
-      /* At her ask the row runs on: Layer 12 and Layer 5 at about the same
-         size (340 tall, each at its own photograph's shape), keeping the
-         pair's up-down step and its 14 overlap; then Layer 91, moved up from
-         the foot of the page, smaller, closing the row. */
-      { src: layer12, x: 557, y: 348, w: 215, h: 340 },
-      { src: layer5, x: 758, y: 503, w: 241, h: 340 },
-      { src: layer9, x: 985, y: 348, w: 200, h: 137 },
+      /* The opening row of Figma's frame 142:401. Its x runs on the 1512
+         project frame, so its left edges are carried onto this 1728 header
+         at 8/7, as the hover pieces always were (70.28 -> 80.3); sizes and
+         heights stay as drawn. A turned one gives the picture's own size,
+         centred in its turned box once that box's left edge is carried over.
+         Layer 3 sits under the others, as in the file. */
+      { src: layer3, x: 541.71, y: 358, w: 248, h: 353 },
+      /* -7.63°: 211 x 296 in a 248.45 x 321.40 box at 80.3,320.3. */
+      { src: layer16, x: 99.0, y: 333.0, w: 211, h: 296, rotate: -7.63 },
+      { src: layer8, x: 314.29, y: 503, w: 257, h: 352 },
+      /* 7.63°: 216 x 346 in a 260.02 x 371.61 box at 949.7,453, the fill a
+         hair wider than the box. */
+      { src: layer12, x: 971.7, y: 465.8, w: 216, h: 346, rotate: 7.63, crop: { left: -0.09, top: 0, w: 101.11, h: 100 } },
     ]}
   />
 

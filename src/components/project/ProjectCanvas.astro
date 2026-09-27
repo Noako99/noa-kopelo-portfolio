@@ -8,7 +8,7 @@ import VimeoEmbed from '@components/project/VimeoEmbed.astro';
    a zoomed-in part of it. */
 type Crop = { left: number; top: number; w: number; h: number };
 
-type Item = { x: number; y: number; w: number; h: number; depth?: number; lift?: number; rest?: number; grow?: number; crop?: Crop } & (
+type Item = { x: number; y: number; w: number; h: number; depth?: number; lift?: number; rest?: number; grow?: number; crop?: Crop; rotate?: number } & (
   | { src: ImageMetadata; alt?: string }
   | { video: string; controls?: boolean; formats?: string[]; slide?: boolean }
   | { vimeo: string; title: string }
@@ -48,8 +48,8 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
   {items.map((item) => (
     <div
       class="item"
-      class:list={[{ sized: item.rest != null }]}
-      style={`--x:${item.x}; --y:${item.y - offsetY}; --w:${item.w}; --h:${item.h};${item.lift ? ` --z:${item.lift};` : ''}${item.rest != null ? ` --rest:${item.rest}; --grow:${item.grow ?? 1};` : ''}`}
+      class:list={[{ sized: item.rest != null, turned: !!item.rotate }]}
+      style={`--x:${item.x}; --y:${item.y - offsetY}; --w:${item.w}; --h:${item.h};${item.lift ? ` --z:${item.lift};` : ''}${item.rest != null ? ` --rest:${item.rest}; --grow:${item.grow ?? 1};` : ''}${item.rotate ? ` --turn:${item.rotate}deg;` : ''}`}
       data-drift={item.depth ?? driftFor(item.y)}
       data-auto={item.depth == null ? '' : undefined}
     >
@@ -125,6 +125,14 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
     width: 100%;
     height: 100%;
     object-fit: contain;
+  }
+
+  /* A piece Figma turns. The turn goes on the picture, not the piece: the
+     piece's own transform is the parallax, and one would overwrite the
+     other. The box is the picture's own, unturned, centred where Figma's
+     turned bounding box is centred. */
+  .item.turned :global(img) {
+    transform: rotate(var(--turn));
   }
 
   /* A piece that rests at the size of the smallest of its group and comes up
