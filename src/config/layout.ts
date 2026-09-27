@@ -21,5 +21,8 @@ export const projectLayout: Record<string, { title: Box; desc: { w: number } }> 
   'more-than-i-love-my-life': { title: { x: 1357, y: 400, w: 165 }, desc: { w: 349 } },
   secrets: { title: { x: 644, y: 552, w: 74 }, desc: { w: 349 } },
   '3-generations': { title: { x: 880, y: 552, w: 128 }, desc: { w: 349 } },
-  'west-bank-barrier': { title: { x: 1127, y: 552, w: 125 }, desc: { w: 349 } },
+  /* 07's description runs 66 words — at 349 it took 21 lines and ran, with
+     the arrow under it, far past the fold. At 560 it takes 12 and the arrow
+     ends at 971; the column stops at 1691, inside the tag row's 1708. */
+  'west-bank-barrier': { title: { x: 1127, y: 552, w: 125 }, desc: { w: 560 } },
 };
