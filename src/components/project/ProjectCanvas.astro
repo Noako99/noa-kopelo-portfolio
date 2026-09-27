@@ -261,9 +261,9 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
     };
 
     /* TRAVEL is how far a piece of depth 1 rides over its whole pass, so
-       `depth` reads as a fraction of it. It is 1.4 windows tall — it was a
-       fixed 700px, which on a big screen barely moved anything — so the
-       layers now part clearly. The pieces left to the default cycle move
+       `depth` reads as a fraction of it. It is 1.9 windows tall — it was a
+       fixed 700px, which on a big screen barely moved anything, then 1.4,
+       and she asked for more — so the layers part hard. The pieces left to the default cycle move
        3x their listed drift for the same reason; the ones given an explicit
        depth (04's pile, 07's laptops) were already tuned against each other
        and keep their proportions.
@@ -281,7 +281,7 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
       const piece = pieces[i];
       const drift = parseFloat(piece.dataset.drift || '0') * (piece.hasAttribute('data-auto') ? AUTO : 1);
       if (!drift) return 0;
-      const travel = window.innerHeight * 1.4;
+      const travel = window.innerHeight * 1.9;
       const reach = window.innerHeight * 0.9;
       /* -1 well below the window, 0 at its middle, +1 well above it. */
       const away = canvasTop + rest[i] - y - window.innerHeight / 2;
@@ -303,9 +303,12 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
        lifted the last pieces well up, and the fixed tail under them left a
        different stretch of empty page on every project before PREV / NEXT.
        Shortening the canvas moves the bottom of the page, which moves where
-       the pieces rest there, so it is settled in a few passes. */
+       the pieces rest there — by about two thirds as much again for the
+       fastest pieces — so taking the new height outright overshoots back and
+       forth, and at this strength eight such passes still left 04 29px out.
+       Each pass therefore goes 60% of the way, which settles in a handful. */
     const fit = () => {
-      for (let pass = 0; pass < 8; pass++) {
+      for (let pass = 0; pass < 30; pass++) {
         const canvasTop = canvas.getBoundingClientRect().top + window.scrollY;
         /* The page's foot is where its last laid-out block ends — the pager
            when there is one. Not scrollHeight: that also counts pieces still
@@ -317,8 +320,10 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
           const piece = pieces[i];
           seen = Math.max(seen, piece.offsetTop + piece.offsetHeight + shift(i, bottomY, canvasTop));
         }
-        if (Math.abs(seen - canvas.offsetHeight) < 0.5) break;
-        canvas.style.height = `${seen.toFixed(1)}px`;
+        /* Fractional: offsetHeight rounds, and the last steps are small. */
+        const now = canvas.getBoundingClientRect().height;
+        if (Math.abs(seen - now) < 0.5) break;
+        canvas.style.height = `${(now + (seen - now) * 0.6).toFixed(1)}px`;
       }
     };
 

@@ -46,30 +46,32 @@ const description =
    The photographs are laid out as Figma's "More Than I Love My Life" frame
    (node 142:401) draws them, the whole pile lifted 15 so it opens 68 under
    the lettering (the frame leaves 83). Turned ones give the picture's own
-   size, centred on the turned box Figma reports. They climb a little faster
-   row by row — gently, so the pile keeps the file's arrangement as it
-   gathers — and stack in the file's order: Layer 7 underneath, Layer 2 on
-   top. */
+   size, centred on the turned box Figma reports. They climb markedly faster
+   row by row, at her ask, so the pile gathers hard as it is scrolled — the
+   file's arrangement is where it starts — and stack in the file's order:
+   Layer 7 underneath, Layer 2 on top. */
 const PILE = -15;
+/* The opening row, moved as a whole so Layer 16's box lands at 80.3. */
+const ROW = 80.3 - 70.28;
 const pieces = [
-  { src: main1, alt: 'Title sequence still', x: 137, y: 1744, w: 606, h: 341, depth: 0.05, lift: 1 },
-  { src: main3, alt: 'Title sequence still', x: 768, y: 1744, w: 606, h: 341, depth: 0.05, lift: 1 },
+  { src: main1, alt: 'Title sequence still', x: 137, y: 1744, w: 606, h: 341, depth: 0.08, lift: 1 },
+  { src: main3, alt: 'Title sequence still', x: 768, y: 1744, w: 606, h: 341, depth: 0.08, lift: 1 },
   /* Figma zooms the fill right in on the lettering. */
-  { src: six, alt: 'Title sequence typography', x: 422, y: 2153, w: 736, h: 355, depth: 0.12, lift: 2,
+  { src: six, alt: 'Title sequence typography', x: 422, y: 2153, w: 736, h: 355, depth: 0.17, lift: 2,
     crop: { left: -89.46, top: -90.79, w: 266.24, h: 284 } },
-  { src: untitledArtwork, alt: 'Title sequence artwork', x: 219, y: 2423, w: 1098, h: 603, depth: 0.19, lift: 3,
+  { src: untitledArtwork, alt: 'Title sequence artwork', x: 219, y: 2423, w: 1098, h: 603, depth: 0.26, lift: 3,
     crop: { left: -47.27, top: -0.01, w: 153.64, h: 144.12 } },
-  { src: layer7, alt: 'Archival photograph', x: 1023.49, y: 4198 + PILE, w: 375, h: 529, depth: 0.34, lift: 1 },
-  { src: layer15, alt: 'Archival photograph', x: 147, y: 3109 + PILE, w: 375, h: 526, depth: 0.24, lift: 4 },
-  { src: elevenEleven, alt: 'Archival photograph', x: 650, y: 3109 + PILE, w: 729, h: 958, depth: 0.24, lift: 5 },
-  { src: layer14, alt: 'Archival photograph', x: 349, y: 3539 + PILE, w: 458, h: 586, depth: 0.27, lift: 6 },
-  { src: layer71, alt: 'Archival photograph', x: 83, y: 3832 + PILE, w: 531, h: 708, depth: 0.3, lift: 7 },
+  { src: layer7, alt: 'Archival photograph', x: 1023.49, y: 4198 + PILE, w: 375, h: 529, depth: 0.52, lift: 1 },
+  { src: layer15, alt: 'Archival photograph', x: 147, y: 3109 + PILE, w: 375, h: 526, depth: 0.32, lift: 4 },
+  { src: elevenEleven, alt: 'Archival photograph', x: 650, y: 3109 + PILE, w: 729, h: 958, depth: 0.32, lift: 5 },
+  { src: layer14, alt: 'Archival photograph', x: 349, y: 3539 + PILE, w: 458, h: 586, depth: 0.38, lift: 6 },
+  { src: layer71, alt: 'Archival photograph', x: 83, y: 3832 + PILE, w: 531, h: 708, depth: 0.44, lift: 7 },
   /* Turned 7.87°: 379 x 532, centred on 675.49,3977 448.29 x 578.90. */
-  { src: layer6, alt: 'Archival photograph', x: 710.14, y: 4000.45 + PILE, w: 379, h: 532, rotate: 7.87, depth: 0.32, lift: 8 },
-  { src: layer13, alt: 'Archival photograph', x: 462.49, y: 4495 + PILE, w: 456, h: 588, depth: 0.36, lift: 9 },
-  { src: layer4, alt: 'Archival photograph', x: 832.49, y: 4727 + PILE, w: 382, h: 532, depth: 0.38, lift: 10 },
+  { src: layer6, alt: 'Archival photograph', x: 710.14, y: 4000.45 + PILE, w: 379, h: 532, rotate: 7.87, depth: 0.48, lift: 8 },
+  { src: layer13, alt: 'Archival photograph', x: 462.49, y: 4495 + PILE, w: 456, h: 588, depth: 0.56, lift: 9 },
+  { src: layer4, alt: 'Archival photograph', x: 832.49, y: 4727 + PILE, w: 382, h: 532, depth: 0.62, lift: 10 },
   /* Turned -3.67°: 390 x 527, centred on 137,4397.04 422.97 x 550.91. */
-  { src: layer2, alt: 'Archival photograph', x: 153.49, y: 4409.0 + PILE, w: 390, h: 527, rotate: -3.67, depth: 0.36, lift: 11 },
+  { src: layer2, alt: 'Archival photograph', x: 153.49, y: 4409.0 + PILE, w: 390, h: 527, rotate: -3.67, depth: 0.56, lift: 11 },
 ];
 ---
 
@@ -80,24 +82,28 @@ const pieces = [
     title={title}
     description={description}
     stays={[
-      /* The opening row of Figma's frame 142:401. Its x runs on the 1512
-         project frame, so its left edges are carried onto this 1728 header
-         at 8/7, as the hover pieces always were (70.28 -> 80.3); sizes and
-         heights stay as drawn. A turned one gives the picture's own size,
-         centred in its turned box once that box's left edge is carried over.
-         Layer 3 sits under the others, as in the file. */
-      { src: layer3, x: 541.71, y: 358, w: 248, h: 353 },
-      /* -7.63°: 211 x 296 in a 248.45 x 321.40 box at 80.3,320.3. */
-      { src: layer16, x: 99.0, y: 333.0, w: 211, h: 296, rotate: -7.63 },
-      { src: layer8, x: 314.29, y: 503, w: 257, h: 352 },
-      /* 7.63°: 216 x 346 in a 260.02 x 371.61 box at 949.7,453, the fill a
+      /* The opening row of Figma's frame 142:401, with the file's own
+         spacing between the photographs, so they sit on one another as
+         much as it draws them. The row is only moved as a whole: every x is
+         the file's, plus the 10.02 that puts Layer 16's box at 80.3, where
+         the hover has always had it. (Carrying each x over at 8/7, as
+         before, spread the row by a seventh while the pictures kept their
+         size, and the overlaps thinned out.) A turned one gives the
+         picture's own size, centred in its turned box. Layer 3 sits under the
+         others, as in the file; the home page's hover draws Layer 16 and 81
+         exactly as here, so they do not move on the way in. */
+      { src: layer3, x: 474 + ROW, y: 358, w: 248, h: 353 },
+      /* -7.63°: 211 x 296 in a 248.45 x 321.40 box at 70.28,320.3. */
+      { src: layer16, x: 70.28 + 124.22 - 105.5 + ROW, y: 333.0, w: 211, h: 296, rotate: -7.63 },
+      { src: layer8, x: 275 + ROW, y: 503, w: 257, h: 352 },
+      /* 7.63°: 216 x 346 in a 260.02 x 371.61 box at 831,453, the fill a
          hair wider than the box. */
-      { src: layer12, x: 971.7, y: 465.8, w: 216, h: 346, rotate: 7.63, crop: { left: -0.09, top: 0, w: 101.11, h: 100 } },
+      { src: layer12, x: 831 + 130.01 - 108 + ROW, y: 465.8, w: 216, h: 346, rotate: 7.63, crop: { left: -0.09, top: 0, w: 101.11, h: 100 } },
       /* "Layer 91 1" (node 250:85, layer-9.png) lies on the page over the
-         frame rather than inside it, and on top of everything: 511,660.12
-         against the frame, a 401.49 x 300.54 box, the photograph 371 x 254
+         frame rather than inside it, and on top of everything: a 401.49 x
+         300.54 box at 511,660.12 against the frame, the photograph 371 x 254
          turned -7.63°, the angle that box and its 619 x 423 shape give. */
-      { src: layer91, x: 599.1, y: 683.6, w: 371, h: 254, rotate: -7.63 },
+      { src: layer91, x: 511 + 200.74 - 185.5 + ROW, y: 683.6, w: 371, h: 254, rotate: -7.63 },
     ]}
   />
 

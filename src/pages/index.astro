@@ -93,8 +93,11 @@ const projects = [
       { src: moreLayer14, x: 816, y: 82, w: 190, h: 227 },
       { video: `${base}/media/more-main1`, x: 1231, y: 100, w: 415, h: 233 },
       { src: moreLayer7, x: 992, y: 196, w: 130, h: 173 },
-      { src: moreLayer16, x: 80, y: 348, w: 248, h: 321 },
-      { src: moreLayer8, x: 314, y: 503, w: 257, h: 352 },
+      /* Drawn exactly as the project page's opening row draws them (Figma
+         frame 142:401, the row set with Layer 16's box at 80.3), so they do
+         not move or turn on the way in. */
+      { src: moreLayer16, x: 99.0, y: 333.0, w: 211, h: 296, rotate: -7.63 },
+      { src: moreLayer8, x: 285.02, y: 503, w: 257, h: 352 },
       { video: `${base}/media/more-main2`, x: 949, y: 679, w: 414, h: 233 },
     ],
   },
@@ -182,7 +185,8 @@ const projects = [
               <div
                 class="hover-card"
                 data-blend={card.blend}
-                style={`--x:${card.x}; --y:${card.y}; --w:${card.w}; --h:${card.h}; --i:${i};`}
+                data-turned={card.rotate ? '' : undefined}
+                style={`--x:${card.x}; --y:${card.y}; --w:${card.w}; --h:${card.h}; --i:${i};${card.rotate ? ` --turn:${card.rotate}deg;` : ''}`}
               >
                 {card.gif ? (
                   <img src={card.gif} alt="" loading="lazy" />
@@ -451,6 +455,16 @@ const projects = [
        blended rather than arriving opaque and popping. */
     opacity: 1;
     transition: transform 420ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  /* A card Figma turns. The turn goes on the picture, since the card's own
+     transform is its slide in, and the card lets the turned corners out. */
+  .hover-card[data-turned] {
+    overflow: visible;
+  }
+
+  .hover-card[data-turned] :global(img) {
+    transform: rotate(var(--turn));
   }
 
   /* contain, not cover: a card must never crop its picture. The backdrop still
