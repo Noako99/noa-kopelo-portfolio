@@ -30,7 +30,9 @@ const PHONE_TOP = 380;
 const PHONE_HEIGHT = 914;
 const PHONE_WIDTH = Math.round((PHONE_HEIGHT * 9) / 19.5);
 const PHONE_LEFT = Math.round(878 - PHONE_WIDTH / 2);
-const FRAME_HEIGHT = PHONE_TOP + PHONE_HEIGHT + 120;
+/* The frame ends with the film counter under the phone, 36 below it, so
+   PREV / NEXT keep the same 100 under the content here as on every page. */
+const FRAME_HEIGHT = PHONE_TOP + PHONE_HEIGHT + 36;
 ---
 
 <BaseLayout title={`${title} — ${siteConfig.name}`} description={description} image={vinylDay.src}>

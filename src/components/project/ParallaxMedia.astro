@@ -11,12 +11,14 @@ interface Props {
   height?: number;
   /* How long it holds in the centre, as a share of the window height. */
   dwell?: number;
+  /* The film is the last thing on the page (01, 02). */
+  last?: boolean;
 }
 
-const { height = 0.8, dwell = 0.7 } = Astro.props;
+const { height = 0.8, dwell = 0.7, last = false } = Astro.props;
 ---
 
-<section class="stage" style={`--h:${height}; --dwell:${dwell};`} data-stage>
+<section class="stage" class:list={[{ last }]} style={`--h:${height}; --dwell:${dwell};`} data-stage>
   <div class="pin">
     <div class="inner">
       <slot />
@@ -30,9 +32,15 @@ const { height = 0.8, dwell = 0.7 } = Astro.props;
   .stage {
     position: relative;
     height: calc((1 + var(--dwell)) * 100vh);
-    /* The landing spot: the stage's top on the window's top puts the film in
-       the middle of an otherwise empty screen. */
-    scroll-snap-align: start;
+  }
+
+  /* When the film is the last thing on the page, what follows (PREV / NEXT)
+     comes up past the empty band the pin leaves under it, so it sits under
+     the film itself. The band is half of whatever the film leaves of the
+     window's height — a wide film leaves more than its cap — so the script
+     measures it; this is only the first guess. */
+  .stage.last {
+    margin-bottom: calc(-1 * (1 - var(--h)) * 50vh);
   }
 
   .pin {
@@ -75,18 +83,11 @@ const { height = 0.8, dwell = 0.7 } = Astro.props;
     display: block;
   }
 
-  /* Only these pages settle onto the film; everywhere else scrolls freely.
-     Proximity, not mandatory: it only takes hold when the scroll comes to rest
-     near the spot. */
-  :global(html:has([data-stage])) {
-    scroll-snap-type: y proximity;
-  }
-
   @media (max-width: 640px) {
-    .stage {
+    .stage,
+    .stage.last {
       height: auto;
       margin: var(--space-xl) var(--space-lg) 0 var(--content-left);
-      scroll-snap-align: none;
     }
 
     .pin {
@@ -194,5 +195,61 @@ const { height = 0.8, dwell = 0.7 } = Astro.props;
     );
     frame();
     onSmoothScroll(grow);
+
+    const trim = () => {
+      if (window.matchMedia('(max-width: 640px)').matches) return;
+      for (const stage of stages) {
+        if (!stage.classList.contains('last')) continue;
+        const inner = stage.querySelector<HTMLElement>('.inner');
+        if (!inner) continue;
+        stage.style.marginBottom = `${(-(window.innerHeight - inner.offsetHeight) / 2).toFixed(1)}px`;
+      }
+    };
+    addEventListener('resize', trim);
+    /* A <video>'s height is only known once its first frame is. */
+    stages.forEach((stage) => stage.querySelectorAll('video').forEach((v) => v.addEventListener('loadedmetadata', trim)));
+    trim();
+
+    /* The click into place. The landing spot is the stage's top on the
+       window's top: the film in the middle of an otherwise empty screen.
+       When a scroll heading down comes to rest just short of it or just past
+       it, the page glides the rest of the way. It was CSS scroll snapping,
+       but on 01 the page runs only a little further than the landing, so
+       from anywhere near the foot the browser counted the film as near and
+       dragged the page back up to it. This only takes hold within 12% of a
+       window of the spot, and only on the way down, so the rest of the page —
+       and the way back up — scroll freely. */
+    if (!window.matchMedia('(max-width: 640px)').matches) {
+      let lastY = window.scrollY;
+      let heading = 0;
+      let rest = 0;
+      let gliding = false;
+
+      addEventListener(
+        'scroll',
+        () => {
+          const y = window.scrollY;
+          if (y !== lastY) heading = Math.sign(y - lastY);
+          lastY = y;
+          if (gliding) return;
+          clearTimeout(rest);
+          rest = window.setTimeout(() => {
+            if (heading <= 0) return;
+            const reach = window.innerHeight * 0.12;
+            for (const stage of stages) {
+              const landing = stage.getBoundingClientRect().top + window.scrollY;
+              const off = window.scrollY - landing;
+              if (off !== 0 && Math.abs(off) < reach) {
+                gliding = true;
+                window.scrollTo({ top: landing, behavior: reduced ? 'auto' : 'smooth' });
+                window.setTimeout(() => (gliding = false), 700);
+                return;
+              }
+            }
+          }, 140);
+        },
+        { passive: true }
+      );
+    }
   }
 </script>

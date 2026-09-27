@@ -64,7 +64,9 @@ const links = [
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    padding: calc(160 * var(--u)) calc(47 * var(--px)) calc(80 * var(--u));
+    /* 100 under the end of the page's content on every project: whatever
+       comes before it ends where its content is seen to end. */
+    padding: calc(100 * var(--u)) calc(47 * var(--px)) calc(80 * var(--u));
   }
 
   /* Pinned to the window, under the two links and over everything else on
@@ -172,7 +174,32 @@ const links = [
 </style>
 
 <script>
+  /* Where the opening frame itself is the end of the page's content (03,
+     whose phone runs past the fold), the pager is measured against the last
+     thing drawn in it, so the gap above PREV / NEXT is the same as on every
+     other page. The frame's own foot is set in Figma units, but some of what
+     hangs under the phone is sized in plain pixels. */
+  const seat = (pager: HTMLElement) => {
+    let before = pager.previousElementSibling as HTMLElement | null;
+    while (before && (before.tagName === 'SCRIPT' || before.tagName === 'STYLE')) {
+      before = before.previousElementSibling as HTMLElement | null;
+    }
+    if (!before || !before.classList.contains('canvas-wrap')) return;
+    if (window.matchMedia('(max-width: 640px)').matches) return;
+    let deepest = -Infinity;
+    before.querySelectorAll<HTMLElement>('.stay, .stay *').forEach((el) => {
+      if (getComputedStyle(el).position === 'fixed') return;
+      const r = el.getBoundingClientRect();
+      if (r.height > 0) deepest = Math.max(deepest, r.bottom);
+    });
+    if (deepest === -Infinity) return;
+    pager.style.marginTop = `${(deepest - before.getBoundingClientRect().bottom).toFixed(1)}px`;
+  };
+
   document.querySelectorAll<HTMLElement>('.pager').forEach((pager) => {
+    seat(pager);
+    addEventListener('resize', () => seat(pager));
+
     const layers = pager.querySelectorAll<HTMLElement>('.pager-bg');
 
     const show = (dir: string | null) => {

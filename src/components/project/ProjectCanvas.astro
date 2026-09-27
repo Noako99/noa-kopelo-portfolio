@@ -265,27 +265,61 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
        rather than arriving pre-collapsed. */
     const AUTO = 3;
 
+    const canvas = pieces[0].offsetParent as HTMLElement;
+
+    /* How far piece i stands off its layout place with the page scrolled to
+       y: negative is up. */
+    const shift = (i: number, y: number, canvasTop: number) => {
+      const piece = pieces[i];
+      const drift = parseFloat(piece.dataset.drift || '0') * (piece.hasAttribute('data-auto') ? AUTO : 1);
+      if (!drift) return 0;
+      const travel = window.innerHeight * 1.4;
+      const reach = window.innerHeight * 0.9;
+      /* -1 well below the window, 0 at its middle, +1 well above it. */
+      const away = canvasTop + rest[i] - y - window.innerHeight / 2;
+      const progress = Math.max(0, Math.min(1, (reach - away) / (2 * reach)));
+      return -drift * travel * progress;
+    };
+
     /* Drawn from the eased scroll position, so the pieces glide after the
        scroll and settle instead of stepping with the wheel. */
     const draw = (y: number) => {
-      const travel = window.innerHeight * 1.4;
-      const canvas = pieces[0].offsetParent as HTMLElement | null;
-      const canvasTop = canvas ? canvas.getBoundingClientRect().top + window.scrollY : 0;
-      const reach = window.innerHeight * 0.9;
-      const middle = window.innerHeight / 2;
+      const canvasTop = canvas.getBoundingClientRect().top + window.scrollY;
       for (let i = 0; i < pieces.length; i++) {
-        const piece = pieces[i];
-        const drift = parseFloat(piece.dataset.drift || '0') * (piece.hasAttribute('data-auto') ? AUTO : 1);
-        if (!drift) continue;
-        /* -1 well below the window, 0 at its middle, +1 well above it. */
-        const away = canvasTop + rest[i] - y - middle;
-        const progress = Math.max(0, Math.min(1, (reach - away) / (2 * reach)));
-        piece.style.transform = `translate3d(0, ${(-drift * travel * progress).toFixed(1)}px, 0)`;
+        pieces[i].style.transform = `translate3d(0, ${shift(i, y, canvasTop).toFixed(1)}px, 0)`;
       }
     };
 
-    addEventListener('resize', measure);
+    /* The canvas ends where its pieces are seen to end with the page at the
+       bottom — not where the layout puts them. By then the parallax has
+       lifted the last pieces well up, and the fixed tail under them left a
+       different stretch of empty page on every project before PREV / NEXT.
+       Shortening the canvas moves the bottom of the page, which moves where
+       the pieces rest there, so it is settled in a few passes. */
+    const fit = () => {
+      for (let pass = 0; pass < 8; pass++) {
+        const canvasTop = canvas.getBoundingClientRect().top + window.scrollY;
+        /* The page's foot is where its last laid-out block ends — the pager
+           when there is one. Not scrollHeight: that also counts pieces still
+           hanging below before they have risen, and so ran long. */
+        const last = document.querySelector<HTMLElement>('.pager') ?? canvas;
+        const bottomY = last.getBoundingClientRect().bottom + window.scrollY - window.innerHeight;
+        let seen = -Infinity;
+        for (let i = 0; i < pieces.length; i++) {
+          const piece = pieces[i];
+          seen = Math.max(seen, piece.offsetTop + piece.offsetHeight + shift(i, bottomY, canvasTop));
+        }
+        if (Math.abs(seen - canvas.offsetHeight) < 0.5) break;
+        canvas.style.height = `${seen.toFixed(1)}px`;
+      }
+    };
+
+    addEventListener('resize', () => {
+      measure();
+      fit();
+    });
     measure();
+    fit();
     onSmoothScroll(draw);
   }
 
