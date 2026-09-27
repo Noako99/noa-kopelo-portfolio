@@ -246,12 +246,20 @@ const projects = [
         </p>
       </div>
 
-      <!-- Figma: red box "Group 2" 644,648 · 404×237 -->
+      <!-- Figma: red box "Group 2" 644,648 · 404×216 -->
       <div class="box skills-box">
         <p class="kicker-wide skills-kicker">Skills &amp; Software</p>
         <p class="skills-copy">
           Motion Design, Video Editing, Editorial Layout, Visual Storytelling, Typography Systems, Adobe Creative
-          Suite, Figma, Procreate, Framer, Claude, AI-Assisted Workflows, Archival Research
+          Suite, Figma, Procreate, Framer, Archival Research
+        </p>
+      </div>
+
+      <!-- Figma: red box "Group 9" 1359,535 · 317×182 -->
+      <div class="box ai-box">
+        <p class="ai-copy">
+          And yes, of course I work with AI. Whether it’s generating visuals and video, experimenting with code, or
+          building interactive web experiences.
         </p>
       </div>
 
@@ -487,7 +495,7 @@ const projects = [
   /* ===== RED GROUPS =====
      They slide into the frame from outside it, fast, one after another, in
      Figma's own order: Group 1 from the left, Group 2 from below, Group 3 from
-     above. No fade — each is simply off the glass until it arrives. Each box
+     above, Group 9 from the right. No fade — each is simply off the glass until it arrives. Each box
      sets its own start in --from-x / --from-y, as a length. They step aside the
      moment a hover takes over the screen. */
   @keyframes rise-in {
@@ -576,7 +584,18 @@ const projects = [
     left: calc(644 * var(--ux));
     top: calc(648 * var(--u));
     width: calc(404 * var(--u));
-    height: calc(237 * var(--u));
+    height: calc(216 * var(--u));
+  }
+
+  .ai-box {
+    --delay: 1850; /* Group 9, on the same 550 beat */
+    /* From the right: it stands against the right of the frame, so it comes
+       in past the window's right edge, 1728 - 1359 away. */
+    --from-x: calc((1728 - 1359) * var(--ux));
+    left: calc(1359 * var(--ux));
+    top: calc(535 * var(--u));
+    width: calc(317 * var(--u));
+    height: calc(182 * var(--u));
   }
 
   /* Text inside the boxes — positioned against each box's own origin. */
@@ -639,13 +658,21 @@ const projects = [
     --w: 356;
   }
 
+  .ai-copy {
+    position: absolute;
+    left: calc(18 * var(--u));
+    top: calc(14 * var(--u));
+    --w: 290;
+  }
+
   /* Figma: 16px General Sans Light, 3.2px tracking, uppercase, red.
      The +3.2 on the width compensates for CSS adding letter-spacing after the
      last character of a line, which Figma does not — without it these blocks
      wrap one line early. */
   .intro-copy,
   .note-copy,
-  .skills-copy {
+  .skills-copy,
+  .ai-copy {
     width: calc((var(--w) + 3.2) * var(--u));
     margin: 0;
     font-family: var(--font-body);
@@ -937,7 +964,8 @@ const projects = [
     .intro-copy,
     .note-copy,
     .skills-kicker,
-    .skills-copy {
+    .skills-copy,
+    .ai-copy {
       position: static;
       width: auto;
     }
@@ -953,20 +981,22 @@ const projects = [
     .intro-copy,
     .note-copy,
     .skills-copy,
+    .ai-copy,
     .kicker-wide {
       font-size: 1rem;
       letter-spacing: 0.15em;
     }
 
     /* DOM order puts the skills box before the projects; on mobile the
-       reading order is intro → note → projects → skills → collab. */
+       reading order is intro → note → projects → skills → AI → collab. */
     .project-list {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: var(--space-lg);
     }
 
-    .skills-box {
+    .skills-box,
+    .ai-box {
       order: 1;
     }
 
