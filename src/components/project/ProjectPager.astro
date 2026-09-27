@@ -2,7 +2,8 @@
 /* The foot of a project page: PREV on the left edge, NEXT on the right, each
    with her arrow turned to point the way. Hovering one fills the whole
    window behind it with that project's backdrop — the same picture its
-   hover brings up on the home page — so you see where you are going before
+   hover brings up on the home page — and puts up its number and title where
+   they stand in the home page's list, so you see where you are going before
    you go. The list wraps: after 07 comes 01. */
 import { Image } from 'astro:assets';
 import { projectOrder } from '@config/projects';
@@ -40,6 +41,14 @@ const links = [
       ) : (
         <Image src={project.backdrop.src} alt="" widths={[1512, 2268]} sizes="100vw" quality={82} loading="lazy" />
       )}
+      <span
+        class="pager-title"
+        data-slug={project.slug}
+        style={`--x:${project.spot.x}; --y:${project.spot.y}; --w:${project.spot.w};`}
+      >
+        <span class="pager-title-num">{project.number}</span>
+        <span class="pager-title-name">{project.title}</span>
+      </span>
     </div>
   ))}
 
@@ -89,6 +98,43 @@ const links = [
     transition:
       opacity 420ms ease,
       visibility 0s;
+  }
+
+  /* The project's title where the home page lists it. The home frame is
+     1728x982, spread across the width and fitted to the height, and centred
+     in the window's height: so x runs on the window's width and y is measured
+     from the frame's middle, at the window's. Type as the list sets it. */
+  .pager-title {
+    position: absolute;
+    left: calc(var(--x) * var(--px));
+    top: calc(50vh + (var(--y) - 491) * var(--u));
+    width: calc(var(--w) * var(--u));
+    color: var(--color-text);
+  }
+
+  .pager-title-num {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 200;
+    font-size: calc(18 * var(--u));
+    letter-spacing: -0.04em;
+    color: var(--color-accent);
+  }
+
+  .pager-title-name {
+    display: block;
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: calc(18 * var(--u));
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+  }
+
+  /* One line each, as on the home page. */
+  .pager-title[data-slug='noa-atalia'] .pager-title-name,
+  .pager-title[data-slug='3-generations'] .pager-title-name {
+    white-space: nowrap;
   }
 
   .pager-bg :global(img),

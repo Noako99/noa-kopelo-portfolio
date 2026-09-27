@@ -8,7 +8,7 @@ import { projectTags } from '@config/tags';
 import logoMark from '@assets/shared/logo-mark.svg';
 
 import noaAtaliaCover from '@assets/projects/noa-atalia/cover.jpg';
-import { backdropFor } from '@config/projects';
+import { backdropFor, spotFor } from '@config/projects';
 import type { ImageMetadata } from 'astro';
 
 import moreLayer7 from '@assets/projects/more-than-i-love-my-life/layer-71.png';
@@ -42,7 +42,7 @@ const projects = [
     number: '01',
     title: 'Noa & Atalia',
     href: `${base}/projects/noa-atalia`,
-    x: 644, y: 400, w: 107,
+    ...spotFor('noa-atalia'),
     tags: projectTags['noa-atalia'],
     mark: { x: 634, y: 393, w: 201, h: 82 },
     bg: backdropFor('noa-atalia'),
@@ -58,7 +58,7 @@ const projects = [
     number: '02',
     title: 'The Prime Minister Next Door',
     href: `${base}/projects/prime-minister-next-door`,
-    x: 881, y: 400, w: 172,
+    ...spotFor('prime-minister-next-door'),
     tags: projectTags['prime-minister-next-door'],
     mark: { x: 867, y: 393, w: 201, h: 82 },
     bg: backdropFor('prime-minister-next-door'),
@@ -74,7 +74,7 @@ const projects = [
     number: '03',
     title: 'Motion Design',
     href: `${base}/projects/motion-design`,
-    x: 1126, y: 400, w: 167,
+    ...spotFor('motion-design'),
     tags: projectTags['motion-design'],
     mark: { x: 1113, y: 392, w: 201, h: 82 },
     bg: backdropFor('motion-design'),
@@ -85,7 +85,7 @@ const projects = [
     number: '04',
     title: 'More Than I Love My Life',
     href: `${base}/projects/more-than-i-love-my-life`,
-    x: 1357, y: 400, w: 150,
+    ...spotFor('more-than-i-love-my-life'),
     tags: projectTags['more-than-i-love-my-life'],
     mark: { x: 1344, y: 392, w: 177, h: 82 },
     bg: backdropFor('more-than-i-love-my-life'),
@@ -106,7 +106,7 @@ const projects = [
     number: '05',
     title: 'Secrets',
     href: `${base}/projects/secrets`,
-    x: 644, y: 552, w: 74,
+    ...spotFor('secrets'),
     tags: projectTags['secrets'],
     mark: { x: 631, y: 546, w: 201, h: 82 },
     bg: backdropFor('secrets'),
@@ -117,7 +117,7 @@ const projects = [
     number: '06',
     title: '3 Generations',
     href: `${base}/projects/3-generations`,
-    x: 880, y: 552, w: 128,
+    ...spotFor('3-generations'),
     tags: projectTags['3-generations'],
     mark: { x: 867, y: 546, w: 201, h: 82 },
     bg: backdropFor('3-generations'),
@@ -136,7 +136,7 @@ const projects = [
     number: '07',
     title: 'The West Bank Barrier',
     href: `${base}/projects/west-bank-barrier`,
-    x: 1127, y: 552, w: 117,
+    ...spotFor('west-bank-barrier'),
     tags: projectTags['west-bank-barrier'],
     mark: { x: 1115, y: 546, w: 201, h: 82 },
     bg: backdropFor('west-bank-barrier'),
