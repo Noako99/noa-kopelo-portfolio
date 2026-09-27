@@ -18,6 +18,8 @@ import layer81 from '@assets/projects/more-than-i-love-my-life/layer-81.png';
 import layer9 from '@assets/projects/more-than-i-love-my-life/layer-9.png';
 import layer16 from '@assets/projects/more-than-i-love-my-life/layer-16.png';
 import layer8 from '@assets/projects/more-than-i-love-my-life/layer-8.png';
+import layer12 from '@assets/projects/more-than-i-love-my-life/layer-12.png';
+import layer5 from '@assets/projects/more-than-i-love-my-life/layer-5.png';
 import { siteConfig } from '@config/site';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -50,10 +52,7 @@ const pieces = [
   { src: layer71, alt: 'Archival photograph', x: 153, y: 3966, w: 531, h: 708, depth: 0.42, lift: 7 },
   { src: layer81, alt: 'Archival photograph', x: 773, y: 4185, w: 416, h: 571, depth: 0.49, lift: 8 },
   { src: layer16, alt: 'Archival photograph', x: 184, y: 4580, w: 376, h: 527, depth: 0.57, lift: 9 },
-  /* At her ask the last photograph stands beside the one before it rather
-     than under it: level with its top, the page's 68 to its right, and at its
-     speed, so the two stay side by side as they climb. */
-  { src: layer9, alt: 'Archival photograph', x: 184 + 376 + 68, y: 4580, w: 669, h: 501, depth: 0.57, lift: 10 },
+  /* Layer 91 (layer-9.png) has moved up to the opening frame. */
 ];
 ---
 
@@ -68,6 +67,13 @@ const pieces = [
          so nothing jumps between the hover and the page. */
       { src: layer16, x: 80, y: 348, w: 248, h: 321 },
       { src: layer8, x: 314, y: 503, w: 257, h: 352 },
+      /* At her ask the row runs on: Layer 12 and Layer 5 at about the same
+         size (340 tall, each at its own photograph's shape), keeping the
+         pair's up-down step and its 14 overlap; then Layer 91, moved up from
+         the foot of the page, smaller, closing the row. */
+      { src: layer12, x: 557, y: 348, w: 215, h: 340 },
+      { src: layer5, x: 758, y: 503, w: 241, h: 340 },
+      { src: layer9, x: 985, y: 348, w: 200, h: 137 },
     ]}
   />
 
