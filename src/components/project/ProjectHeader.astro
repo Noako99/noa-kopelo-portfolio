@@ -85,6 +85,11 @@ const home = import.meta.env.BASE_URL;
       </div>
 
       <p class="description" style={`--w:${desc.w};`}>{description}</p>
+
+      <!-- There is more below: 35 under the paragraph, on its left edge. -->
+      <svg class="scroll-cue" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+        <path d="M0.353267 12.208L12.5614 24.4161L24.7695 12.208M12.5614 24.4161L12.5614 -0.000125067" />
+      </svg>
     </div>
 
     <!-- The mark keeps the corner it has on the home page, 47,915, rather than
@@ -275,6 +280,21 @@ const home = import.meta.env.BASE_URL;
      pinned to the window's left edge and centred in its height, so 47,915 in
      the frame is 47u from the left and 50vh + (915 - 491)u from the top. The
      tall pages pad the canvas by that same half, so it holds there too. */
+  /* 26 x 26 in the file, drawn in the accent red with a hairline stroke. */
+  .scroll-cue {
+    display: block;
+    width: calc(26 * var(--u));
+    height: calc(26 * var(--u));
+    margin-top: calc(35 * var(--u));
+    overflow: visible;
+  }
+
+  .scroll-cue path {
+    stroke: var(--color-accent);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
   .brand-mark {
     position: fixed;
     z-index: 100;
