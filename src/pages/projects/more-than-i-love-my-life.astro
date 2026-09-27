@@ -46,11 +46,14 @@ const description =
    The photographs are laid out as Figma's "More Than I Love My Life" frame
    (node 142:401) draws them, the whole pile lifted 15 so it opens 68 under
    the lettering (the frame leaves 83). Turned ones give the picture's own
-   size, centred on the turned box Figma reports. They climb markedly faster
-   row by row, at her ask, so the pile gathers hard as it is scrolled — the
-   file's arrangement is where it starts — and stack in the file's order:
-   Layer 7 underneath, Layer 2 on top. */
+   size, centred on the turned box Figma reports. The pile climbs as one
+   rigid block — every photograph at one speed, reckoned from the pile's
+   middle — so the photographs sit on one another exactly as the file draws
+   them the whole way; the parallax is between the pile and the blocks above
+   it, which it overtakes fast. They stack in the file's order: Layer 7
+   underneath, Layer 2 on top. */
 const PILE = -15;
+const PILE_DEPTH = 0.5;
 /* The opening row, moved as a whole so Layer 16's box lands at 80.3. */
 const ROW = 80.3 - 70.28;
 const pieces = [
@@ -61,17 +64,17 @@ const pieces = [
     crop: { left: -89.46, top: -90.79, w: 266.24, h: 284 } },
   { src: untitledArtwork, alt: 'Title sequence artwork', x: 219, y: 2423, w: 1098, h: 603, depth: 0.26, lift: 3,
     crop: { left: -47.27, top: -0.01, w: 153.64, h: 144.12 } },
-  { src: layer7, alt: 'Archival photograph', x: 1023.49, y: 4198 + PILE, w: 375, h: 529, depth: 0.52, lift: 1 },
-  { src: layer15, alt: 'Archival photograph', x: 147, y: 3109 + PILE, w: 375, h: 526, depth: 0.32, lift: 4 },
-  { src: elevenEleven, alt: 'Archival photograph', x: 650, y: 3109 + PILE, w: 729, h: 958, depth: 0.32, lift: 5 },
-  { src: layer14, alt: 'Archival photograph', x: 349, y: 3539 + PILE, w: 458, h: 586, depth: 0.38, lift: 6 },
-  { src: layer71, alt: 'Archival photograph', x: 83, y: 3832 + PILE, w: 531, h: 708, depth: 0.44, lift: 7 },
+  { src: layer7, alt: 'Archival photograph', x: 1023.49, y: 4198 + PILE, w: 375, h: 529, depth: PILE_DEPTH, group: 'pile', lift: 1 },
+  { src: layer15, alt: 'Archival photograph', x: 147, y: 3109 + PILE, w: 375, h: 526, depth: PILE_DEPTH, group: 'pile', lift: 4 },
+  { src: elevenEleven, alt: 'Archival photograph', x: 650, y: 3109 + PILE, w: 729, h: 958, depth: PILE_DEPTH, group: 'pile', lift: 5 },
+  { src: layer14, alt: 'Archival photograph', x: 349, y: 3539 + PILE, w: 458, h: 586, depth: PILE_DEPTH, group: 'pile', lift: 6 },
+  { src: layer71, alt: 'Archival photograph', x: 83, y: 3832 + PILE, w: 531, h: 708, depth: PILE_DEPTH, group: 'pile', lift: 7 },
   /* Turned 7.87°: 379 x 532, centred on 675.49,3977 448.29 x 578.90. */
-  { src: layer6, alt: 'Archival photograph', x: 710.14, y: 4000.45 + PILE, w: 379, h: 532, rotate: 7.87, depth: 0.48, lift: 8 },
-  { src: layer13, alt: 'Archival photograph', x: 462.49, y: 4495 + PILE, w: 456, h: 588, depth: 0.56, lift: 9 },
-  { src: layer4, alt: 'Archival photograph', x: 832.49, y: 4727 + PILE, w: 382, h: 532, depth: 0.62, lift: 10 },
+  { src: layer6, alt: 'Archival photograph', x: 710.14, y: 4000.45 + PILE, w: 379, h: 532, rotate: 7.87, depth: PILE_DEPTH, group: 'pile', lift: 8 },
+  { src: layer13, alt: 'Archival photograph', x: 462.49, y: 4495 + PILE, w: 456, h: 588, depth: PILE_DEPTH, group: 'pile', lift: 9 },
+  { src: layer4, alt: 'Archival photograph', x: 832.49, y: 4727 + PILE, w: 382, h: 532, depth: PILE_DEPTH, group: 'pile', lift: 10 },
   /* Turned -3.67°: 390 x 527, centred on 137,4397.04 422.97 x 550.91. */
-  { src: layer2, alt: 'Archival photograph', x: 153.49, y: 4409.0 + PILE, w: 390, h: 527, rotate: -3.67, depth: 0.56, lift: 11 },
+  { src: layer2, alt: 'Archival photograph', x: 153.49, y: 4409.0 + PILE, w: 390, h: 527, rotate: -3.67, depth: PILE_DEPTH, group: 'pile', lift: 11 },
 ];
 ---
 

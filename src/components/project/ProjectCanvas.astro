@@ -8,7 +8,7 @@ import VimeoEmbed from '@components/project/VimeoEmbed.astro';
    a zoomed-in part of it. */
 type Crop = { left: number; top: number; w: number; h: number };
 
-type Item = { x: number; y: number; w: number; h: number; depth?: number; lift?: number; rest?: number; grow?: number; crop?: Crop; rotate?: number } & (
+type Item = { x: number; y: number; w: number; h: number; depth?: number; lift?: number; rest?: number; grow?: number; crop?: Crop; rotate?: number; group?: string } & (
   | { src: ImageMetadata; alt?: string }
   | { video: string; controls?: boolean; formats?: string[]; slide?: boolean }
   | { vimeo: string; title: string }
@@ -52,6 +52,7 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
       style={`--x:${item.x}; --y:${item.y - offsetY}; --w:${item.w}; --h:${item.h};${item.lift ? ` --z:${item.lift};` : ''}${item.rest != null ? ` --rest:${item.rest}; --grow:${item.grow ?? 1};` : ''}${item.rotate ? ` --turn:${item.rotate}deg;` : ''}`}
       data-drift={item.depth ?? driftFor(item.y)}
       data-auto={item.depth == null ? '' : undefined}
+      data-group={item.group}
     >
       {'vimeo' in item ? (
         <VimeoEmbed id={item.vimeo} title={item.title} />
@@ -256,8 +257,25 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
        a piece far down the page was already hundreds of pixels out of place
        before it had been scrolled to at all. */
     let rest: number[] = [];
+    /* Pieces that share a `group` take their progress from the group's
+       middle, not each from its own, so the group climbs as one rigid block
+       and keeps the overlaps the file draws. Measured each on its own, the
+       higher pieces of a pile are further along than the lower ones and
+       ride further up, and the pile pulls apart by some 40% of its spacing
+       even at a single speed. */
     const measure = () => {
       rest = pieces.map((piece) => piece.offsetTop + piece.offsetHeight / 2);
+      const spans = new Map<string, [number, number]>();
+      pieces.forEach((piece) => {
+        const g = piece.dataset.group;
+        if (!g) return;
+        const [top, bottom] = spans.get(g) ?? [Infinity, -Infinity];
+        spans.set(g, [Math.min(top, piece.offsetTop), Math.max(bottom, piece.offsetTop + piece.offsetHeight)]);
+      });
+      pieces.forEach((piece, i) => {
+        const span = piece.dataset.group ? spans.get(piece.dataset.group) : null;
+        if (span) rest[i] = (span[0] + span[1]) / 2;
+      });
     };
 
     /* TRAVEL is how far a piece of depth 1 rides over its whole pass, so
