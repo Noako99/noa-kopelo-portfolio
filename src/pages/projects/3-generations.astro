@@ -21,12 +21,15 @@ const description =
 
 /* Straight off the Figma frame "3 Generations" (1512x3117). */
 const pieces = [
-  /* The palette, top to bottom, at 108 with its hex underneath. */
-  { color: '#E2ECF4', label: 'E2ECF4', x: 108, y: 1040, w: 99, h: 95 },
-  { color: '#CFD6BB', label: 'CFD6BB', x: 108, y: 1181, w: 99, h: 95 },
-  { color: '#DCD7B9', label: 'DCD7B9', x: 108, y: 1318, w: 99, h: 95 },
-  { color: '#ECE2CF', label: 'ECE2CF', x: 108, y: 1455, w: 99, h: 95 },
-  { color: '#ED9A6E', label: 'ED9A6E', x: 108, y: 1593, w: 99, h: 95 },
+  /* The palette, top to bottom, at 108 with its hex underneath. The five
+     ride as one column at one depth: left to the default cycle they fell in
+     different bands, and at the stronger parallax each hex ran into the
+     swatch under it. They climb faster than the film beside them. */
+  { color: '#E2ECF4', label: 'E2ECF4', x: 108, y: 1040, w: 99, h: 95, depth: 0.08 },
+  { color: '#CFD6BB', label: 'CFD6BB', x: 108, y: 1181, w: 99, h: 95, depth: 0.08 },
+  { color: '#DCD7B9', label: 'DCD7B9', x: 108, y: 1318, w: 99, h: 95, depth: 0.08 },
+  { color: '#ECE2CF', label: 'ECE2CF', x: 108, y: 1455, w: 99, h: 95, depth: 0.08 },
+  { color: '#ED9A6E', label: 'ED9A6E', x: 108, y: 1593, w: 99, h: 95, depth: 0.08 },
 
   { video: `${base}/media/three-generations`, controls: true, formats: ['mp4'], x: 292, y: 1030, w: 1130, h: 701 },
   /* Figma lays them out "Untitled-1-03", "-01", "-02" from left to right. */

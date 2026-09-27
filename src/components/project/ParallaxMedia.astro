@@ -1,6 +1,6 @@
 ---
 /* The project's film, set down on its own stage. As the page is scrolled it
-   rises out of the fold, growing a touch as it comes, while the title and the
+   rises out of the fold, growing from 0.8 as it comes, while the title and the
    text leave the screen above it; it lands dead centre with nothing else on
    the glass, and the page settles onto that spot if the scroll stops near it —
    the film clicks into place. It holds there, playing, for a stretch of
@@ -116,6 +116,8 @@ const { height = 0.8, dwell = 0.7 } = Astro.props;
 </style>
 
 <script>
+  import { onSmoothScroll } from '../../scripts/smoothScroll';
+
   const stages = [...document.querySelectorAll<HTMLElement>('[data-stage]')];
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -124,6 +126,25 @@ const { height = 0.8, dwell = 0.7 } = Astro.props;
     frame.contentWindow?.postMessage(JSON.stringify({ method }), 'https://player.vimeo.com');
 
   if (stages.length) {
+    /* The growth is drawn from the eased scroll position, so it swells and
+       settles rather than stepping with the wheel; whether it plays follows
+       the real one. */
+    const grow = (y: number) => {
+      if (reduced) return;
+      const vh = window.innerHeight;
+      const lag = window.scrollY - y;
+      for (const stage of stages) {
+        const top = stage.getBoundingClientRect().top + lag;
+        const inner = stage.querySelector<HTMLElement>('.inner');
+        /* 0 while the stage waits below the fold, 1 once it has landed. It
+           grows from 0.8 on an ease-out, so most of the growing is done early
+           and the last stretch before the landing is calm. */
+        const rise = Math.min(1, Math.max(0, 1 - top / vh));
+        const eased = 1 - Math.pow(1 - rise, 3);
+        if (inner) inner.style.transform = `scale(${(0.8 + 0.2 * eased).toFixed(4)})`;
+      }
+    };
+
     let ticking = false;
 
     const frame = () => {
@@ -132,16 +153,6 @@ const { height = 0.8, dwell = 0.7 } = Astro.props;
 
       for (const stage of stages) {
         const top = stage.getBoundingClientRect().top;
-        const inner = stage.querySelector<HTMLElement>('.inner');
-
-        /* 0 while the stage waits below the fold, 1 once it has landed. It
-           grows from 0.9 on an ease-out, so most of the growing is done early
-           and the last stretch before the landing is calm. */
-        const rise = Math.min(1, Math.max(0, 1 - top / vh));
-        if (inner && !reduced) {
-          const eased = 1 - Math.pow(1 - rise, 3);
-          inner.style.transform = `scale(${(0.9 + 0.1 * eased).toFixed(4)})`;
-        }
 
         /* Playing from the moment it has all but landed until it has mostly
            gone up past the top. */
@@ -182,5 +193,6 @@ const { height = 0.8, dwell = 0.7 } = Astro.props;
       )
     );
     frame();
+    onSmoothScroll(grow);
   }
 </script>

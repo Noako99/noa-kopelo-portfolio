@@ -51,6 +51,7 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
       class:list={[{ sized: item.rest != null }]}
       style={`--x:${item.x}; --y:${item.y - offsetY}; --w:${item.w}; --h:${item.h};${item.lift ? ` --z:${item.lift};` : ''}${item.rest != null ? ` --rest:${item.rest}; --grow:${item.grow ?? 1};` : ''}`}
       data-drift={item.depth ?? driftFor(item.y)}
+      data-auto={item.depth == null ? '' : undefined}
     >
       {'vimeo' in item ? (
         <VimeoEmbed id={item.vimeo} title={item.title} />
@@ -234,13 +235,13 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
 </style>
 
 <script>
+  import { onSmoothScroll } from '../../scripts/smoothScroll';
+
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const flat = window.matchMedia('(max-width: 640px)').matches;
   const pieces = [...document.querySelectorAll<HTMLElement>('.project-canvas .item')];
 
   if (!reduced && !flat && pieces.length) {
-    let ticking = false;
-
     /* The piece's resting middle, measured once off the layout. Reading it
        back off getBoundingClientRect every frame fed each frame's own
        transform into the next one, which is what tore the arrangement apart:
@@ -251,56 +252,55 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
       rest = pieces.map((piece) => piece.offsetTop + piece.offsetHeight / 2);
     };
 
-    /* TRAVEL is how far the deepest piece rides up over its whole pass, so
-       `depth` reads as a fraction of it. The run is laid out at its Figma
-       spacing and every piece starts there, because progress is 0 until the
-       piece is near the window — the gaps are the ones the file draws, and
-       the pile closes as it is scrolled rather than arriving pre-collapsed. */
-    const TRAVEL = 700;
+    /* TRAVEL is how far a piece of depth 1 rides over its whole pass, so
+       `depth` reads as a fraction of it. It is 1.4 windows tall — it was a
+       fixed 700px, which on a big screen barely moved anything — so the
+       layers now part clearly. The pieces left to the default cycle move
+       3x their listed drift for the same reason; the ones given an explicit
+       depth (04's pile, 07's laptops) were already tuned against each other
+       and keep their proportions.
+       The run is laid out at its Figma spacing and every piece starts there,
+       because progress is 0 until the piece is near the window — the gaps
+       are the ones the file draws, and the pile closes as it is scrolled
+       rather than arriving pre-collapsed. */
+    const AUTO = 3;
 
-    const frame = () => {
-      ticking = false;
+    /* Drawn from the eased scroll position, so the pieces glide after the
+       scroll and settle instead of stepping with the wheel. */
+    const draw = (y: number) => {
+      const travel = window.innerHeight * 1.4;
       const canvas = pieces[0].offsetParent as HTMLElement | null;
       const canvasTop = canvas ? canvas.getBoundingClientRect().top + window.scrollY : 0;
       const reach = window.innerHeight * 0.9;
       const middle = window.innerHeight / 2;
       for (let i = 0; i < pieces.length; i++) {
         const piece = pieces[i];
-        const drift = parseFloat(piece.dataset.drift || '0');
+        const drift = parseFloat(piece.dataset.drift || '0') * (piece.hasAttribute('data-auto') ? AUTO : 1);
         if (!drift) continue;
         /* -1 well below the window, 0 at its middle, +1 well above it. */
-        const away = canvasTop + rest[i] - window.scrollY - middle;
+        const away = canvasTop + rest[i] - y - middle;
         const progress = Math.max(0, Math.min(1, (reach - away) / (2 * reach)));
-        piece.style.transform = `translate3d(0, ${(-drift * TRAVEL * progress).toFixed(1)}px, 0)`;
+        piece.style.transform = `translate3d(0, ${(-drift * travel * progress).toFixed(1)}px, 0)`;
       }
     };
 
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(frame);
-    };
-
-    addEventListener('scroll', onScroll, { passive: true });
-    addEventListener('resize', () => {
-      measure();
-      onScroll();
-    });
+    addEventListener('resize', measure);
     measure();
-    frame();
+    onSmoothScroll(draw);
   }
 
   /* The films that slide inside their frames. */
   const slides = [...document.querySelectorAll<HTMLElement>('[data-slide]')];
 
   if (!reduced && !flat && slides.length) {
-    let pending = false;
-
-    const move = () => {
-      pending = false;
+    const move = (y: number) => {
       const middle = window.innerHeight / 2;
+      /* The eased position trails the real one; the frames are measured at
+         the real one, so shift them by the difference. */
+      const lag = window.scrollY - y;
       for (const slide of slides) {
-        const box = slide.getBoundingClientRect();
+        const real = slide.getBoundingClientRect();
+        const box = { top: real.top + lag, bottom: real.bottom + lag, height: real.height };
         if (box.bottom < -200 || box.top > window.innerHeight + 200) continue;
         /* -1 well below the middle, +1 well above it. */
         const away = (middle - (box.top + box.height / 2)) / (window.innerHeight / 2 + box.height / 2);
@@ -309,15 +309,7 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
       }
     };
 
-    const onMove = () => {
-      if (pending) return;
-      pending = true;
-      requestAnimationFrame(move);
-    };
-
-    addEventListener('scroll', onMove, { passive: true });
-    addEventListener('resize', onMove);
-    move();
+    onSmoothScroll(move);
   }
 
   /* Films start themselves when they come into view and stop when they leave.
