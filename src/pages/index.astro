@@ -215,6 +215,15 @@ const projects = [
     ))}
 
     <div class="canvas" data-hover="">
+      <!-- The red groups slide in on the first visit only. Coming back to the
+           home page from a project, the page is simply there as it was left:
+           this runs while the page is still being read, before anything is
+           drawn, so the groups never start their slide. -->
+      <script is:inline>
+        try {
+          if (sessionStorage.getItem('home-entered')) document.currentScript.parentElement.classList.add('entered');
+        } catch (e) {}
+      </script>
       <Nav canvas />
 
       <!-- Figma: the name is its own canvas element at 263,198 — it sits over the
@@ -1096,9 +1105,15 @@ const projects = [
     });
   };
 
-  /* The red groups rise in exactly once per page load. */
+  /* The red groups slide in once per visit — see the inline script at the
+     top of the canvas, which skips it on the way back. */
   const boxes = document.querySelectorAll<HTMLElement>('.box');
-  const markEntered = () => canvas?.classList.add('entered');
+  const markEntered = () => {
+    canvas?.classList.add('entered');
+    try {
+      sessionStorage.setItem('home-entered', '1');
+    } catch {}
+  };
   let settled = 0;
   boxes.forEach((box) =>
     box.addEventListener('animationend', () => {
