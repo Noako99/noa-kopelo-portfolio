@@ -5,9 +5,12 @@ interface Props {
   /* Homepage passes nothing: it inherits --u from the scaled canvas. Project
      pages pass `standalone` so the row reproduces the same scale on its own. */
   standalone?: boolean;
+  /* The row's view-transition-name, so the same project's row holds its place
+     from the home page's hover into the project page. */
+  name?: string;
 }
 
-const { tags, standalone = false } = Astro.props;
+const { tags, standalone = false, name } = Astro.props;
 
 /* One row along the top of the page: it ends 20 from the RIGHT EDGE OF THE
    WINDOW, with 30 between one label and the next.
@@ -19,7 +22,7 @@ const { tags, standalone = false } = Astro.props;
    20 inside the wrong edge. CV hugs the left of the page; these hug the right. */
 ---
 
-<div class="project-tags" aria-hidden="true">
+<div class="project-tags" aria-hidden="true" style={name ? `view-transition-name: ${name}` : undefined}>
   <span class="tag">{tags.map((tag) => tag.label).join(' / ')}</span>
 </div>
 

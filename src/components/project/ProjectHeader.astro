@@ -37,7 +37,7 @@ const home = import.meta.env.BASE_URL;
 ---
 
 <div class="canvas-wrap" class:list={[{ tall: frameHeight > 982 }]} style={`--fh:${frameHeight};`}>
-  <ProjectTags tags={projectTags[slug]} />
+  <ProjectTags tags={projectTags[slug]} name={`tags-${slug}`} />
 
   <div class="canvas">
     <Nav canvas />
@@ -73,15 +73,15 @@ const home = import.meta.env.BASE_URL;
       </div>
     ))}
 
-    <a class="name" href={home}>Noa Kopelo</a>
+    <a class="name" href={home} style="view-transition-name: site-name">Noa Kopelo</a>
 
     <!-- The description runs on under the title, in the same block, so the gap
          between them is the same on every page however many lines the title
          takes. -->
     <div class="project-head" style={`--x:${titleBox.x}; --y:${titleBox.y};`}>
       <div class="project-title" data-slug={slug} style={`--w:${titleBox.w};`}>
-        <span class="num">{number}</span>
-        <span class="title">{title}</span>
+        <span class="num" style={`view-transition-name: num-${slug}`}>{number}</span>
+        <span class="title" style={`view-transition-name: title-${slug}`}>{title}</span>
       </div>
 
       <p class="description" style={`--w:${desc.w};`}>{description}</p>
@@ -97,7 +97,7 @@ const home = import.meta.env.BASE_URL;
          It carries the same face as the home page: eyes at (12,17) and (18,17)
          with radius 1, and an 8-wide smile from (11,21). It stays on that spot
          as the page scrolls, and takes you back home. -->
-    <a class="brand-mark" href={home} aria-label="Back to the home page">
+    <a class="brand-mark" href={home} aria-label="Back to the home page" style="view-transition-name: site-mark">
       <img src={logoMark.src} alt="" />
       <svg class="mark-face" viewBox="0 0 30 28" aria-hidden="true">
         <circle cx="12" cy="17" r="1" />

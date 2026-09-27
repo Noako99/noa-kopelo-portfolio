@@ -10,11 +10,12 @@ const { canvas = false } = Astro.props;
 ---
 
 <nav class:list={['site-nav', { canvas }]} aria-label="Main navigation">
-  <a class="nav-link nav-cv" href={siteConfig.cvUrl} target="_blank" rel="noopener noreferrer">CV</a>
+  <a class="nav-link nav-cv" style="view-transition-name: site-cv" href={siteConfig.cvUrl} target="_blank" rel="noopener noreferrer">CV</a>
 
   <div class="contact">
     <button
       class="nav-link contact-toggle"
+      style="view-transition-name: site-contact"
       type="button"
       aria-expanded="false"
       aria-controls="contact-links"

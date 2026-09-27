@@ -104,6 +104,37 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Going from one page to the next, what the two share stays where it is —
+   the name, the project's number and title, CV and CONTACT, the mark in the
+   corner, the red tag row — and everything else fades across around it,
+   rather than the whole page blanking and loading again. Each of those
+   carries the same view-transition-name on both pages. A browser that has no
+   cross-page view transitions (Firefox, for now) simply loads the page. */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 380ms;
+  animation-timing-function: ease;
+}
+
+/* A shared piece that lands a touch off (a title in a different weight)
+   eases over instead of jumping. */
+::view-transition-group(*) {
+  animation-duration: 380ms;
+  animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
 body {
   font-family: var(--font-body);
   color: var(--color-text);

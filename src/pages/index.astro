@@ -206,7 +206,7 @@ const projects = [
          and its right edge stops short of the glass on a wide screen. -->
     {projects.map((project) => (
       <div class="hover-tags" data-for={project.slug}>
-        <ProjectTags tags={project.tags} />
+        <ProjectTags tags={project.tags} name={`tags-${project.slug}`} />
       </div>
     ))}
 
@@ -215,7 +215,7 @@ const projects = [
 
       <!-- Figma: the name is its own canvas element at 263,198 — it sits over the
            red group rather than inside it, so it does not animate with it. -->
-      <h1 class="name"><a href={`mailto:${siteConfig.email}`}>Noa Kopelo</a></h1>
+      <h1 class="name" style="view-transition-name: site-name"><a href={`mailto:${siteConfig.email}`}>Noa Kopelo</a></h1>
 
       <!-- Figma "Group 8", 618,245 · 198x35: the red pennant that opens out of
            the end of the name when the name is hovered. Its left edge carries
@@ -271,8 +271,8 @@ const projects = [
               <svg class="mark" viewBox="0 0 17.26 17.26" aria-hidden="true">
                 <path d="M0.5 0.5V16.76H16.76M0.5 16.76L16.76 0.5" />
               </svg>
-              <span class="num">{project.number}</span>
-              <span class="title">{project.title}</span>
+              <span class="num" style={`view-transition-name: num-${project.slug}`}>{project.number}</span>
+              <span class="title" style={`view-transition-name: title-${project.slug}`}>{project.title}</span>
             </a>
           </li>
         ))}
@@ -281,7 +281,7 @@ const projects = [
       <!-- Figma: logo 47,915 · 30×28, with the face she drew inside the arch —
            eyes at (12,17) and (18,17) with radius 1, and an 8-wide smile
            starting at (11,21). The face only shows while the pennant is open. -->
-      <span class="collab-mark">
+      <span class="collab-mark" style="view-transition-name: site-mark">
         <img src={logoMark.src} alt="" />
         <svg class="mark-face" viewBox="0 0 30 28" aria-hidden="true">
           <circle cx="12" cy="17" r="1" />
