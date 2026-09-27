@@ -173,6 +173,13 @@ const home = import.meta.env.BASE_URL;
     letter-spacing: -0.07em;
     text-align: center;
     color: var(--color-text);
+    transition: color var(--transition-fast);
+  }
+
+  /* It leads home, and turns the accent red under the cursor to say so. */
+  .name:hover,
+  .name:focus-visible {
+    color: var(--color-accent);
   }
 
   .stay {
