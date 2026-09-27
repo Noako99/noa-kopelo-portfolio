@@ -75,12 +75,17 @@ const home = import.meta.env.BASE_URL;
 
     <a class="name" href={home}>Noa Kopelo</a>
 
-    <div class="project-title" data-slug={slug} style={`--x:${titleBox.x}; --y:${titleBox.y}; --w:${titleBox.w};`}>
-      <span class="num">{number}</span>
-      <span class="title">{title}</span>
-    </div>
+    <!-- The description runs on under the title, in the same block, so the gap
+         between them is the same on every page however many lines the title
+         takes. -->
+    <div class="project-head" style={`--x:${titleBox.x}; --y:${titleBox.y};`}>
+      <div class="project-title" data-slug={slug} style={`--w:${titleBox.w};`}>
+        <span class="num">{number}</span>
+        <span class="title">{title}</span>
+      </div>
 
-    <p class="description" style={`--x:${desc.x}; --y:${desc.y}; --w:${desc.w};`}>{description}</p>
+      <p class="description" style={`--w:${desc.w};`}>{description}</p>
+    </div>
 
     <!-- The mark keeps the corner it has on the home page, 47,915, rather than
          standing beside the name. There is no OPEN FOR COLLAB here.
@@ -203,10 +208,14 @@ const home = import.meta.env.BASE_URL;
     object-fit: contain;
   }
 
-  .project-title {
+  /* Stands where the project stood in the home page list. */
+  .project-head {
     position: absolute;
     left: calc(var(--x) * var(--u));
     top: calc(var(--y) * var(--u));
+  }
+
+  .project-title {
     width: calc(var(--w) * var(--u));
   }
 
@@ -238,12 +247,12 @@ const home = import.meta.env.BASE_URL;
 
   /* Figma: General Sans Regular 18px, 3.6px tracking, uppercase. The +3.6 on the
      width offsets the trailing letter-space CSS adds and Figma does not. */
+  /* 50 under the title's last line on every page. The old boxes left 97 to
+     123 there, and 05 and 06 stood beside the title instead; 50 keeps the
+     longest ones, on 05 and 06, clear of the fold (they end at 940). */
   .description {
-    position: absolute;
-    left: calc(var(--x) * var(--u));
-    top: calc(var(--y) * var(--u));
     width: calc((var(--w) + 3.6) * var(--u));
-    margin: 0;
+    margin: calc(50 * var(--u)) 0 0;
     font-family: var(--font-body);
     font-weight: 400;
     font-size: calc(18 * var(--u));
@@ -358,6 +367,7 @@ const home = import.meta.env.BASE_URL;
     }
 
     .name,
+    .project-head,
     .project-title,
     .description,
     .brand-mark {
