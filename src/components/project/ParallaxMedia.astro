@@ -84,10 +84,11 @@ const { height = 0.8, dwell = 0.7, last = false } = Astro.props;
   }
 
   @media (max-width: 640px) {
+    /* The column's 20 margins, like everything else on a phone. */
     .stage,
     .stage.last {
       height: auto;
-      margin: var(--space-xl) var(--space-lg) 0 var(--content-left);
+      margin: calc(40 * var(--m)) calc(20 * var(--m)) 0;
     }
 
     .pin {
