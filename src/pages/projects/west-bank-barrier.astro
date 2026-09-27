@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
 import ProjectHeader from '@components/project/ProjectHeader.astro';
+import ProjectPager from '@components/project/ProjectPager.astro';
 import ProjectCanvas from '@components/project/ProjectCanvas.astro';
 import Flipbook from '@components/project/Flipbook.astro';
 import { siteConfig } from '@config/site';
@@ -92,4 +93,6 @@ const pieces = [
   </ProjectHeader>
 
   <ProjectCanvas width={1512} height={5141} offsetY={BOOK_TOP_OF_CANVAS} tail={GAP} items={pieces} />
+
+  <ProjectPager slug="west-bank-barrier" />
 </BaseLayout>

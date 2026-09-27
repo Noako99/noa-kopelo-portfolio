@@ -1,0 +1,205 @@
+---
+/* The foot of a project page: PREV on the left edge, NEXT on the right, each
+   with her arrow turned to point the way. Hovering one fills the whole
+   window behind it with that project's backdrop — the same picture its
+   hover brings up on the home page — so you see where you are going before
+   you go. The list wraps: after 07 comes 01. */
+import { Image } from 'astro:assets';
+import { projectOrder } from '@config/projects';
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const at = projectOrder.findIndex((p) => p.slug === slug);
+const count = projectOrder.length;
+const prev = projectOrder[(at - 1 + count) % count];
+const next = projectOrder[(at + 1) % count];
+
+const links = [
+  { dir: 'prev', label: 'Prev', project: prev },
+  { dir: 'next', label: 'Next', project: next },
+] as const;
+---
+
+<nav class="pager" aria-label="More projects">
+  {links.map(({ dir, project }) => (
+    <div
+      class="pager-bg"
+      data-for={dir}
+      style={project.backdrop.opacity ? `--bg-opacity:${project.backdrop.opacity};` : ''}
+      aria-hidden="true"
+    >
+      {'video' in project.backdrop ? (
+        <video muted loop playsinline preload="none">
+          <source src={`${project.backdrop.video}.webm`} type="video/webm" />
+          <source src={`${project.backdrop.video}.mp4`} type="video/mp4" />
+        </video>
+      ) : (
+        <Image src={project.backdrop.src} alt="" widths={[1512, 2268]} sizes="100vw" quality={82} loading="lazy" />
+      )}
+    </div>
+  ))}
+
+  {links.map(({ dir, label, project }) => (
+    <a class="pager-link" data-dir={dir} href={`${base}/projects/${project.slug}`} aria-label={`${label}: ${project.title}`}>
+      {/* Her 26x26 arrow points down; turned a quarter it points the way. */}
+      <svg class="pager-arrow" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+        <path d="M0.353267 12.208L12.5614 24.4161L24.7695 12.208M12.5614 24.4161L12.5614 -0.000125067" />
+      </svg>
+      <span class="pager-label">{label}</span>
+    </a>
+  ))}
+</nav>
+
+<style>
+  /* One Figma pixel of the home frame across the page's width, the same
+     measure the header spreads by, so the two words sit 47 in from the
+     edges — where CV sits — on any window. */
+  .pager {
+    --px: calc(100vw / 1728);
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: calc(160 * var(--u)) calc(47 * var(--px)) calc(80 * var(--u));
+  }
+
+  /* Pinned to the window, under the two links and over everything else on
+     the page, so the whole glass fills with the next project. */
+  .pager-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 420ms ease,
+      visibility 0s linear 420ms;
+  }
+
+  .pager-bg.is-active {
+    opacity: var(--bg-opacity, 1);
+    visibility: visible;
+    transition:
+      opacity 420ms ease,
+      visibility 0s;
+  }
+
+  .pager-bg :global(img),
+  .pager-bg video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .pager-link {
+    position: relative;
+    z-index: 160;
+    display: flex;
+    align-items: center;
+    gap: calc(14 * var(--u));
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  /* NEXT reads arrow-last and hugs the right edge. */
+  .pager-link[data-dir='next'] .pager-arrow {
+    order: 2;
+    transform: rotate(-90deg);
+  }
+
+  .pager-link[data-dir='prev'] .pager-arrow {
+    transform: rotate(90deg);
+  }
+
+  /* 26 x 26, as the file draws it, in the accent red. */
+  .pager-arrow {
+    width: calc(26 * var(--u));
+    height: calc(26 * var(--u));
+    overflow: visible;
+    transition: translate 320ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .pager-arrow path {
+    stroke: var(--color-accent);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* The nav's voice: CV and CONTACT's 20, Extralight, uppercase. */
+  .pager-label {
+    font-family: var(--font-display);
+    font-weight: 200;
+    font-size: calc(20 * var(--u));
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  /* The arrow leans the way it points. */
+  .pager-link[data-dir='next']:hover .pager-arrow,
+  .pager-link[data-dir='next']:focus-visible .pager-arrow {
+    translate: calc(8 * var(--u)) 0;
+  }
+
+  .pager-link[data-dir='prev']:hover .pager-arrow,
+  .pager-link[data-dir='prev']:focus-visible .pager-arrow {
+    translate: calc(-8 * var(--u)) 0;
+  }
+
+  @media (max-width: 640px) {
+    .pager {
+      --u: 1px;
+      padding: var(--space-2xl) var(--space-lg) var(--space-xl);
+    }
+
+    /* No hover on a phone: the page stays put. */
+    .pager-bg {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pager-arrow {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.pager').forEach((pager) => {
+    const layers = pager.querySelectorAll<HTMLElement>('.pager-bg');
+
+    const show = (dir: string | null) => {
+      layers.forEach((layer) => {
+        const active = layer.dataset.for === dir;
+        layer.classList.toggle('is-active', active);
+        const video = layer.querySelector('video');
+        if (!video) return;
+        if (active) {
+          video.muted = true;
+          void video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      });
+    };
+
+    pager.querySelectorAll<HTMLAnchorElement>('.pager-link').forEach((link) => {
+      const dir = link.dataset.dir ?? null;
+      link.addEventListener('mouseenter', () => show(dir));
+      link.addEventListener('mouseleave', () => show(null));
+      link.addEventListener('focus', () => show(dir));
+      link.addEventListener('blur', () => show(null));
+    });
+
+    /* Coming back to the page with the browser's back button restores it
+       from the cache, hover and all; start clean. */
+    addEventListener('pageshow', () => show(null));
+  });
+</script>

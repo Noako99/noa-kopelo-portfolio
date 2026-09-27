@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
 import ProjectHeader from '@components/project/ProjectHeader.astro';
+import ProjectPager from '@components/project/ProjectPager.astro';
 import PhoneCarousel from '@components/project/PhoneCarousel.astro';
 import { siteConfig } from '@config/site';
 import vinylDay from '@assets/projects/motion-graphic/vinyl-day.jpg';
@@ -45,4 +46,6 @@ const FRAME_HEIGHT = PHONE_TOP + PHONE_HEIGHT + 120;
   >
     <PhoneCarousel slot="phone" films={films} label="Motion pieces" />
   </ProjectHeader>
+
+  <ProjectPager slug="motion-design" />
 </BaseLayout>

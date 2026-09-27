@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
 import ProjectHeader from '@components/project/ProjectHeader.astro';
+import ProjectPager from '@components/project/ProjectPager.astro';
 import VimeoEmbed from '@components/project/VimeoEmbed.astro';
 import ParallaxMedia from '@components/project/ParallaxMedia.astro';
 import { Image } from 'astro:assets';
@@ -28,6 +29,8 @@ const description =
   <ParallaxMedia>
     <VimeoEmbed id="1209460267" title="למה ראש הממשלה שכן שלי?" />
   </ParallaxMedia>
+
+  <ProjectPager slug="prime-minister-next-door" />
 </BaseLayout>
 
 

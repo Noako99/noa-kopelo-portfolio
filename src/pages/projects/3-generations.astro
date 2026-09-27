@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
 import ProjectHeader from '@components/project/ProjectHeader.astro';
+import ProjectPager from '@components/project/ProjectPager.astro';
 import ProjectCanvas from '@components/project/ProjectCanvas.astro';
 import { siteConfig } from '@config/site';
 import building1 from '@assets/projects/3-generations/building-1.png';
@@ -62,4 +63,6 @@ const pieces = [
   />
 
   <ProjectCanvas width={1512} height={3117} offsetY={990} tail={200} items={pieces} />
+
+  <ProjectPager slug="3-generations" />
 </BaseLayout>
