@@ -38,6 +38,13 @@ const bookWidth = 1250;
 const bookLeft = Math.round((1512 - bookWidth) / 2);
 const bookHeight = Math.round(bookWidth / (1389 / 982));
 const filmTop = bookTop + bookHeight + GAP;
+
+/* The opening frame runs past the 982 fold here, the way 03's does: the
+   description takes 21 lines and ends at 1102, its arrow at 1172, and the
+   flip-through beside it reaches 1052. At 982 the frame cut all three off,
+   even once scrolled to. It now ends 35 under the arrow — the arrow's own
+   gap under the text. */
+const FRAME_HEIGHT = 1172 + 35;
 /* The film runs narrower than the flip-through above it, centred in the frame. */
 const filmWidth = 1100;
 const filmLeft = Math.round((1512 - filmWidth) / 2);
@@ -74,6 +81,7 @@ const pieces = [
     number="07"
     title={title}
     description={description}
+    frameHeight={FRAME_HEIGHT}
     stays={[
       /* "Component 1" — the flip-through — where Figma instances it, beside
          the title and across the fold. */
