@@ -8,6 +8,8 @@ import building2 from '@assets/projects/3-generations/building-2.png';
 import building3 from '@assets/projects/3-generations/building-3.png';
 import building4 from '@assets/projects/3-generations/building-4.png';
 import building5 from '@assets/projects/3-generations/building-5.png';
+import building6 from '@assets/projects/3-generations/building-6.png';
+import building7 from '@assets/projects/3-generations/building-7.png';
 import mapBg from '@assets/projects/3-generations/map-bg.jpg';
 import avatar1 from '@assets/projects/3-generations/avatar-1.png';
 import avatar2 from '@assets/projects/3-generations/avatar-2.png';
@@ -48,6 +50,15 @@ const pieces = [
       { src: building4, x: 1156, y: 134, w: 381, h: 382 },
       { src: building2, x: 47, y: 249, w: 381, h: 382 },
       { src: building5, x: 321, y: 582, w: 382, h: 382 },
+      /* The hover carries two more. By the rule the five above follow (the
+         hover's x times 1512/1728) they would land on the title and the
+         description, so each takes the open ground nearest its hover spot,
+         placed by the building's own ink rather than its 382 square:
+         6 above the title (ink 840-1101 x 330-483: 69 over the title, 80
+         under building 1), 7 right of the description (ink 1400-1610 x
+         640-853: 167 clear of its column). */
+      { src: building6, x: 784, y: 275, w: 382, h: 382 },
+      { src: building7, x: 1348, y: 524, w: 382, h: 381 },
     ]}
   />
 
