@@ -40,7 +40,10 @@ const { tags, standalone = false, name } = Astro.props;
     --tag-top: 39.22;
     position: absolute;
     top: calc(50% - (491 - var(--tag-top)) * var(--u));
-    right: calc(20 * var(--u));
+    /* As far in from the right edge as CV stands in from the left: 47 on
+       the same width-spread scale CV uses (41px on a 1512 window). It was
+       20, the file's number, and read as crowding the edge against CV. */
+    right: calc(47 * var(--ux, var(--u)));
     z-index: 100;
     pointer-events: none;
   }
