@@ -1,49 +1,61 @@
 ---
-/* A piece of media that climbs over the text as the page scrolls — the
-   "בגלילה עולה על הקיים בparallax" note in the Figma frames — and then pins
-   itself once it is fully on screen, so it can be watched without fighting the
-   scroll. It is sized in proportion to the window rather than filling it. */
+/* The project's film, set down on its own stage. As the page is scrolled it
+   rises out of the fold, growing a touch as it comes, while the title and the
+   text leave the screen above it; it lands dead centre with nothing else on
+   the glass, and the page settles onto that spot if the scroll stops near it —
+   the film clicks into place. It holds there, playing, for a stretch of
+   scroll, then goes on up with the page. It is paused until it lands and
+   paused again once it has gone. */
 interface Props {
-  /* How far it climbs, as a share of how far the page has scrolled. */
-  rate?: number;
-  /* Share of the window height it is allowed to occupy. */
+  /* Share of the window height the film may take once it has landed. */
   height?: number;
-  /* Hold it still once it has fully arrived. */
-  pin?: boolean;
+  /* How long it holds in the centre, as a share of the window height. */
+  dwell?: number;
 }
 
-const { rate = 0.35, height = 0.9, pin = true } = Astro.props;
+const { height = 0.8, dwell = 0.7 } = Astro.props;
 ---
 
-<div class="parallax" class:list={[{ pin }]} style={`--rate:${rate}; --h:${height};`} data-parallax>
-  <div class="inner">
-    <slot />
+<section class="stage" style={`--h:${height}; --dwell:${dwell};`} data-stage>
+  <div class="pin">
+    <div class="inner">
+      <slot />
+    </div>
   </div>
-</div>
+</section>
 
 <style>
-  /* The page's own width less the Figma margin on each side, centred on the
-     window rather than on the left-anchored canvas, and starting below the
-     fold so it climbs into view instead of already sitting in it. */
-  .parallax {
+  /* One window to land in, plus the hold. The pin sticks to the top of the
+     window for exactly the length of the hold. */
+  .stage {
     position: relative;
-    z-index: 2;
+    height: calc((1 + var(--dwell)) * 100vh);
+    /* The landing spot: the stage's top on the window's top puts the film in
+       the middle of an otherwise empty screen. */
+    scroll-snap-align: start;
+  }
+
+  .pin {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* The page's width less the Figma margin on each side. The scale is driven
+     from the script as the film rises, so it arrives rather than just
+     appears. */
+  .inner {
     width: calc(100vw - 2 * 81 * var(--u));
-    margin-inline: auto;
-    /* 68 rendered pixels at the 1512 frame width — the same gap the canvas
-       below keeps between one block and the next, so the run reads as one
-       evenly spaced column from the title down. */
-    margin-top: calc(78 * var(--u));
+    transform-origin: 50% 50%;
     will-change: transform;
   }
 
-  .parallax.pin .inner {
-    position: sticky;
-    top: calc((100vh - var(--h) * 100vh) / 2);
-  }
-
-  /* Proportional to the window, never edge to edge: the media keeps its own
-     shape and is capped at a share of the viewport height. */
+  /* Proportional to the window, never edge to edge: the film keeps its own
+     shape and is capped at a share of the window height, so it lands with
+     empty page all round it. */
   .inner :global(img),
   .inner :global(video),
   .inner :global(.frame) {
@@ -63,10 +75,29 @@ const { rate = 0.35, height = 0.9, pin = true } = Astro.props;
     display: block;
   }
 
+  /* Only these pages settle onto the film; everywhere else scrolls freely.
+     Proximity, not mandatory: it only takes hold when the scroll comes to rest
+     near the spot. */
+  :global(html:has([data-stage])) {
+    scroll-snap-type: y proximity;
+  }
+
   @media (max-width: 640px) {
-    .parallax {
-      width: auto;
+    .stage {
+      height: auto;
       margin: var(--space-xl) var(--space-lg) 0 var(--content-left);
+      scroll-snap-align: none;
+    }
+
+    .pin {
+      position: static;
+      height: auto;
+      display: block;
+    }
+
+    .inner {
+      width: auto;
+      transform: none !important;
     }
 
     .inner :global(img),
@@ -75,43 +106,61 @@ const { rate = 0.35, height = 0.9, pin = true } = Astro.props;
       max-height: none;
       max-width: none;
     }
-
-    .parallax.pin .inner {
-      position: static;
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .parallax {
-      margin-top: var(--space-xl);
-    }
-
-    .parallax.pin .inner {
-      position: static;
+    .inner {
+      transform: none !important;
     }
   }
 </style>
 
 <script>
+  const stages = [...document.querySelectorAll<HTMLElement>('[data-stage]')];
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const blocks = [...document.querySelectorAll<HTMLElement>('[data-parallax]')];
 
-  if (!reduced && blocks.length) {
+  /* Vimeo's player takes its orders by message. */
+  const tell = (frame: HTMLIFrameElement, method: 'play' | 'pause') =>
+    frame.contentWindow?.postMessage(JSON.stringify({ method }), 'https://player.vimeo.com');
+
+  if (stages.length) {
     let ticking = false;
 
     const frame = () => {
       ticking = false;
-      for (const block of blocks) {
-        const rate = parseFloat(getComputedStyle(block).getPropertyValue('--rate')) || 0.35;
-        const box = block.getBoundingClientRect();
-        /* Only climbs while it is on screen, and stops once it has fully
-           arrived — from there the sticky rule holds it in place. */
-        const travelled = Math.min(
-          Math.max(0, window.innerHeight - box.top),
-          window.innerHeight
+      const vh = window.innerHeight;
+
+      for (const stage of stages) {
+        const top = stage.getBoundingClientRect().top;
+        const inner = stage.querySelector<HTMLElement>('.inner');
+
+        /* 0 while the stage waits below the fold, 1 once it has landed. It
+           grows from 0.9 on an ease-out, so most of the growing is done early
+           and the last stretch before the landing is calm. */
+        const rise = Math.min(1, Math.max(0, 1 - top / vh));
+        if (inner && !reduced) {
+          const eased = 1 - Math.pow(1 - rise, 3);
+          inner.style.transform = `scale(${(0.9 + 0.1 * eased).toFixed(4)})`;
+        }
+
+        /* Playing from the moment it has all but landed until it has mostly
+           gone up past the top. */
+        const holdEnd = -(stage.offsetHeight - vh);
+        const playing = top < vh * 0.12 && top > holdEnd - vh * 0.5;
+        if (stage.dataset.playing === String(playing)) continue;
+        stage.dataset.playing = String(playing);
+
+        stage.querySelectorAll('video').forEach((video) => {
+          if (playing) {
+            video.muted = true;
+            void video.play().catch(() => {});
+          } else {
+            video.pause();
+          }
+        });
+        stage.querySelectorAll<HTMLIFrameElement>('iframe[src*="vimeo"]').forEach((f) =>
+          tell(f, playing ? 'play' : 'pause')
         );
-        const inner = block.firstElementChild as HTMLElement | null;
-        if (inner) inner.style.transform = `translate3d(0, ${-(travelled * rate).toFixed(1)}px, 0)`;
       }
     };
 
@@ -123,6 +172,15 @@ const { rate = 0.35, height = 0.9, pin = true } = Astro.props;
 
     addEventListener('scroll', onScroll, { passive: true });
     addEventListener('resize', onScroll);
+    /* A Vimeo player that has only just loaded missed the first order. */
+    stages.forEach((stage) =>
+      stage.querySelectorAll('iframe').forEach((f) =>
+        f.addEventListener('load', () => {
+          delete stage.dataset.playing;
+          onScroll();
+        })
+      )
+    );
     frame();
   }
 </script>
