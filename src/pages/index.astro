@@ -304,13 +304,23 @@ const projects = [
        The scale fits BOTH axes, so the whole frame is always visible and nothing
        is ever cropped. On a window wider than 1728/982 that leaves empty space
        down the right-hand side — the design keeps its proportions rather than
-       stretching to the glass. */
+       stretching to the glass.
+       --ux is the same Figma pixel measured across the page's own width
+       (100cqw of this wrap, so a Windows scrollbar is left out). Only the
+       horizontal place of a piece uses it; sizes, type and heights stay on
+       --u. On a Mac, whose window has the frame's own 1.76 shape, the two are
+       one and the same. On a wider window (Windows, 16:9 less the taskbar,
+       about 2.1) --u is set by the height and left 12-16% of the width empty
+       on the right; --ux spreads the pieces across it instead. Pieces that
+       are drawn against one another move as one, from a shared anchor. */
     --u: min(calc(100vw / 1728), calc(100vh / 982));
+    --ux: calc(100cqw / 1728);
+    container-type: inline-size;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    width: 100vw;
+    width: 100%;
     height: 100vh;
     overflow: hidden;
     background: var(--color-bg);
@@ -321,7 +331,7 @@ const projects = [
   .canvas {
     position: relative;
     flex: none;
-    width: calc(1728 * var(--u));
+    width: 100%;
     height: calc(982 * var(--u));
     /* Transparent and above the hover layers, so the backdrop shows through. */
     z-index: 1;
@@ -375,18 +385,17 @@ const projects = [
     object-fit: cover;
   }
 
-  /* Two scales at once. --uw spreads the cards across the full width of the
+  /* Two scales at once. --ux spreads the cards across the full width of the
      window, so they never look bunched into a narrow strip. Height, size and
      vertical position stay on the canvas's --u, which keeps them level with the
      type and stops them growing taller than the screen — scaling both axes off
      the width is what pushed a top card into the tag row and cut the feet off a
      bottom one. */
   .hover-card-stack {
-    --uw: calc(100vw / 1728);
     position: absolute;
     left: 0;
     top: calc(50% - 491 * var(--u));
-    width: 100vw;
+    width: 100%;
     height: calc(982 * var(--u));
     overflow: hidden;
   }
@@ -415,7 +424,7 @@ const projects = [
   /* They come up a beat after the backdrop, one after another. */
   .hover-card {
     position: absolute;
-    left: calc(var(--x) * var(--uw));
+    left: calc(var(--x) * var(--ux));
     top: calc(var(--y) * var(--u));
     width: calc(var(--w) * var(--u));
     height: calc(var(--h) * var(--u));
@@ -537,8 +546,11 @@ const projects = [
        (the a starts at 358.4 in frame units, the box ends at 365). */
     --delay: 200;
     /* The canvas is pinned to the window's left edge, so x + w clears it. */
-    --from-x: calc(-1 * (127 + 237) * var(--u));
-    left: calc(127 * var(--u));
+    /* Drawn against the name (its edge meets the "a"), so it hangs off the
+       name's centre, 445.5, rather than spreading on its own. The slide starts
+       with its right edge on the window's left. */
+    --from-x: calc(-445.5 * var(--ux) + (445.5 - 127 - 237) * var(--u));
+    left: calc(445.5 * var(--ux) + (127 - 445.5) * var(--u));
     top: calc(173 * var(--u));
     width: calc(237 * var(--u));
     height: calc(408 * var(--u));
@@ -549,7 +561,7 @@ const projects = [
     /* From above: the window's top edge is 50vh - 491u above the canvas's
        middle, and the box's bottom, at 132 + 201, has to clear it. */
     --from-y: calc((491 - 132 - 201) * var(--u) - 50vh);
-    left: calc(1008 * var(--u));
+    left: calc(1008 * var(--ux));
     top: calc(132 * var(--u));
     width: calc(237 * var(--u));
     height: calc(201 * var(--u));
@@ -561,7 +573,7 @@ const projects = [
        50vh + 491u below the canvas's middle; the box's top, at 648, has to
        travel to there. */
     --from-y: calc(50vh + (491 - 648) * var(--u));
-    left: calc(644 * var(--u));
+    left: calc(644 * var(--ux));
     top: calc(648 * var(--u));
     width: calc(404 * var(--u));
     height: calc(237 * var(--u));
@@ -585,7 +597,7 @@ const projects = [
   .name {
     /* Figma: 260,198, 371 wide — centred on 445.5, never wrapping. */
     position: absolute;
-    left: calc(445.5 * var(--u));
+    left: calc(445.5 * var(--ux));
     top: calc(198 * var(--u));
     transform: translateX(-50%);
     white-space: nowrap;
@@ -667,7 +679,7 @@ const projects = [
 
   .project-item {
     position: absolute;
-    left: calc(var(--x) * var(--u));
+    left: calc(var(--x) * var(--ux));
     top: calc(var(--y) * var(--u));
     width: calc(var(--w) * var(--u));
   }
@@ -731,7 +743,7 @@ const projects = [
 
   .collab-mark {
     position: absolute;
-    left: calc(47 * var(--u));
+    left: calc(47 * var(--ux));
     top: calc(915 * var(--u));
     width: calc(30 * var(--u));
     height: calc(28 * var(--u));
@@ -779,7 +791,8 @@ const projects = [
      red therefore never leaves the letter, and still starts behind it. */
   .collab-banner {
     position: absolute;
-    left: calc(621 * var(--u));
+    /* Cut to the name's last "o", so it hangs off the name's centre. */
+    left: calc(445.5 * var(--ux) + (621 - 445.5) * var(--u));
     top: calc(245 * var(--u));
     /* Her length, kept: the pennant still ends at 836. */
     --bw: 215;

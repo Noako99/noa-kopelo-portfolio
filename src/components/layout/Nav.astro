@@ -67,13 +67,14 @@ const { canvas = false } = Astro.props;
 
   .site-nav.canvas .nav-cv {
     position: absolute;
-    left: calc(47 * var(--u));
+    left: calc(47 * var(--ux, var(--u)));
     top: calc(35 * var(--u));
   }
 
+  /* CONTACT keeps its 63 from CV, so the pair spreads as one. */
   .site-nav.canvas .contact {
     position: absolute;
-    left: calc(110 * var(--u));
+    left: calc(47 * var(--ux, var(--u)) + 63 * var(--u));
     top: calc(35 * var(--u));
   }
 
