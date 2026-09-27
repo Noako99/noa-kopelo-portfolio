@@ -22,8 +22,10 @@ const description =
     stays={[
       /* Figma keeps these two beside the text: "2 27" and "2-6 (0-05-19-20) 1". */
       /* Exactly where "HOVER 1 fixed" puts it, so it does not jump on the way in. */
-      { video: `${base}/media/noa-atalia-clip`, x: 1430, y: 122, w: 237, h: 322 },
-      { video: `${base}/media/car-fight`, x: 62, y: 582, w: 466, h: 262 },
+      /* On a phone the two corners come together: the tall clip at the
+         right, the wide one overlapping its foot from the left. */
+      { video: `${base}/media/noa-atalia-clip`, x: 1430, y: 122, w: 237, h: 322, m: { x: 214, y: 0, w: 156 } },
+      { video: `${base}/media/car-fight`, x: 62, y: 582, w: 466, h: 262, m: { x: 20, y: 132, w: 236 } },
     ]}
   />
 

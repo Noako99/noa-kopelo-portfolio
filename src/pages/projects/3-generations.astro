@@ -26,17 +26,19 @@ const pieces = [
      ride as one column at one depth: left to the default cycle they fell in
      different bands, and at the stronger parallax each hex ran into the
      swatch under it. They climb faster than the film beside them. */
-  { color: '#E2ECF4', label: 'E2ECF4', x: 108, y: 1040, w: 99, h: 95, depth: 0.08 },
-  { color: '#CFD6BB', label: 'CFD6BB', x: 108, y: 1181, w: 99, h: 95, depth: 0.08 },
-  { color: '#DCD7B9', label: 'DCD7B9', x: 108, y: 1318, w: 99, h: 95, depth: 0.08 },
-  { color: '#ECE2CF', label: 'ECE2CF', x: 108, y: 1455, w: 99, h: 95, depth: 0.08 },
-  { color: '#ED9A6E', label: 'ED9A6E', x: 108, y: 1593, w: 99, h: 95, depth: 0.08 },
+  { color: '#E2ECF4', label: 'E2ECF4', x: 108, y: 1040, w: 99, h: 95, depth: 0.08, m: { x: 20, y: 40, w: 52 } },
+  { color: '#CFD6BB', label: 'CFD6BB', x: 108, y: 1181, w: 99, h: 95, depth: 0.08, m: { x: 94.5, y: 40, w: 52 } },
+  { color: '#DCD7B9', label: 'DCD7B9', x: 108, y: 1318, w: 99, h: 95, depth: 0.08, m: { x: 169, y: 40, w: 52 } },
+  { color: '#ECE2CF', label: 'ECE2CF', x: 108, y: 1455, w: 99, h: 95, depth: 0.08, m: { x: 243.5, y: 40, w: 52 } },
+  { color: '#ED9A6E', label: 'ED9A6E', x: 108, y: 1593, w: 99, h: 95, depth: 0.08, m: { x: 318, y: 40, w: 52 } },
 
-  { video: `${base}/media/three-generations`, controls: true, formats: ['mp4'], x: 292, y: 1030, w: 1130, h: 701 },
+  /* On a phone the film takes the whole column, so the palette runs as a
+     row above it and the three portraits sit side by side under it. */
+  { video: `${base}/media/three-generations`, controls: true, formats: ['mp4'], x: 292, y: 1030, w: 1130, h: 701, m: { x: 20, y: 124, w: 350 } },
   /* Figma lays them out "Untitled-1-03", "-01", "-02" from left to right. */
-  { src: avatar3, alt: 'Jerusalem, 2022', x: 89, y: 1789, w: 421, h: 421 },
-  { src: avatar1, alt: 'Jerusalem, 1989', x: 545, y: 1789, w: 421, h: 421 },
-  { src: avatar2, alt: 'Jerusalem, 1956', x: 1001, y: 1789, w: 421, h: 421 },
+  { src: avatar3, alt: 'Jerusalem, 2022', x: 89, y: 1789, w: 421, h: 421, m: { x: 20, y: 369, w: 110 } },
+  { src: avatar1, alt: 'Jerusalem, 1989', x: 545, y: 1789, w: 421, h: 421, m: { x: 140, y: 369, w: 110 } },
+  { src: avatar2, alt: 'Jerusalem, 1956', x: 1001, y: 1789, w: 421, h: 421, m: { x: 260, y: 369, w: 110 } },
 ];
 ---
 
@@ -48,17 +50,20 @@ const pieces = [
     description={description}
     stays={[
       /* The five buildings, exactly where Figma scatters them over the fold. */
-      { src: building3, x: 301, y: -68, w: 382, h: 382 },
-      { src: building1, x: 733, y: 46, w: 382, h: 381 },
-      { src: building4, x: 1156, y: 134, w: 381, h: 382 },
-      { src: building2, x: 47, y: 249, w: 381, h: 382 },
-      { src: building5, x: 321, y: 582, w: 382, h: 382 },
+      /* On a phone the six gather into two staggered rows across the
+         column, each at 160 — they spread over the whole desktop frame and,
+         scaled down as one, came out a thumbnail each. */
+      { src: building3, x: 301, y: -68, w: 382, h: 382, m: { x: 0, y: -30, w: 160 } },
+      { src: building1, x: 733, y: 46, w: 382, h: 381, m: { x: 118, y: 0, w: 160 } },
+      { src: building4, x: 1156, y: 134, w: 381, h: 382, m: { x: 236, y: -24, w: 160 } },
+      { src: building2, x: 47, y: 249, w: 381, h: 382, m: { x: 10, y: 88, w: 160 } },
+      { src: building5, x: 321, y: 582, w: 382, h: 382, m: { x: 124, y: 70, w: 160 } },
       /* The hover carries two more. Old Bezalel (building 6) stays in the
          hover only. Building 7, scaled like the five above (the hover's x
          times 1512/1728), would land on the description, so it takes the
          open ground right of it, placed by its own ink rather than its 382
          square: ink 1400-1610 x 640-853, 167 clear of the column. */
-      { src: building7, x: 1348, y: 524, w: 382, h: 381 },
+      { src: building7, x: 1348, y: 524, w: 382, h: 381, m: { x: 226, y: 84, w: 160 } },
     ]}
   />
 

@@ -157,59 +157,59 @@ const { canvas = false } = Astro.props;
   }
 
   /* ===== MOBILE =====
-     No room to open sideways, so the links stack under the word instead. */
-  @media (max-width: 900px) {
+     One bar across the top of the page, not pinned — it scrolls away with the
+     page rather than riding over the content. CV sits on the 20 margin at the
+     left, CONTACT on the one at the right, on one baseline; CONTACT's links
+     drop under it, right-aligned. */
+  @media (max-width: 640px) {
     .site-nav.canvas {
-      --u: 1px;
-      position: fixed;
+      position: absolute;
       inset: auto;
-      top: var(--content-top);
-      left: var(--content-left);
+      top: calc(24 * var(--m));
+      left: calc(20 * var(--m));
+      right: calc(20 * var(--m));
       display: flex;
-      align-items: flex-start;
-      gap: 2.6rem;
+      justify-content: space-between;
+      align-items: baseline;
       pointer-events: auto;
+      z-index: 110;
     }
 
     .site-nav.canvas .nav-cv,
     .site-nav.canvas .contact {
-      position: static;
+      position: relative;
+      left: auto;
+      top: auto;
     }
 
-    .site-nav.canvas .contact {
-      position: relative;
+    .nav-link {
+      font-size: calc(16 * var(--m));
     }
 
     .contact-toggle[aria-expanded='true'] {
-      letter-spacing: -0.04em;
+      letter-spacing: 0.1em;
     }
 
     .contact-links {
       position: absolute;
-      top: calc(100% + 0.75rem);
-      left: 0;
+      top: calc(100% + 10 * var(--m));
+      left: auto;
+      right: 0;
       height: auto;
       display: flex;
       flex-direction: column;
-      gap: 0.6rem;
+      align-items: flex-end;
+      gap: calc(8 * var(--m));
     }
 
     .contact-link {
       position: static;
-      transform: translateY(-0.4rem);
-      font-size: 1rem;
+      transform: translateY(calc(-6 * var(--m)));
+      font-size: calc(13 * var(--m));
     }
 
     .contact.is-open .contact-link {
       transform: none;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .site-nav:not(.canvas) {
-      top: 1.25rem;
-      left: 1.25rem;
-      gap: 1.5rem;
     }
   }
 </style>

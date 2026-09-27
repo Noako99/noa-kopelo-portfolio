@@ -8,7 +8,12 @@ import VimeoEmbed from '@components/project/VimeoEmbed.astro';
    a zoomed-in part of it. */
 type Crop = { left: number; top: number; w: number; h: number };
 
-type Item = { x: number; y: number; w: number; h: number; depth?: number; lift?: number; rest?: number; grow?: number; crop?: Crop; rotate?: number; group?: string } & (
+/* `m` places a piece by hand on a phone, in the 390-wide phone frame, from the
+   top of the canvas; its height follows its own shape. For pieces the file
+   sets side by side at a width a phone cannot give them both. */
+type Mobile = { x: number; y: number; w: number };
+
+type Item = { x: number; y: number; w: number; h: number; depth?: number; lift?: number; rest?: number; grow?: number; crop?: Crop; rotate?: number; group?: string; m?: Mobile } & (
   | { src: ImageMetadata; alt?: string }
   | { video: string; controls?: boolean; formats?: string[]; slide?: boolean }
   | { vimeo: string; title: string }
@@ -49,10 +54,11 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
     <div
       class="item"
       class:list={[{ sized: item.rest != null, turned: !!item.rotate }]}
-      style={`--x:${item.x}; --y:${item.y - offsetY}; --w:${item.w}; --h:${item.h};${item.lift ? ` --z:${item.lift};` : ''}${item.rest != null ? ` --rest:${item.rest}; --grow:${item.grow ?? 1};` : ''}${item.rotate ? ` --turn:${item.rotate}deg;` : ''}`}
+      style={`${item.m ? `--smx:${item.m.x}; --smy:${item.m.y}; --smw:${item.m.w}; ` : ''}--x:${item.x}; --y:${item.y - offsetY}; --w:${item.w}; --h:${item.h};${item.lift ? ` --z:${item.lift};` : ''}${item.rest != null ? ` --rest:${item.rest}; --grow:${item.grow ?? 1};` : ''}${item.rotate ? ` --turn:${item.rotate}deg;` : ''}`}
       data-drift={item.depth ?? driftFor(item.y)}
       data-auto={item.depth == null ? '' : undefined}
       data-group={item.group}
+      data-m={item.m ? '' : undefined}
     >
       {'vimeo' in item ? (
         <VimeoEmbed id={item.vimeo} title={item.title} />
@@ -202,33 +208,47 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
     color: var(--color-text);
   }
 
-  /* On a phone the frame is unreadable at this scale, so it unwinds into a
-     single column in the order Figma stacks it. */
+  /* ===== PHONE =====
+     The frame keeps its composition on a phone, redrawn for the 390-wide
+     phone frame (--m is one of its pixels): every piece is scaled by --k,
+     large enough to read, but no wider than the 350 column; the frame's
+     vertical spacing is scaled by the same --k, so pieces stacked in the file
+     overlap here exactly as they do there; and each piece keeps its place
+     across the width in proportion — its middle at the same share of the
+     column as of the frame — pulled in to sit inside the 20 margins. Pieces
+     side by side in the file therefore close up and overlap: that is the
+     phone's version of the arrangement, not a single column. */
   @media (max-width: 640px) {
     .project-canvas {
-      width: auto;
-      height: auto;
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-lg);
-      padding: var(--space-xl) var(--space-lg) 0 var(--content-left);
+      --k: 0.37;
+      --ub: calc(var(--k) * var(--m));
+      width: 100%;
+      height: calc(var(--fh) * var(--ub));
     }
 
     .item {
-      position: static;
-      width: auto;
-      height: auto;
-      transform: none !important;
+      --iw: min(calc(var(--w) * var(--ub)), calc(350 * var(--m)));
+      width: var(--iw);
+      height: min(calc(var(--h) * var(--ub)), calc(350 * var(--h) / var(--w) * var(--m)));
+      left: clamp(
+        calc(20 * var(--m)),
+        calc((20 + (var(--x) + var(--w) / 2) * 350 / var(--fw)) * var(--m) - var(--iw) / 2),
+        calc(370 * var(--m) - var(--iw))
+      );
+      top: calc(var(--y) * var(--ub));
     }
 
-    .item :global(img),
-    .item video {
-      height: auto;
+    .item[data-m] {
+      --iw: calc(var(--smw) * var(--m));
+      left: calc(var(--smx) * var(--m));
+      top: calc(var(--smy) * var(--m));
+      height: calc(var(--smw) * var(--h) / var(--w) * var(--m));
     }
 
-    .crop {
-      position: static;
-      aspect-ratio: var(--w) / var(--h);
+    /* The hex under a swatch would shrink with the frame to nothing. */
+    .swatch-label {
+      margin-top: calc(4 * var(--m));
+      font-size: calc(9 * var(--m));
     }
   }
 
@@ -247,10 +267,11 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
   import { onSmoothScroll } from '../../scripts/smoothScroll';
 
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const flat = window.matchMedia('(max-width: 640px)').matches;
+  /* A phone keeps the parallax, over a shorter travel. */
+  const phone = window.matchMedia('(max-width: 640px)').matches;
   const pieces = [...document.querySelectorAll<HTMLElement>('.project-canvas .item')];
 
-  if (!reduced && !flat && pieces.length) {
+  if (!reduced && pieces.length) {
     /* The piece's resting middle, measured once off the layout. Reading it
        back off getBoundingClientRect every frame fed each frame's own
        transform into the next one, which is what tore the arrangement apart:
@@ -299,7 +320,7 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
       const piece = pieces[i];
       const drift = parseFloat(piece.dataset.drift || '0') * (piece.hasAttribute('data-auto') ? AUTO : 1);
       if (!drift) return 0;
-      const travel = window.innerHeight * 1.9;
+      const travel = window.innerHeight * (phone ? 1.1 : 1.9);
       const reach = window.innerHeight * 0.9;
       /* -1 well below the window, 0 at its middle, +1 well above it. */
       const away = canvasTop + rest[i] - y - window.innerHeight / 2;
@@ -357,7 +378,7 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
   /* The films that slide inside their frames. */
   const slides = [...document.querySelectorAll<HTMLElement>('[data-slide]')];
 
-  if (!reduced && !flat && slides.length) {
+  if (!reduced && slides.length) {
     const move = (y: number) => {
       const middle = window.innerHeight / 2;
       /* The eased position trails the real one; the frames are measured at

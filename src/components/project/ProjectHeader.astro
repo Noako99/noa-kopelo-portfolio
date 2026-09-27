@@ -11,7 +11,12 @@ import type { ImageMetadata } from 'astro';
    turned, both taken straight from the design. */
 type Crop = { left: number; top: number; w: number; h: number };
 
-type Base = { x: number; y: number; w: number; h: number; crop?: Crop; rotate?: number };
+/* `m` places a piece by hand on the phone, in the 390-wide phone frame, from
+   the top of the collage; its height follows its own shape. Pages whose
+   pieces sit too far apart on the desktop frame to scale down as one use it. */
+type Mobile = { x: number; y: number; w: number };
+
+type Base = { x: number; y: number; w: number; h: number; crop?: Crop; rotate?: number; m?: Mobile };
 
 type Stay =
   | ({ src: ImageMetadata } & Base)
@@ -34,19 +39,48 @@ interface Props {
 const { slug, number, title, description, stays = [], frameHeight = 982 } = Astro.props;
 const { title: titleBox, desc } = projectLayout[slug];
 const home = import.meta.env.BASE_URL;
+
+/* On a phone the pieces kept beside the text become one small collage: the
+   same arrangement, overlaps and turns as the frame draws them, scaled as a
+   whole to the phone's 350-wide column (its 390 less the 20 margins) and
+   never taller than 440 — turned pieces then keep inside the margins — and
+   centred. All in the phone frame's own units. */
+const collage = (() => {
+  if (!stays.length) return null;
+  if (stays.every((s) => s.m)) {
+    return { x0: 0, y0: 0, sc: 0, left: 0, height: Math.max(...stays.map((s) => s.m!.y + (s.m!.w * s.h) / s.w)) };
+  }
+  const x0 = Math.min(...stays.map((s) => s.x));
+  const y0 = Math.min(...stays.map((s) => s.y));
+  const bw = Math.max(...stays.map((s) => s.x + s.w)) - x0;
+  const bh = Math.max(...stays.map((s) => s.y + s.h)) - y0;
+  const sc = Math.min(350 / bw, 440 / bh);
+  return { x0, y0, sc, left: (390 - bw * sc) / 2, height: bh * sc };
+})();
+/* Phone frame: the bar at 24, the tags at 58, the name at 92, then the
+   collage, then the number, title and description. */
+const M_NAME = 92;
+const M_COLLAGE = 190;
+/* A flip-through hangs its page count under its box. */
+const hangs = stays.some((s) => 'flipbook' in s) ? 40 : 0;
+const mTextTop = collage ? M_COLLAGE + collage.height + 36 + hangs : M_COLLAGE;
 ---
 
 <div class="canvas-wrap" class:list={[{ tall: frameHeight > 982 }]} style={`--fh:${frameHeight};`}>
   <ProjectTags tags={projectTags[slug]} name={`tags-${slug}`} />
 
-  <div class="canvas">
+  <div
+    class="canvas"
+    style={collage ? `--mx0:${collage.x0}; --my0:${collage.y0}; --msc:${collage.sc}; --mleft:${collage.left}; --mcol:${M_COLLAGE}; --mname:${M_NAME}; --mtext:${mTextTop};` : `--mname:${M_NAME}; --mtext:${mTextTop};`}
+  >
     <Nav canvas />
 
     {stays.map((stay) => (
       <div
         class="stay"
         class:list={[{ turned: !!stay.rotate, plain: 'flipbook' in stay || 'phone' in stay }]}
-        style={`--x:${stay.x}; --y:${stay.y}; --w:${stay.w}; --h:${stay.h};${stay.rotate ? ` --turn:${stay.rotate}deg;` : ''}`}
+        data-m={stay.m ? '' : undefined}
+        style={`--x:${stay.x}; --y:${stay.y}; --w:${stay.w}; --h:${stay.h};${stay.rotate ? ` --turn:${stay.rotate}deg;` : ''}${stay.m ? ` --smx:${stay.m.x}; --smy:${stay.m.y}; --smw:${stay.m.w};` : ''}`}
       >
         {'video' in stay ? (
           <video autoplay muted loop playsinline preload="metadata">
@@ -371,74 +405,92 @@ const home = import.meta.env.BASE_URL;
     }
   }
 
+  /* ===== PHONE =====
+     Drawn on a 390-wide frame (--m is one of its pixels), everything on the
+     20 margins: the bar and the tags across the top, the name, the collage
+     of the pieces kept beside the text, then the number, title, description
+     and arrow, left-aligned in one column. */
   @media (max-width: 640px) {
-    .canvas-wrap {
-      --u: 1px;
+    .canvas-wrap,
+    .canvas-wrap.tall {
       display: block;
       width: auto;
       height: auto;
+      min-height: 0;
+      padding-top: 0;
       overflow: visible;
     }
 
-    .canvas {
+    .canvas-wrap.tall :global(.project-tags) {
+      top: calc(58 * var(--m));
+    }
+
+    .canvas,
+    .canvas-wrap.tall .canvas {
       width: auto;
       height: auto;
-      padding: 6rem var(--space-lg) var(--space-xl) var(--content-left);
-    }
-
-    .stay {
-      position: static;
-      width: auto;
-      height: auto;
-      margin-bottom: var(--space-lg);
-      transform: none !important;
-    }
-
-    .crop {
-      position: static;
-      aspect-ratio: var(--w) / var(--h);
-    }
-
-    .name,
-    .project-head,
-    .project-title,
-    .description,
-    .brand-mark {
-      position: static;
-      width: auto;
-      transform: none;
-      white-space: normal;
-      display: block;
+      padding: calc(var(--mtext) * var(--m)) calc(20 * var(--m)) calc(24 * var(--m));
     }
 
     .name {
-      font-size: clamp(2.5rem, 12vw, 4rem);
+      left: calc(20 * var(--m));
+      top: calc(var(--mname) * var(--m));
+      transform: none;
+      font-size: calc(58 * var(--m));
       text-align: left;
-      margin-bottom: var(--space-lg);
+    }
+
+    /* Each piece at its place in the frame, the whole scaled as one. */
+    .stay {
+      left: calc((var(--mleft) + (var(--x) - var(--mx0)) * var(--msc)) * var(--m));
+      top: calc((var(--mcol) + (var(--y) - var(--my0)) * var(--msc)) * var(--m));
+      width: calc(var(--w) * var(--msc) * var(--m));
+      height: calc(var(--h) * var(--msc) * var(--m));
+    }
+
+    .stay[data-m] {
+      left: calc(var(--smx) * var(--m));
+      top: calc((var(--mcol) + var(--smy)) * var(--m));
+      width: calc(var(--smw) * var(--m));
+      height: calc(var(--smw) * var(--h) / var(--w) * var(--m));
+    }
+
+    .project-head {
+      position: static;
+    }
+
+    .project-title {
+      width: auto;
     }
 
     .num,
     .title {
-      font-size: 1.1rem;
+      font-size: calc(14 * var(--m));
     }
 
     .description {
-      margin-top: var(--space-md);
-      font-size: 1rem;
-      letter-spacing: 0.15em;
+      width: auto;
+      margin-top: calc(14 * var(--m));
+      font-size: calc(12 * var(--m));
+      letter-spacing: 0.16em;
+      line-height: 1.4;
     }
 
+    .scroll-cue {
+      width: calc(22 * var(--m));
+      height: calc(22 * var(--m));
+      margin-top: calc(24 * var(--m));
+    }
+
+    /* Pinned in a corner it would sit on the text of a phone's narrow
+       column, so here it takes the middle of the top bar, between CV and
+       CONTACT, and scrolls away with it — still the way home. */
     .brand-mark {
-      /* Its own containing block, so the face stays on it. */
-      position: relative;
-      width: 1.25rem;
-      /* 30 x 28 in the file. */
-      height: 1.167rem;
-      margin-top: var(--space-md);
-    }
-
-    .mark-face {
-      opacity: 1;
+      position: absolute;
+      left: calc(50% - 12 * var(--m));
+      top: calc(20 * var(--m));
+      width: calc(24 * var(--m));
+      height: calc(22.4 * var(--m));
     }
   }
 </style>

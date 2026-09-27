@@ -59,6 +59,11 @@
      design outside a canvas needs it too. */
   --u: min(calc(100vw / 1728), calc(100vh / 982));
 
+  /* One pixel of the 390-wide phone frame the mobile layouts are drawn on.
+     It follows the phone's width, and stops growing at 1.4px so a small
+     tablet gets the phone layout a little larger rather than stretched. */
+  --m: min(calc(100vw / 390), 1.4px);
+
   /* Colors — from the Figma design system */
   --color-bg: #fafaf4;
   --color-text: #000000;
@@ -151,7 +156,7 @@ body.home-fixed {
   overflow: hidden;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 640px) {
   body.home-fixed {
     height: auto;
     overflow: visible;

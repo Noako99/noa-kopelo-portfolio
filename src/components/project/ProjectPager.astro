@@ -200,10 +200,21 @@ const links = [
     translate: calc(-8 * var(--u)) 0;
   }
 
+  /* On a phone: the two words on the 20 margins, clear of the corner mark
+     that sits under them at the bottom left. */
   @media (max-width: 640px) {
     .pager {
-      --u: 1px;
-      padding: var(--space-2xl) var(--space-lg) var(--space-xl);
+      --u: var(--m);
+      padding: calc(56 * var(--m)) calc(20 * var(--m)) calc(72 * var(--m));
+    }
+
+    .pager-label {
+      font-size: calc(16 * var(--m));
+    }
+
+    .pager-arrow {
+      width: calc(22 * var(--m));
+      height: calc(22 * var(--m));
     }
 
     /* No hover on a phone: the page stays put. */

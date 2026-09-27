@@ -77,19 +77,18 @@ const { tags, standalone = false, name } = Astro.props;
     border-radius: 4px;
   }
 
-  @media (max-width: 900px) {
+  /* On a phone the row runs under the top bar, between the 20 margins,
+     wrapping as it must. */
+  @media (max-width: 640px) {
     .project-tags {
-      position: static;
-      pointer-events: auto;
-    }
-
-    .project-tags {
-      --u: 1px;
-      margin-bottom: var(--space-lg);
+      top: calc(58 * var(--m));
+      left: calc(20 * var(--m));
+      right: calc(20 * var(--m));
     }
 
     .project-tags .tag {
-      font-size: 0.95rem;
+      font-size: calc(12 * var(--m));
+      line-height: 1.4;
       white-space: normal;
     }
   }
