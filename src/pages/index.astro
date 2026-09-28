@@ -947,8 +947,8 @@ const projects = [
      --m, one of its pixels, so the file's numbers read as they are). The top
      is the frame's own: CONTACT left, the mark in the middle, CV right; Group
      1 at 20,83, 200 x 336, with the name at 69 across it. Then, on the 20
-     margins, Group 3 right, the list, Group 2 left, Group 9 right, and the
-     OPEN FOR COLLAB pennant as a red band across the foot of the page. There is no hover on a phone, so the project that crosses the
+     margins, Group 3 right, the list, Group 2 left, Group 9 right. There is
+     no OPEN FOR COLLAB pennant on a phone. There is no hover on a phone, so the project that crosses the
      middle of the screen as the list is scrolled takes the hover instead:
      its backdrop fills the glass behind the list, the groups step aside, and
      its mark comes up over its number. */
@@ -968,7 +968,7 @@ const projects = [
       display: flex;
       flex-direction: column;
       /* Group 1 runs to 419; the rest follows 44 under it. */
-      padding: calc(463 * var(--m)) calc(20 * var(--m)) 0;
+      padding: calc(463 * var(--m)) calc(20 * var(--m)) calc(56 * var(--m));
     }
 
     .phone-break {
@@ -995,24 +995,9 @@ const projects = [
       font-size: calc(69 * var(--m));
     }
 
-    /* A red band across the foot of the page, edge to edge, always there. */
+    /* No pennant on a phone. */
     .collab-banner {
-      order: 99;
-      position: relative;
-      left: auto;
-      top: auto;
-      align-self: stretch;
-      width: auto;
-      height: calc(48 * var(--m));
-      margin: calc(72 * var(--m)) calc(-20 * var(--m)) 0;
-      padding-left: calc(20 * var(--m));
-      opacity: 1;
-      transition: none;
-      clip-path: none;
-    }
-
-    .collab-label {
-      font-size: calc(18 * var(--m));
+      display: none;
     }
 
     /* The red groups, each sized to its words, on alternate margins. */
