@@ -102,11 +102,20 @@ const { height = 0.8, dwell = 0.7, last = false } = Astro.props;
       transform: none !important;
     }
 
-    .inner :global(img),
-    .inner :global(video),
     .inner :global(.frame) {
       max-height: none;
       max-width: none;
+    }
+
+    /* A film of its own takes the column's width and its own shape, as a
+       Vimeo frame does. Uncapped it came in at its native size — 01's
+       teaser at 1920 wide on a 402 screen. */
+    .inner :global(img),
+    .inner :global(video) {
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+      max-height: none;
     }
   }
 

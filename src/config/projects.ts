@@ -27,7 +27,9 @@ export const projectOrder: { slug: string; number: string; title: string; spot: 
   { slug: 'prime-minister-next-door', number: '02', title: 'The Prime Minister Next Door', spot: { x: 881, y: 400, w: 172 }, backdrop: { src: primeMinisterHoverBg } },
   /* Figma's "Pi7_GIF_CMP 1" — the GIF, re-encoded as a looping mp4. */
   { slug: 'motion-design', number: '03', title: 'Motion Design', spot: { x: 1126, y: 400, w: 167 }, backdrop: { video: `${base}/media/motion-hover` } },
-  { slug: 'more-than-i-love-my-life', number: '04', title: 'More Than I Love My Life', spot: { x: 1357, y: 400, w: 150 }, backdrop: { src: moreHoverBg } },
+  /* "My" and "Life" are held together, so the title breaks as she
+     set it — MORE THAN I LOVE / MY LIFE — and never leaves MY at a line end. */
+  { slug: 'more-than-i-love-my-life', number: '04', title: 'More Than I Love My\u00A0Life', spot: { x: 1357, y: 400, w: 150 }, backdrop: { src: moreHoverBg } },
   { slug: 'secrets', number: '05', title: 'Secrets', spot: { x: 644, y: 552, w: 74 }, backdrop: { src: secretsHoverBg } },
   { slug: '3-generations', number: '06', title: '3 Generations', spot: { x: 880, y: 552, w: 128 }, backdrop: { src: threeGenHoverBg } },
   { slug: 'west-bank-barrier', number: '07', title: 'The West Bank Barrier', spot: { x: 1127, y: 552, w: 117 }, backdrop: { src: westBankHoverBg } },
