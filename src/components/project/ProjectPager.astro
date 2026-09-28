@@ -64,7 +64,8 @@ const links = [
     </a>
   ))}
 
-  <!-- On a phone the project's tag row closes the page, under PREV / NEXT. -->
+  <!-- On a phone the project's tag row sits at the foot of the page, over
+       PREV / NEXT. -->
   <div class="pager-tags">
     <ProjectTags tags={projectTags[slug]} />
   </div>
@@ -222,8 +223,9 @@ const links = [
 
     .pager-tags {
       display: block;
+      order: -1;
       flex-basis: 100%;
-      margin-top: calc(36 * var(--m));
+      margin-bottom: calc(28 * var(--m));
     }
 
     .pager-tags :global(.project-tags) {

@@ -160,7 +160,8 @@ const { canvas = false } = Astro.props;
      One bar across the top of the page, not pinned — it scrolls away with the
      page rather than riding over the content. As Figma's "iPhone 17" frame
      has it: CONTACT on the 20 margin at the left, CV on the one at the right,
-     both at 35 in 20 Extralight; CONTACT's links drop under it. */
+     both at 35 in Extralight — 16, a size under the frame's 20, at her ask;
+     CONTACT's links drop under it. */
   @media (max-width: 640px) {
     .site-nav.canvas {
       position: absolute;
@@ -187,7 +188,7 @@ const { canvas = false } = Astro.props;
     }
 
     .nav-link {
-      font-size: calc(20 * var(--m));
+      font-size: calc(16 * var(--m));
       line-height: 1.35;
     }
 
