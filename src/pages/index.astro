@@ -215,13 +215,20 @@ const projects = [
     ))}
 
     <div class="canvas" data-hover="">
-      <!-- The red groups slide in on the first visit only. Coming back to the
-           home page from a project, the page is simply there as it was left:
-           this runs while the page is still being read, before anything is
-           drawn, so the groups never start their slide. -->
+      <!-- The red groups slide in on every arrival at the site — a typed
+           address, a link from elsewhere, a reload. Only coming back to the
+           home page from one of the projects is the page simply there as it
+           was left. It was once per browser session, so a second visit in
+           the same tab, or a reload, showed no entrance at all. This runs
+           while the page is still being read, before anything is drawn, so
+           the groups never start their slide. -->
       <script is:inline>
         try {
-          if (sessionStorage.getItem('home-entered')) document.currentScript.parentElement.classList.add('entered');
+          var nav = performance.getEntriesByType('navigation')[0];
+          var type = nav ? nav.type : 'navigate';
+          var fromSite = document.referrer && new URL(document.referrer).origin === location.origin;
+          var back = type === 'back_forward' && sessionStorage.getItem('home-entered');
+          if ((type === 'navigate' && fromSite) || back) document.currentScript.parentElement.classList.add('entered');
         } catch (e) {}
       </script>
       <Nav canvas />
@@ -1163,8 +1170,8 @@ const projects = [
     });
   };
 
-  /* The red groups slide in once per visit — see the inline script at the
-     top of the canvas, which skips it on the way back. */
+  /* The red groups slide in on each arrival — see the inline script at the
+     top of the canvas, which skips it on the way back from a project. */
   const boxes = document.querySelectorAll<HTMLElement>('.box');
   const markEntered = () => {
     canvas?.classList.add('entered');
