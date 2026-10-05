@@ -966,7 +966,10 @@ const projects = [
       display: block;
       width: auto;
       height: auto;
+      /* The groups waiting off the glass to slide in would otherwise widen
+         the page sideways. */
       overflow: visible;
+      overflow-x: clip;
     }
 
     .canvas {
@@ -1014,8 +1017,32 @@ const projects = [
       top: auto;
       height: auto;
       padding: calc(16 * var(--m)) calc(16 * var(--m)) calc(18 * var(--m));
-      --from-x: 0px;
-      --from-y: calc(24 * var(--m));
+      --from-x: -100vw;
+      --from-y: 0px;
+    }
+
+    /* The entrance as on the desktop: each group slides in whole from off
+       the glass, from the side it stands against — the left-hand ones from
+       the left, the right-hand ones from the right — one after the other.
+       Only Group 1 and Group 3 are on the first screen, so the two below
+       wait, still out of sight, and slide in as the page is scrolled to
+       them (the script holds them back). A 24 rise was all a phone had,
+       and the two below had played before they were ever seen. */
+    .note-box,
+    .ai-box {
+      --from-x: 100vw;
+    }
+
+    .skills-box {
+      --delay: 0;
+    }
+
+    .ai-box {
+      --delay: 250;
+    }
+
+    .box.waiting {
+      animation-play-state: paused;
     }
 
     /* Figma's Group 1, where the frame draws it. */
@@ -1189,6 +1216,25 @@ const projects = [
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) markEntered();
 
   const phone = window.matchMedia('(max-width: 640px)');
+
+  /* On a phone each group holds its slide until the page reaches it. Its
+     box is still off the glass, clipped, so the browser would never count
+     it as seen; the slide is only sideways, though, so its top is already
+     where it will land, and that is what is watched. */
+  if (phone.matches && !canvas?.classList.contains('entered')) {
+    const waiting = new Set(boxes);
+    const reach = () => {
+      for (const box of waiting) {
+        if (box.getBoundingClientRect().top > window.innerHeight * 0.85) continue;
+        box.classList.remove('waiting');
+        waiting.delete(box);
+      }
+      if (!waiting.size) removeEventListener('scroll', reach);
+    };
+    boxes.forEach((box) => box.classList.add('waiting'));
+    addEventListener('scroll', reach, { passive: true });
+    reach();
+  }
 
   links.forEach((link) => {
     const slug = link.dataset.slug ?? null;
