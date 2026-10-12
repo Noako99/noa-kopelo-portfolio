@@ -318,11 +318,6 @@ const mTextTop = collage ? M_COLLAGE + collage.height + 36 + hangs : M_COLLAGE;
     color: var(--color-text);
   }
 
-  /* Pinned to the window at the spot it has in the frame, so it rides down
-     with the scroll instead of leaving with the first screen. The canvas is
-     pinned to the window's left edge and centred in its height, so 47,915 in
-     the frame is 47u from the left and 50vh + (915 - 491)u from the top. The
-     tall pages pad the canvas by that same half, so it holds there too. */
   /* 26 x 26 in the file, drawn in the accent red with a hairline stroke. */
   .scroll-cue {
     display: block;
@@ -338,11 +333,17 @@ const mTextTop = collage ? M_COLLAGE + collage.height + 36 + hangs : M_COLLAGE;
     vector-effect: non-scaling-stroke;
   }
 
+  /* Pinned to the window, so it rides down with the scroll instead of
+     leaving with the first screen. Figma leaves 982 - 943 = 39 under it, and
+     it keeps those 39 from the window's bottom. It was placed from the
+     window's middle, as the frame is, but a window taller than the frame —
+     a full screen — carried it up off the bottom and onto PREV, which the
+     pager holds 80 from the bottom on every window. */
   .brand-mark {
     position: fixed;
     z-index: 100;
     left: calc(47 * var(--ux));
-    top: calc(50vh + (915 - 491) * var(--u));
+    bottom: calc(39 * var(--u));
     width: calc(30 * var(--u));
     height: calc(28 * var(--u));
     display: block;
@@ -491,6 +492,7 @@ const mTextTop = collage ? M_COLLAGE + collage.height + 36 + hangs : M_COLLAGE;
       position: absolute;
       left: calc(50% - 11 * var(--m));
       top: calc(35.5 * var(--m));
+      bottom: auto;
       width: calc(22 * var(--m));
       height: calc(20.5 * var(--m));
     }
