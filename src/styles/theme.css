@@ -165,6 +165,36 @@ body.home-fixed {
   }
 }
 
+/* The mark's hello on a phone, where nothing can hover it: each page opens
+   with it rocking twice on its base with its face showing, the sway the
+   desktop gives it on hover, then it settles upright and the face goes.
+   Used by the home page and the project header. */
+@keyframes mark-hello {
+  0%,
+  100% {
+    transform: none;
+  }
+  12.5%,
+  62.5% {
+    transform: rotate(-5deg);
+  }
+  37.5%,
+  87.5% {
+    transform: rotate(5deg);
+  }
+}
+
+@keyframes face-hello {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  8%,
+  85% {
+    opacity: 1;
+  }
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   * {

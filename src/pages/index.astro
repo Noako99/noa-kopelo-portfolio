@@ -1162,6 +1162,24 @@ const projects = [
       top: calc(35.5 * var(--m));
       width: calc(22 * var(--m));
       height: calc(20.5 * var(--m));
+      transition: top 300ms ease;
+    }
+
+    /* The bar holds still while CONTACT's links push the page down under
+       it (see Nav): the mark is in the page, so it is lifted back by as
+       much as the page goes down. */
+    :global(html.contact-open) .collab-mark {
+      top: calc((35.5 - 66) * var(--m));
+    }
+  }
+
+  @media (max-width: 640px) and (prefers-reduced-motion: no-preference) {
+    .collab-mark {
+      animation: mark-hello 3.6s ease-in-out 400ms both;
+    }
+
+    .collab-mark .mark-face {
+      animation: face-hello 3.6s ease 400ms both;
     }
   }
 </style>

@@ -217,6 +217,27 @@ const { canvas = false } = Astro.props;
     .contact.is-open .contact-link {
       transform: none;
     }
+
+    /* The three links run down the left margin, where the name and Group 1
+       begin, and they opened on top of them. Now the page steps down to
+       make room — 66, the links' depth past where the page's first things
+       start, plus a gap — while the bar itself is lifted back by the same
+       amount and holds still. */
+    :global(main) {
+      transition: margin-top 300ms ease;
+    }
+
+    :global(html.contact-open main) {
+      margin-top: calc(66 * var(--m));
+    }
+
+    .site-nav.canvas {
+      transition: top 300ms ease;
+    }
+
+    :global(html.contact-open) .site-nav.canvas {
+      top: calc((35 - 66) * var(--m));
+    }
   }
 </style>
 
@@ -227,6 +248,8 @@ const { canvas = false } = Astro.props;
 
   const setOpen = (open: boolean) => {
     contact?.classList.toggle('is-open', open);
+    /* For the page to make room under the links on a phone. */
+    document.documentElement.classList.toggle('contact-open', open);
     toggle?.setAttribute('aria-expanded', String(open));
     /* Keep the links out of the tab order while they are invisible. */
     links?.forEach((link) => link.setAttribute('tabindex', open ? '0' : '-1'));
