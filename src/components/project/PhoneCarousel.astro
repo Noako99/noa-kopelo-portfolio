@@ -35,6 +35,10 @@ const { films, label = 'Motion pieces' } = Astro.props;
   <button class="arrow next" type="button" data-next aria-label="Next piece"><span class="mark"></span></button>
 
   <p class="count"><span data-current>1</span> / {films.length}</p>
+
+  <!-- A browser lets a film start by itself only in silence, so the sound
+       waits for a tap — on this, or on the screen itself. -->
+  <button class="sound" type="button" data-sound aria-pressed="false">Sound off</button>
 </div>
 
 <style>
@@ -161,6 +165,35 @@ const { films, label = 'Motion pieces' } = Astro.props;
     opacity: 0.55;
   }
 
+  /* Under the count, in the nav's voice. */
+  .sound {
+    position: absolute;
+    left: 50%;
+    top: calc(100% + 2.6rem);
+    transform: translateX(-50%);
+    padding: 0.2rem 0.4rem;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: var(--font-display);
+    font-weight: 200;
+    font-size: clamp(0.75rem, 1.1vw, 1rem);
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    color: var(--color-text);
+    transition: color var(--transition-fast);
+  }
+
+  .sound:hover,
+  .sound[aria-pressed='true'] {
+    color: var(--color-accent);
+  }
+
+  .screen {
+    cursor: pointer;
+  }
+
   @media (max-width: 640px) {
     .phone-carousel {
       position: relative;
@@ -168,6 +201,15 @@ const { films, label = 'Motion pieces' } = Astro.props;
       aspect-ratio: 9 / 19.5;
       max-width: 17rem;
       margin-inline: auto;
+    }
+
+    /* The number and title follow close under the phone here, so the
+       button rides on the count's line, at its right, instead of under it. */
+    .sound {
+      top: calc(100% + 0.6rem);
+      left: auto;
+      right: 0;
+      transform: none;
     }
 
     .prev {
@@ -186,15 +228,19 @@ const { films, label = 'Motion pieces' } = Astro.props;
     const prev = carousel.querySelector<HTMLButtonElement>('[data-prev]');
     const next = carousel.querySelector<HTMLButtonElement>('[data-next]');
     const readout = carousel.querySelector<HTMLElement>('[data-current]');
+    const soundButton = carousel.querySelector<HTMLButtonElement>('[data-sound]');
+    const screen = carousel.querySelector<HTMLElement>('.screen');
     if (!films.length || !prev || !next) continue;
 
     let at = 0;
     let onScreen = false;
+    /* Off until asked for: the films start silent, as a browser insists. */
+    let sound = false;
 
     const play = (film: HTMLElement | undefined) => {
       const video = film?.querySelector('video');
       if (!video) return;
-      video.muted = true;
+      video.muted = !sound;
       /* If it isn't ready yet, start it the moment it is. */
       if (video.readyState < 2) {
         video.addEventListener(
@@ -233,6 +279,21 @@ const { films, label = 'Motion pieces' } = Astro.props;
 
       if (readout) readout.textContent = String(at + 1);
     };
+
+    /* The tap that turns the sound on is what lets the browser play it. */
+    const setSound = (on: boolean) => {
+      sound = on;
+      soundButton?.setAttribute('aria-pressed', String(on));
+      if (soundButton) soundButton.textContent = on ? 'Sound on' : 'Sound off';
+      films.forEach((film) => {
+        const video = film.querySelector('video');
+        if (video) video.muted = !on;
+      });
+      const video = films[at]?.querySelector('video');
+      if (video && onScreen && video.paused) play(films[at]);
+    };
+    soundButton?.addEventListener('click', () => setSound(!sound));
+    screen?.addEventListener('click', () => setSound(!sound));
 
     prev.addEventListener('click', () => show(at - 1));
     next.addEventListener('click', () => show(at + 1));
