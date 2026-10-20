@@ -114,7 +114,7 @@ const mTextTop = collage ? M_COLLAGE + collage.height + 36 + hangs : M_COLLAGE;
     <!-- The description runs on under the title, in the same block, so the gap
          between them is the same on every page however many lines the title
          takes. -->
-    <div class="project-head" class:list={[{ 'grow-left': titleBox.x + desc.w * 1.12 > 1700 }]} style={`--x:${titleBox.x}; --y:${titleBox.y};`}>
+    <div class="project-head" style={`--x:${titleBox.x}; --y:${titleBox.y};`}>
       <div class="project-title" data-slug={slug} style={`--w:${titleBox.w};`}>
         <span class="num" style={`view-transition-name: num-${slug}`}>{number}</span>
         <span class="title" style={`view-transition-name: title-${slug}`}>{title}</span>
@@ -272,15 +272,14 @@ const mTextTop = collage ? M_COLLAGE + collage.height + 36 + hangs : M_COLLAGE;
     transform-origin: 0 100%;
   }
 
-  /* Both grow up from their foot as the page scrolls (the script below). The
-     paragraph grows right, except where that would run it off the frame's
-     right edge — 04, at 1357 — where it grows left instead. */
+  /* Both grow up and to the right from their foot as the page scrolls (the
+     script below), so the title, the paragraph and the arrow under it keep
+     one left edge. 04's paragraph once grew left instead, to stay inside the
+     frame, and parted from the title and the arrow; the paragraph's growth
+     is now small enough that 04's, at 1357 and 352.6 wide, still ends
+     inside the 1728. */
   .description {
     transform-origin: 0 100%;
-  }
-
-  .grow-left .description {
-    transform-origin: 100% 100%;
   }
 
   /* Figma: 18px, -1.26px tracking — set to -0.72px (-0.04em) at her ask.
@@ -545,9 +544,10 @@ const mTextTop = collage ? M_COLLAGE + collage.height + 36 + hangs : M_COLLAGE;
   const phone = window.matchMedia('(max-width: 640px)');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* The title to 1.8 times its size, the paragraph to 1.12. */
-  const TITLE = 0.8;
-  const DESC = 0.12;
+  /* The title to 1.5 times its size (1.8 was too big, at her ask), the
+     paragraph to 1.05 — as far as 04's can go and stay in the frame. */
+  const TITLE = 0.5;
+  const DESC = 0.05;
 
   if (head && title && desc && !reduced) {
     /* How far down the page the title's foot stands at rest: the scroll
