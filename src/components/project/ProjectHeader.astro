@@ -530,14 +530,15 @@ const mTextTop = collage ? M_COLLAGE + collage.height + 36 + hangs : M_COLLAGE;
 </style>
 
 <script>
-  import { onSmoothScroll } from '../../scripts/smoothScroll';
-
   /* On the way down the title grows, and the paragraph under it a little,
-     as the first screen scrolls away — at full size by 30% of a window's
-     scroll, while the title is still well on the glass (it stands at 400). They grow up from their foot: the paragraph keeps its
-     last line where it was and the title rides up on top of it, so nothing
-     is pushed down past the fold onto the pictures below. Read from the
-     eased scroll, like the parallax, so it swells rather than steps. */
+     step for step with the scroll: from nothing at the top of the page to
+     full size by the time the title would have scrolled off the top of the
+     window — so it grows the whole time it is on the glass, and stops the
+     moment the scroll stops. (It first followed the eased scroll and was
+     done within 30% of a window, so it ran on after the wheel and finished
+     in a jump.) They grow up from their foot: the paragraph keeps its last
+     line where it was and the title rides up on top of it, so nothing is
+     pushed down past the fold onto the pictures below. */
   const head = document.querySelector<HTMLElement>('.project-head');
   const title = head?.querySelector<HTMLElement>('.project-title');
   const desc = head?.querySelector<HTMLElement>('.description');
@@ -549,15 +550,40 @@ const mTextTop = collage ? M_COLLAGE + collage.height + 36 + hangs : M_COLLAGE;
   const DESC = 0.12;
 
   if (head && title && desc && !reduced) {
-    onSmoothScroll((y) => {
+    /* How far down the page the title's foot stands at rest: the scroll
+       over which it grows. Measured with the growth taken off. */
+    let range = 1;
+    const measure = () => {
+      const kept = [title.style.transform, desc.style.transform];
+      title.style.transform = desc.style.transform = '';
+      range = Math.max(1, title.getBoundingClientRect().bottom + window.scrollY);
+      [title.style.transform, desc.style.transform] = kept;
+    };
+
+    let ticking = false;
+    const draw = () => {
+      ticking = false;
       if (phone.matches) {
         title.style.transform = desc.style.transform = '';
         return;
       }
-      const g = Math.min(1, Math.max(0, y / (window.innerHeight * 0.3)));
+      const g = Math.min(1, Math.max(0, window.scrollY / range));
       const lift = desc.offsetHeight * DESC * g;
       desc.style.transform = `scale(${(1 + DESC * g).toFixed(4)})`;
       title.style.transform = `translateY(${(-lift).toFixed(2)}px) scale(${(1 + TITLE * g).toFixed(4)})`;
+    };
+    const queue = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(draw);
+    };
+
+    measure();
+    draw();
+    addEventListener('scroll', queue, { passive: true });
+    addEventListener('resize', () => {
+      measure();
+      queue();
     });
   }
 </script>
