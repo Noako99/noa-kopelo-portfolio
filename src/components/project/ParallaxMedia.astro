@@ -53,14 +53,12 @@ const { height = 0.95, dwell = 0.7, last = false } = Astro.props;
     justify-content: center;
   }
 
-  /* Every film the size of 05's, at her ask: 1378 of the 1512 frame, 73 in
-     from either side — 91% of the page's width. (It was the width less 81
-     on each side, smaller on every page.) The height cap is 0.95 of the
-     window, so on any ordinary window the width is what decides. The scale
-     is driven from the script as the film rises, so it arrives rather than
-     just appears. */
+  /* Every film on the site's content margins (--page-span, 05's 73 on
+     either side). The height cap is 0.95 of the window, so on any ordinary
+     window the width is what decides. The scale is driven from the script
+     as the film rises, so it arrives rather than just appears. */
   .inner {
-    width: calc(100vw * 1378 / 1512);
+    width: var(--page-span);
     transform-origin: 50% 50%;
     will-change: transform;
   }

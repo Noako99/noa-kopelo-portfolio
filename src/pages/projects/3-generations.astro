@@ -26,6 +26,14 @@ const description =
 
 /* Straight off the Figma frame "3 Generations" (1512x3117). */
 
+/* On the site's content margins, 73 to 1439: the three portraits fill it,
+   432 each, 35 apart as the file spaces them; the palette keeps its 19 in
+   from the first and the film its right edge on the last. */
+const PORTRAIT = 432;
+const PORTRAIT_STEP = PORTRAIT + 35;
+const PALETTE_X = 73 + 19;
+const FILM_X = 1439 - 1130;
+
 /* The film and everything with it scroll with the page, with no parallax
    of their own: the process now follows them, and drifting at their own
    speeds the portraits closed on it and pulled away again as the page
@@ -47,19 +55,19 @@ const pieces = [
      film beside it move as one block — the same speed, reckoned from the
      block's middle — so the column stays level with the film's top as in the
      file, rather than sliding past it. */
-  { color: '#E2ECF4', label: 'E2ECF4', x: 108, y: 1040, w: 99, h: 95, depth: FILM_DEPTH, group: 'film', m: { x: 20, y: 41.4, w: 53.8 } },
-  { color: '#CFD6BB', label: 'CFD6BB', x: 108, y: 1181, w: 99, h: 95, depth: FILM_DEPTH, group: 'film', m: { x: 97.1, y: 41.4, w: 53.8 } },
-  { color: '#DCD7B9', label: 'DCD7B9', x: 108, y: 1318, w: 99, h: 95, depth: FILM_DEPTH, group: 'film', m: { x: 174.1, y: 41.4, w: 53.8 } },
-  { color: '#ECE2CF', label: 'ECE2CF', x: 108, y: 1455, w: 99, h: 95, depth: FILM_DEPTH, group: 'film', m: { x: 251.2, y: 41.4, w: 53.8 } },
-  { color: '#ED9A6E', label: 'ED9A6E', x: 108, y: 1593, w: 99, h: 95, depth: FILM_DEPTH, group: 'film', m: { x: 328.2, y: 41.4, w: 53.8 } },
+  { color: '#E2ECF4', label: 'E2ECF4', x: PALETTE_X, y: 1040, w: 99, h: 95, depth: FILM_DEPTH, group: 'film', m: { x: 20, y: 41.4, w: 53.8 } },
+  { color: '#CFD6BB', label: 'CFD6BB', x: PALETTE_X, y: 1181, w: 99, h: 95, depth: FILM_DEPTH, group: 'film', m: { x: 97.1, y: 41.4, w: 53.8 } },
+  { color: '#DCD7B9', label: 'DCD7B9', x: PALETTE_X, y: 1318, w: 99, h: 95, depth: FILM_DEPTH, group: 'film', m: { x: 174.1, y: 41.4, w: 53.8 } },
+  { color: '#ECE2CF', label: 'ECE2CF', x: PALETTE_X, y: 1455, w: 99, h: 95, depth: FILM_DEPTH, group: 'film', m: { x: 251.2, y: 41.4, w: 53.8 } },
+  { color: '#ED9A6E', label: 'ED9A6E', x: PALETTE_X, y: 1593, w: 99, h: 95, depth: FILM_DEPTH, group: 'film', m: { x: 328.2, y: 41.4, w: 53.8 } },
 
   /* On a phone the film takes the whole column, so the palette runs as a
      row above it and the three portraits sit side by side under it. */
-  { video: `${base}/media/three-generations`, controls: true, formats: ['mp4'], x: 292, y: 1030, w: 1130, h: 701, depth: FILM_DEPTH, group: 'film', m: { x: 20, y: 128.3, w: 362 } },
+  { video: `${base}/media/three-generations`, controls: true, formats: ['mp4'], x: FILM_X, y: 1030, w: 1130, h: 701, depth: FILM_DEPTH, group: 'film', m: { x: 20, y: 128.3, w: 362 } },
   /* Figma lays them out "Untitled-1-03", "-01", "-02" from left to right. */
-  { src: avatar3, alt: 'Jerusalem, 2022', x: 89, y: 1789, w: 421, h: 421, depth: FILM_DEPTH, group: 'film', m: { x: 20, y: 381.7, w: 113.8 } },
-  { src: avatar1, alt: 'Jerusalem, 1989', x: 545, y: 1789, w: 421, h: 421, depth: FILM_DEPTH, group: 'film', m: { x: 144.1, y: 381.7, w: 113.8 } },
-  { src: avatar2, alt: 'Jerusalem, 1956', x: 1001, y: 1789, w: 421, h: 421, depth: FILM_DEPTH, group: 'film', m: { x: 268.2, y: 381.7, w: 113.8 } },
+  { src: avatar3, alt: 'Jerusalem, 2022', x: 73, y: 1789, w: PORTRAIT, h: PORTRAIT, depth: FILM_DEPTH, group: 'film', m: { x: 20, y: 381.7, w: 113.8 } },
+  { src: avatar1, alt: 'Jerusalem, 1989', x: 73 + PORTRAIT_STEP, y: 1789, w: PORTRAIT, h: PORTRAIT, depth: FILM_DEPTH, group: 'film', m: { x: 144.1, y: 381.7, w: 113.8 } },
+  { src: avatar2, alt: 'Jerusalem, 1956', x: 73 + 2 * PORTRAIT_STEP, y: 1789, w: PORTRAIT, h: PORTRAIT, depth: FILM_DEPTH, group: 'film', m: { x: 268.2, y: 381.7, w: 113.8 } },
 ];
 ---
 
@@ -92,8 +100,7 @@ const pieces = [
 
   <!-- Further down than on 02: the portraits above still drift with the
        scroll, and at 100 they rode up close to it. -->
-  <!-- On the edges of the work above it: the portraits run 89 to 1422. -->
-  <ProcessSection rows={process} gap={260} edges={{ frame: 1512, left: 89, right: 1422 }} />
+  <ProcessSection rows={process} gap={260} />
 
   <ProjectPager slug="3-generations" />
 </BaseLayout>

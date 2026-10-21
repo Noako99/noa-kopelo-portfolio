@@ -53,7 +53,12 @@ const filmWidth = Math.round((775 * 1432) / 900);
 const filmLeft = Math.round((1512 - filmWidth) / 2);
 const filmHeight = Math.round(filmWidth / (1432 / 900));
 const screenTop = filmTop + filmHeight + GAP;
-const screenTop2 = screenTop + 486;                 /* Figma's own row step */
+/* The four laptops on the site's content margins, 73 to 1439: two
+   columns of 680, 6 apart as Figma's 640s were, each 510 high. */
+const SCREEN_W = 680;
+const SCREEN_H = 510;
+const SCREEN_X2 = 73 + SCREEN_W + 6;
+const screenTop2 = screenTop + SCREEN_H + 6;
 
 /* No parallax on 07, at her ask: every piece scrolls with the page, at
    depth 0, and the film no longer slides inside its frame. */
@@ -68,10 +73,10 @@ const GROW = 1 / REST;
 const pieces = [
   { video: `${base}/media/booklet-flip`, formats: ['mp4'], x: bookLeft, y: bookTop, w: bookWidth, h: bookHeight, depth: STILL },
   { video: `${base}/media/west-bank-barrier`, formats: ['mp4'], controls: true, x: filmLeft, y: filmTop, w: filmWidth, h: filmHeight, depth: STILL },
-  { src: screen1, alt: 'The site, on a laptop', x: 113, y: screenTop, w: 640, h: 480, depth: STILL, lift: 1, rest: 1, grow: GROW },
-  { src: screen2, alt: 'The site, on a laptop', x: 759, y: screenTop, w: 640, h: 480, depth: STILL, lift: 2, rest: REST, grow: 1 },
-  { src: screen3, alt: 'The site, on a laptop', x: 113, y: screenTop2, w: 640, h: 480, depth: STILL, lift: 3, rest: REST, grow: 1 },
-  { src: screen4, alt: 'The site, on a laptop', x: 759, y: screenTop2, w: 640, h: 480, depth: STILL, lift: 4, rest: REST, grow: 1 },
+  { src: screen1, alt: 'The site, on a laptop', x: 73, y: screenTop, w: SCREEN_W, h: SCREEN_H, depth: STILL, lift: 1, rest: 1, grow: GROW },
+  { src: screen2, alt: 'The site, on a laptop', x: SCREEN_X2, y: screenTop, w: SCREEN_W, h: SCREEN_H, depth: STILL, lift: 2, rest: REST, grow: 1 },
+  { src: screen3, alt: 'The site, on a laptop', x: 73, y: screenTop2, w: SCREEN_W, h: SCREEN_H, depth: STILL, lift: 3, rest: REST, grow: 1 },
+  { src: screen4, alt: 'The site, on a laptop', x: SCREEN_X2, y: screenTop2, w: SCREEN_W, h: SCREEN_H, depth: STILL, lift: 4, rest: REST, grow: 1 },
 ];
 ---
 

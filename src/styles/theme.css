@@ -66,6 +66,14 @@
      inside the 20 margins is 362 wide, from 20 to 382. */
   --m: min(calc(100vw / 402), 1.4px);
 
+  /* The project pages' one content margin, 05's: its film and grid start
+     73 in on its 1512 frame, and every film, row, grid and process on the
+     site now takes that same 73 on both sides, so the content shares one
+     left and one right edge on every page. CV, the tags and PREV / NEXT
+     keep the home frame's 47. In vw, as the canvases place their pieces. */
+  --page-inset: calc(100vw * 73 / 1512);
+  --page-span: calc(100vw * 1366 / 1512);
+
   /* Colors — from the Figma design system */
   --color-bg: #fafaf4;
   --color-text: #000000;
