@@ -92,7 +92,8 @@ const pieces = [
 
   <!-- Further down than on 02: the portraits above still drift with the
        scroll, and at 100 they rode up close to it. -->
-  <ProcessSection rows={process} gap={260} />
+  <!-- On the edges of the work above it: the portraits run 89 to 1422. -->
+  <ProcessSection rows={process} gap={260} edges={{ frame: 1512, left: 89, right: 1422 }} />
 
   <ProjectPager slug="3-generations" />
 </BaseLayout>

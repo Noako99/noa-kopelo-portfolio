@@ -14,12 +14,20 @@ interface Props {
   /* The gap above it, in Figma units: 100 as above PREV / NEXT, more where
      the work above it still moves with the scroll. */
   gap?: number;
+  /* Edges to line up with the work above, in the units of its Figma frame:
+     where the page's frame is `frame` wide, the process runs from `left` to
+     `right` (06: its portraits, 89 to 1422 of 1512). Without them it keeps
+     the site's 47 margins. */
+  edges?: { frame: number; left: number; right: number };
 }
 
-const { rows, gap = 100 } = Astro.props;
+const { rows, gap = 100, edges } = Astro.props;
+const inset = edges
+  ? `--in-l:calc(100vw * ${edges.left} / ${edges.frame}); --in-w:calc(100vw * ${edges.right - edges.left} / ${edges.frame});`
+  : '';
 ---
 
-<section class="process" aria-labelledby="process-title" style={`--gap:${gap};`}>
+<section class="process" class:list={[{ edged: !!edges }]} aria-labelledby="process-title" style={`--gap:${gap}; ${inset}`}>
   <h2 class="process-title" id="process-title">Process</h2>
   {rows.map((row) => (
     <div class="process-row" class:list={[{ single: row.length === 1 }]}>
@@ -41,6 +49,16 @@ const { rows, gap = 100 } = Astro.props;
   .process {
     --px: calc(100vw / 1728);
     padding: calc(var(--gap) * var(--u)) calc(47 * var(--px)) 0;
+  }
+
+  /* Placed by its left edge and its width, as the canvas places its pieces:
+     a right margin would be taken from the page less its scrollbar, and
+     stop short of the work above. */
+  .process.edged {
+    box-sizing: content-box;
+    width: var(--in-w);
+    padding-left: var(--in-l);
+    padding-right: 0;
   }
 
   /* In the paragraph's voice: 18, uppercase, 0.2em. */
@@ -91,6 +109,13 @@ const { rows, gap = 100 } = Astro.props;
   @media (max-width: 640px) {
     .process {
       padding: calc(var(--gap) * 0.4 * var(--m)) calc(20 * var(--m)) 0;
+    }
+
+    /* On a phone every page keeps the column's 20 margins. */
+    .process.edged {
+      width: auto;
+      padding-left: calc(20 * var(--m));
+      padding-right: calc(20 * var(--m));
     }
 
     .process-title {
