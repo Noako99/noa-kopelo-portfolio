@@ -1189,6 +1189,17 @@ const projects = [
   const links = document.querySelectorAll<HTMLAnchorElement>('.project-link');
   const layers = document.querySelectorAll<HTMLElement>('.hover-bg, .hover-cards, .hover-tags');
 
+  /* Every hover's pictures are decoded ahead of time, once the page itself
+     has loaded. A hidden picture is only downloaded, not decoded, so the
+     first hover drew the backdrop a beat late — and on 06 the buildings,
+     blended onto the map, flashed in full colour with no map under them. */
+  const warm = () =>
+    document
+      .querySelectorAll<HTMLImageElement>('.hover-bg img, .hover-card img')
+      .forEach((img) => void img.decode().catch(() => {}));
+  if (document.readyState === 'complete') warm();
+  else addEventListener('load', warm, { once: true });
+
   /* One shared switch: the backdrop, the floating cards and the tag row for a
      project all carry the same data-for, so a single slug lights up all three.
      Each video offers WebM first and falls back to mp4, and only loads its

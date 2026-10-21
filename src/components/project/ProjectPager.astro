@@ -284,6 +284,32 @@ const links = [
 
     const layers = pager.querySelectorAll<HTMLElement>('.pager-bg');
 
+    /* The two backdrops are fetched and decoded as the foot of the page
+       comes near, so they are ready under the cursor. Left to load on the
+       hover itself — a lazy picture, and a film that loaded nothing in
+       advance — the first hover often brought up nothing at all (04's PREV
+       leads to 03's film). */
+    let warmed = false;
+    const warm = () => {
+      if (warmed || pager.getBoundingClientRect().top > window.innerHeight * 2) return;
+      warmed = true;
+      removeEventListener('scroll', warm);
+      layers.forEach((layer) => {
+        const img = layer.querySelector('img');
+        if (img) {
+          img.loading = 'eager';
+          void img.decode().catch(() => {});
+        }
+        const video = layer.querySelector('video');
+        if (video) {
+          video.preload = 'auto';
+          video.load();
+        }
+      });
+    };
+    addEventListener('scroll', warm, { passive: true });
+    warm();
+
     const show = (dir: string | null) => {
       layers.forEach((layer) => {
         const active = layer.dataset.for === dir;
