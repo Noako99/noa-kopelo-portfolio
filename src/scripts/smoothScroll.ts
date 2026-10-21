@@ -1,49 +1,52 @@
-/* One eased scroll position for every scroll-driven piece on a page.
+/* One smooth scroll for the whole site, and one position every scroll-driven
+   piece is drawn from.
 
-   The page itself scrolls natively — nothing here takes the scroll over. What
-   eases is the position the parallax is drawn from: each frame it closes a
-   share of the distance to the real one, so a piece glides after the scroll
-   and settles, rather than stepping with every notch of the wheel. All the
-   pieces read the same eased position, so they stay in step with each other.
+   The wheel moves a page in notches: left to the browser, the page jumped a
+   notch at a time while the parallax, eased on its own, glided after it and
+   went on floating once the page had stopped — the two out of step, which
+   read as a jumpy scroll. Now Lenis eases the page's scroll itself, and the
+   pieces are drawn straight from that same position each frame, with no
+   easing of their own, so page and pieces move as one.
 
-   Subscribers are called with it on every frame while it is still moving, and
-   once more when it has settled. */
+   On a touch screen Lenis leaves the scroll to the phone, whose own momentum
+   is already smooth; the pieces follow it the same way. With reduced motion
+   asked for, the scroll stays the browser's.
+
+   Subscribers are called with the position on every frame it changes. */
+
+import Lenis from 'lenis';
 
 type Draw = (y: number) => void;
 
-/* The share of the remaining distance closed each frame, at 60fps. Lower
-   floats more; 0.09 settles in about half a second. */
-const EASE = 0.09;
-
 const draws: Draw[] = [];
-let current = typeof window === 'undefined' ? 0 : window.scrollY;
-let running = false;
-let last = 0;
+let lenis: Lenis | null = null;
 
-const tick = (now: number) => {
-  const target = window.scrollY;
-  /* Frame-rate independent: a 120Hz screen closes the same distance per
-     second as a 60Hz one. */
-  const dt = last ? Math.min(64, now - last) : 16.7;
-  last = now;
-  const k = 1 - Math.pow(1 - EASE, dt / 16.7);
-  current += (target - current) * k;
-  if (Math.abs(target - current) < 0.3) current = target;
-
-  for (const draw of draws) draw(current);
-
-  if (current !== target) {
-    requestAnimationFrame(tick);
-  } else {
-    running = false;
-    last = 0;
-  }
+/* Started once per page, from the layout. */
+export const startSmoothScroll = () => {
+  if (lenis || typeof window === 'undefined') return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  /* 0.1 of the remaining distance a frame: the page settles in about half a
+     second after the wheel stops. */
+  lenis = new Lenis({ autoRaf: true, lerp: 0.1 });
 };
 
-const wake = () => {
-  if (running) return;
-  running = true;
-  requestAnimationFrame(tick);
+/* A glide to a spot on the page, through Lenis when it runs, so the two
+   never pull against each other. */
+export const glideTo = (top: number) => {
+  if (lenis) lenis.scrollTo(top);
+  else window.scrollTo({ top, behavior: 'smooth' });
+};
+
+let queued = false;
+const frame = () => {
+  queued = false;
+  const y = window.scrollY;
+  for (const draw of draws) draw(y);
+};
+const queue = () => {
+  if (queued) return;
+  queued = true;
+  requestAnimationFrame(frame);
 };
 
 let listening = false;
@@ -51,15 +54,9 @@ let listening = false;
 export const onSmoothScroll = (draw: Draw) => {
   if (!listening) {
     listening = true;
-    /* Arriving part way down (a reload, a back button) starts from there
-       rather than gliding in from the top. */
-    current = window.scrollY;
-    addEventListener('scroll', wake, { passive: true });
-    addEventListener('resize', () => {
-      for (const d of draws) d(current);
-      wake();
-    });
+    addEventListener('scroll', queue, { passive: true });
+    addEventListener('resize', queue);
   }
   draws.push(draw);
-  draw(current);
+  draw(window.scrollY);
 };

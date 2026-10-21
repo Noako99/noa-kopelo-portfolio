@@ -127,7 +127,7 @@ const { height = 0.8, dwell = 0.7, last = false } = Astro.props;
 </style>
 
 <script>
-  import { onSmoothScroll } from '../../scripts/smoothScroll';
+  import { onSmoothScroll, glideTo } from '../../scripts/smoothScroll';
 
   const stages = [...document.querySelectorAll<HTMLElement>('[data-stage]')];
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -137,9 +137,8 @@ const { height = 0.8, dwell = 0.7, last = false } = Astro.props;
     frame.contentWindow?.postMessage(JSON.stringify({ method }), 'https://player.vimeo.com');
 
   if (stages.length) {
-    /* The growth is drawn from the eased scroll position, so it swells and
-       settles rather than stepping with the wheel; whether it plays follows
-       the real one. */
+    /* The growth is drawn from the site's one smooth scroll position (see
+       smoothScroll), so it swells and settles with the page. */
     const grow = (y: number) => {
       if (reduced) return;
       const vh = window.innerHeight;
@@ -251,7 +250,8 @@ const { height = 0.8, dwell = 0.7, last = false } = Astro.props;
               const off = window.scrollY - landing;
               if (off !== 0 && Math.abs(off) < reach) {
                 gliding = true;
-                window.scrollTo({ top: landing, behavior: reduced ? 'auto' : 'smooth' });
+                if (reduced) window.scrollTo({ top: landing });
+                else glideTo(landing);
                 window.setTimeout(() => (gliding = false), 700);
                 return;
               }

@@ -328,8 +328,8 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
       return -drift * travel * progress;
     };
 
-    /* Drawn from the eased scroll position, so the pieces glide after the
-       scroll and settle instead of stepping with the wheel. */
+    /* Drawn from the site's one smooth scroll position (see smoothScroll),
+       so the pieces move with the page rather than stepping with the wheel. */
     const draw = (y: number) => {
       const canvasTop = canvas.getBoundingClientRect().top + window.scrollY;
       for (let i = 0; i < pieces.length; i++) {
@@ -381,8 +381,8 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
   if (!reduced && slides.length) {
     const move = (y: number) => {
       const middle = window.innerHeight / 2;
-      /* The eased position trails the real one; the frames are measured at
-         the real one, so shift them by the difference. */
+      /* Should the position drawn from ever trail the real one, the frames
+         are measured at the real one, so shift them by the difference. */
       const lag = window.scrollY - y;
       for (const slide of slides) {
         const real = slide.getBoundingClientRect();
