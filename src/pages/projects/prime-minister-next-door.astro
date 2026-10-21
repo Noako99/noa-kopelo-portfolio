@@ -6,6 +6,7 @@ import VimeoEmbed from '@components/project/VimeoEmbed.astro';
 import ParallaxMedia from '@components/project/ParallaxMedia.astro';
 import ProcessSection from '@components/project/ProcessSection.astro';
 import { siteConfig } from '@config/site';
+import { EDGE_L } from '@config/layout';
 import cover from '@assets/projects/prime-minister/cover.jpg';
 import process1 from '@assets/projects/prime-minister/process-1.jpg';
 import process2 from '@assets/projects/prime-minister/process-2.jpg';
@@ -43,7 +44,7 @@ const description =
     description={description}
     stays={[
       /* Figma keeps "frame2 1" at 20,335. */
-      { video: `${base}/media/prime-minister-card`, x: 20, y: 335, w: 498, h: 280 },
+      { video: `${base}/media/prime-minister-card`, x: EDGE_L, y: 335, w: 498, h: 280 },
     ]}
   />
 

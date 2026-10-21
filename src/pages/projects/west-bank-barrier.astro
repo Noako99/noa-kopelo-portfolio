@@ -5,6 +5,7 @@ import ProjectPager from '@components/project/ProjectPager.astro';
 import ProjectCanvas from '@components/project/ProjectCanvas.astro';
 import Flipbook from '@components/project/Flipbook.astro';
 import { siteConfig } from '@config/site';
+import { EDGE_L } from '@config/layout';
 import bookletDetail from '@assets/projects/west-bank-barrier/booklet-detail.jpg';
 import page1 from '@assets/projects/west-bank-barrier/booklet/page-01.png';
 import page2 from '@assets/projects/west-bank-barrier/booklet/page-02.png';
@@ -90,7 +91,7 @@ const pieces = [
     stays={[
       /* "Component 1" — the flip-through — where Figma instances it, beside
          the title and across the fold. */
-      { flipbook: true as const, x: 7, y: 422, w: 1072, h: 630 },
+      { flipbook: true as const, x: EDGE_L, y: 422, w: 1079 - EDGE_L, h: (630 * (1079 - EDGE_L)) / 1072 },
     ]}
   >
     <Flipbook slot="flipbook" spreads={spreads} alt="West Bank Barrier booklet spread" label="The booklet" />

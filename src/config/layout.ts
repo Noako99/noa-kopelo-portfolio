@@ -23,3 +23,9 @@ export const projectLayout: Record<string, { title: Box; desc: { w: number } }> 
   '3-generations': { title: { x: 880, y: 552, w: 128 }, desc: { w: 349 } },
   'west-bank-barrier': { title: { x: 1127, y: 552, w: 125 }, desc: { w: 349 } },
 };
+
+/* The project pages' content margin — 05's 73 on its 1512 frame, on both
+   sides (see --page-inset in theme.css) — in the 1728 frame the opening of
+   every project page is drawn on, for the pictures and films placed there. */
+export const EDGE_L = (73 * 1728) / 1512;
+export const EDGE_R = 1728 - EDGE_L;
