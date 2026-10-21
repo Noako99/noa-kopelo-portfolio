@@ -72,16 +72,17 @@ const { rows, gap = 100 } = Astro.props;
     height: auto;
   }
 
-  /* A picture alone on its row is held to three quarters of the window's
-     height, so it is seen whole, and centred: across the full width 06's
-     sketch stood 906 high, taller than the window. */
+  /* A picture alone on its row is held to 90% of the window's height, so
+     it is seen whole with a little page round it, and centred: across the
+     full width 06's sketch stood 906 high, taller than the window, and at
+     three quarters it read too small. */
   .process-row.single {
     justify-content: center;
   }
 
   .process-row.single :global(img) {
     flex: none;
-    height: 75vh;
+    height: 90vh;
     width: auto;
     max-width: 100%;
     object-fit: contain;
