@@ -60,3 +60,12 @@ export const onSmoothScroll = (draw: Draw) => {
   draws.push(draw);
   draw(window.scrollY);
 };
+
+/* Holds the page still under an overlay, and lets it go again. */
+export const holdScroll = (hold: boolean) => {
+  if (lenis) {
+    if (hold) lenis.stop();
+    else lenis.start();
+  }
+  document.documentElement.style.overflow = hold ? 'hidden' : '';
+};

@@ -1,0 +1,292 @@
+---
+/* Pictures on a page that open large when clicked, one at a time, and page
+   through the rest — with her red arrows, the keyboard's arrows, or a swipe.
+   A click outside the picture, the cross, or Escape closes it.
+
+   `selector` picks the pictures (their <img>s), in the order they are paged
+   through: the order they stand in the page. */
+interface Props {
+  selector: string;
+  label?: string;
+}
+
+const { selector, label = 'Pictures' } = Astro.props;
+---
+
+<div class="lightbox" data-lightbox={selector} role="dialog" aria-modal="true" aria-label={label} hidden>
+  <img class="lb-image" alt="" />
+
+  <button class="lb-arrow lb-prev" type="button" aria-label="Previous picture">
+    <svg viewBox="0 0 26 26" fill="none" aria-hidden="true">
+      <path d="M0.353267 12.208L12.5614 24.4161L24.7695 12.208M12.5614 24.4161L12.5614 -0.000125067" />
+    </svg>
+  </button>
+  <button class="lb-arrow lb-next" type="button" aria-label="Next picture">
+    <svg viewBox="0 0 26 26" fill="none" aria-hidden="true">
+      <path d="M0.353267 12.208L12.5614 24.4161L24.7695 12.208M12.5614 24.4161L12.5614 -0.000125067" />
+    </svg>
+  </button>
+
+  <button class="lb-close" type="button" aria-label="Close">Close</button>
+  <p class="lb-count"><span data-lb-at>1</span> / <span data-lb-of>1</span></p>
+</div>
+
+<style>
+  /* Over everything, on the page's own cream, so the picture stands alone. */
+  .lightbox {
+    --px: calc(100vw / 1728);
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: grid;
+    place-items: center;
+    background: var(--color-bg);
+    opacity: 0;
+    transition: opacity 260ms ease;
+  }
+
+  .lightbox[hidden] {
+    display: none;
+  }
+
+  .lightbox.is-open {
+    opacity: 1;
+  }
+
+  /* As large as the window allows, inside the site's 47 margins. */
+  .lb-image {
+    display: block;
+    max-width: calc(100vw - 2 * 140 * var(--px));
+    max-height: calc(100vh - 2 * 90 * var(--u));
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    transform: scale(0.96);
+    transition: transform 320ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .lightbox.is-open .lb-image {
+    transform: none;
+  }
+
+  /* Her 26x26 arrow, pointing down in the file, turned to point the way —
+     as PREV / NEXT turn it — on the 47 margins. */
+  .lb-arrow {
+    position: absolute;
+    top: 50%;
+    width: calc(44 * var(--u));
+    height: calc(44 * var(--u));
+    margin-top: calc(-22 * var(--u));
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+  }
+
+  .lb-arrow svg {
+    width: calc(26 * var(--u));
+    height: calc(26 * var(--u));
+    overflow: visible;
+    transition: translate 320ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .lb-arrow path {
+    stroke: var(--color-accent);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .lb-prev {
+    left: calc(47 * var(--px));
+  }
+
+  .lb-prev svg {
+    transform: rotate(90deg);
+  }
+
+  .lb-next {
+    right: calc(47 * var(--px));
+  }
+
+  .lb-next svg {
+    transform: rotate(-90deg);
+  }
+
+  .lb-prev:hover svg {
+    translate: calc(-6 * var(--u)) 0;
+  }
+
+  .lb-next:hover svg {
+    translate: calc(6 * var(--u)) 0;
+  }
+
+  /* CLOSE where CV stands across the page, in the nav's voice. */
+  .lb-close {
+    position: absolute;
+    top: calc(35 * var(--u));
+    right: calc(47 * var(--px));
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-weight: 200;
+    font-size: calc(20 * var(--u));
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    color: var(--color-text);
+    transition: color var(--transition-fast);
+  }
+
+  .lb-close:hover {
+    color: var(--color-accent);
+  }
+
+  .lb-count {
+    position: absolute;
+    bottom: calc(35 * var(--u));
+    left: 0;
+    right: 0;
+    margin: 0;
+    text-align: center;
+    font-family: var(--font-display);
+    font-weight: 200;
+    font-size: calc(18 * var(--u));
+    letter-spacing: 0.18em;
+    color: var(--color-text);
+  }
+
+  @media (max-width: 640px) {
+    .lb-image {
+      max-width: calc(100vw - 40 * var(--m));
+      max-height: calc(100vh - 160 * var(--m));
+    }
+
+    .lb-arrow {
+      top: auto;
+      bottom: calc(22 * var(--m));
+      margin: 0;
+      width: calc(44 * var(--m));
+      height: calc(44 * var(--m));
+    }
+
+    .lb-arrow svg {
+      width: calc(22 * var(--m));
+      height: calc(22 * var(--m));
+    }
+
+    .lb-prev {
+      left: calc(10 * var(--m));
+    }
+
+    .lb-next {
+      right: calc(10 * var(--m));
+    }
+
+    .lb-close {
+      top: calc(35 * var(--m));
+      right: calc(20 * var(--m));
+      font-size: calc(16 * var(--m));
+    }
+
+    .lb-count {
+      bottom: calc(35 * var(--m));
+      font-size: calc(12 * var(--m));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lightbox,
+    .lb-image {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { holdScroll } from '../../scripts/smoothScroll';
+
+  for (const box of document.querySelectorAll<HTMLElement>('[data-lightbox]')) {
+    const pictures = [...document.querySelectorAll<HTMLImageElement>(box.dataset.lightbox ?? '')];
+    if (!pictures.length) continue;
+
+    const image = box.querySelector<HTMLImageElement>('.lb-image')!;
+    const at = box.querySelector<HTMLElement>('[data-lb-at]')!;
+    box.querySelector<HTMLElement>('[data-lb-of]')!.textContent = String(pictures.length);
+    let index = 0;
+    let opener: HTMLElement | null = null;
+
+    const show = (i: number) => {
+      index = (i + pictures.length) % pictures.length;
+      const picture = pictures[index];
+      /* The largest the page already has of it. */
+      image.src = picture.currentSrc || picture.src;
+      image.alt = picture.alt;
+      at.textContent = String(index + 1);
+    };
+
+    const open = (i: number, from: HTMLElement) => {
+      opener = from;
+      show(i);
+      box.hidden = false;
+      holdScroll(true);
+      requestAnimationFrame(() => box.classList.add('is-open'));
+      box.querySelector<HTMLButtonElement>('.lb-close')?.focus({ preventScroll: true });
+    };
+
+    const close = () => {
+      box.classList.remove('is-open');
+      holdScroll(false);
+      window.setTimeout(() => (box.hidden = true), 260);
+      opener?.focus({ preventScroll: true });
+    };
+
+    pictures.forEach((picture, i) => {
+      /* Each picture's box takes the click and the keyboard. */
+      const target = (picture.closest('.item') as HTMLElement | null) ?? picture;
+      target.style.cursor = 'zoom-in';
+      target.tabIndex = 0;
+      target.setAttribute('role', 'button');
+      target.setAttribute('aria-label', `Open picture ${i + 1} of ${pictures.length}`);
+      target.addEventListener('click', () => open(i, target));
+      target.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          open(i, target);
+        }
+      });
+    });
+
+    box.querySelector('.lb-prev')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      show(index - 1);
+    });
+    box.querySelector('.lb-next')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      show(index + 1);
+    });
+    box.querySelector('.lb-close')?.addEventListener('click', close);
+    /* A click anywhere but the picture and the arrows closes it. */
+    box.addEventListener('click', (e) => {
+      if (e.target === box) close();
+    });
+    image.addEventListener('click', () => show(index + 1));
+
+    addEventListener('keydown', (e) => {
+      if (box.hidden) return;
+      if (e.key === 'Escape') close();
+      if (e.key === 'ArrowLeft') show(index - 1);
+      if (e.key === 'ArrowRight') show(index + 1);
+    });
+
+    /* A swipe pages on a phone. */
+    let startX = 0;
+    box.addEventListener('touchstart', (e) => (startX = e.touches[0].clientX), { passive: true });
+    box.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) > 40) show(index + (dx < 0 ? 1 : -1));
+    });
+  }
+</script>
