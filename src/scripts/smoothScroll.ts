@@ -25,9 +25,11 @@ let lenis: Lenis | null = null;
 export const startSmoothScroll = () => {
   if (lenis || typeof window === 'undefined') return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  /* 0.1 of the remaining distance a frame: the page settles in about half a
-     second after the wheel stops. */
-  lenis = new Lenis({ autoRaf: true, lerp: 0.1 });
+  /* 0.16 of the remaining distance a frame: the page settles in about a
+     third of a second after the wheel stops — 0.1 floated on too long, at
+     her eye. And each notch carries the page 0.8 of the browser's own
+     step, which ran too fast. */
+  lenis = new Lenis({ autoRaf: true, lerp: 0.16, wheelMultiplier: 0.8 });
 };
 
 /* A glide to a spot on the page, through Lenis when it runs, so the two
