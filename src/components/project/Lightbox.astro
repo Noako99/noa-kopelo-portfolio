@@ -1,7 +1,9 @@
 ---
-/* Pictures on a page that open large when clicked, one at a time, and page
-   through the rest — with her red arrows, the keyboard's arrows, or a swipe.
-   A click outside the picture, the cross, or Escape closes it.
+/* Pictures on a page that open large when clicked, right over the page: the
+   picture grows out of its own spot to the middle of the window, with
+   nothing laid behind it, and pages through the rest — with her red arrows,
+   the keyboard's arrows, a click on the picture, or a swipe. Scrolling on,
+   a click beside it, or Escape sends it back into its place.
 
    `selector` picks the pictures (their <img>s), in the order they are paged
    through: the order they stand in the page. */
@@ -13,7 +15,7 @@ interface Props {
 const { selector, label = 'Pictures' } = Astro.props;
 ---
 
-<div class="lightbox" data-lightbox={selector} role="dialog" aria-modal="true" aria-label={label} hidden>
+<div class="lightbox" data-lightbox={selector} role="dialog" aria-label={label} hidden>
   <img class="lb-image" alt="" />
 
   <button class="lb-arrow lb-prev" type="button" aria-label="Previous picture">
@@ -26,51 +28,40 @@ const { selector, label = 'Pictures' } = Astro.props;
       <path d="M0.353267 12.208L12.5614 24.4161L24.7695 12.208M12.5614 24.4161L12.5614 -0.000125067" />
     </svg>
   </button>
-
-  <button class="lb-close" type="button" aria-label="Close">Close</button>
-  <p class="lb-count"><span data-lb-at>1</span> / <span data-lb-of>1</span></p>
 </div>
 
 <style>
-  /* Over everything, on the page's own cream, so the picture stands alone. */
+  /* A clear layer over the page: it only catches the click beside the
+     picture that puts it away. */
   .lightbox {
     --px: calc(100vw / 1728);
     position: fixed;
     inset: 0;
     z-index: 300;
-    display: grid;
-    place-items: center;
-    background: var(--color-bg);
-    opacity: 0;
-    transition: opacity 260ms ease;
+    cursor: zoom-out;
   }
 
   .lightbox[hidden] {
     display: none;
   }
 
-  .lightbox.is-open {
-    opacity: 1;
-  }
-
-  /* As large as the window allows, inside the site's 47 margins. */
+  /* Placed and sized by the script, from its spot in the page to the
+     middle of the window. A soft shadow lifts it off the page under it. */
   .lb-image {
+    position: fixed;
+    left: 0;
+    top: 0;
     display: block;
-    max-width: calc(100vw - 2 * 140 * var(--px));
-    max-height: calc(100vh - 2 * 90 * var(--u));
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    transform: scale(0.96);
-    transition: transform 320ms cubic-bezier(0.22, 0.61, 0.36, 1);
-  }
-
-  .lightbox.is-open .lb-image {
-    transform: none;
+    max-width: none;
+    transform-origin: 0 0;
+    box-shadow: 0 calc(18 * var(--u)) calc(60 * var(--u)) rgba(0, 0, 0, 0.22);
+    cursor: pointer;
+    transition: transform 420ms cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
   /* Her 26x26 arrow, pointing down in the file, turned to point the way —
-     as PREV / NEXT turn it — on the 47 margins. */
+     as PREV / NEXT turn it — on the 47 margins. They come up once the
+     picture has opened. */
   .lb-arrow {
     position: absolute;
     top: 50%;
@@ -83,6 +74,13 @@ const { selector, label = 'Pictures' } = Astro.props;
     cursor: pointer;
     display: grid;
     place-items: center;
+    opacity: 0;
+    transition: opacity 260ms ease;
+  }
+
+  .lightbox.is-open .lb-arrow {
+    opacity: 1;
+    transition-delay: 220ms;
   }
 
   .lb-arrow svg {
@@ -122,48 +120,7 @@ const { selector, label = 'Pictures' } = Astro.props;
     translate: calc(6 * var(--u)) 0;
   }
 
-  /* CLOSE where CV stands across the page, in the nav's voice. */
-  .lb-close {
-    position: absolute;
-    top: calc(35 * var(--u));
-    right: calc(47 * var(--px));
-    padding: 0;
-    border: 0;
-    background: none;
-    cursor: pointer;
-    font-family: var(--font-display);
-    font-weight: 200;
-    font-size: calc(20 * var(--u));
-    letter-spacing: -0.04em;
-    text-transform: uppercase;
-    color: var(--color-text);
-    transition: color var(--transition-fast);
-  }
-
-  .lb-close:hover {
-    color: var(--color-accent);
-  }
-
-  .lb-count {
-    position: absolute;
-    bottom: calc(35 * var(--u));
-    left: 0;
-    right: 0;
-    margin: 0;
-    text-align: center;
-    font-family: var(--font-display);
-    font-weight: 200;
-    font-size: calc(18 * var(--u));
-    letter-spacing: 0.18em;
-    color: var(--color-text);
-  }
-
   @media (max-width: 640px) {
-    .lb-image {
-      max-width: calc(100vw - 40 * var(--m));
-      max-height: calc(100vh - 160 * var(--m));
-    }
-
     .lb-arrow {
       top: auto;
       bottom: calc(22 * var(--m));
@@ -184,62 +141,90 @@ const { selector, label = 'Pictures' } = Astro.props;
     .lb-next {
       right: calc(10 * var(--m));
     }
-
-    .lb-close {
-      top: calc(35 * var(--m));
-      right: calc(20 * var(--m));
-      font-size: calc(16 * var(--m));
-    }
-
-    .lb-count {
-      bottom: calc(35 * var(--m));
-      font-size: calc(12 * var(--m));
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .lightbox,
-    .lb-image {
+    .lb-image,
+    .lb-arrow {
       transition: none;
     }
   }
 </style>
 
 <script>
-  import { holdScroll } from '../../scripts/smoothScroll';
-
   for (const box of document.querySelectorAll<HTMLElement>('[data-lightbox]')) {
     const pictures = [...document.querySelectorAll<HTMLImageElement>(box.dataset.lightbox ?? '')];
     if (!pictures.length) continue;
 
     const image = box.querySelector<HTMLImageElement>('.lb-image')!;
-    const at = box.querySelector<HTMLElement>('[data-lb-at]')!;
-    box.querySelector<HTMLElement>('[data-lb-of]')!.textContent = String(pictures.length);
+    const phone = window.matchMedia('(max-width: 640px)');
     let index = 0;
+    let open = false;
     let opener: HTMLElement | null = null;
+
+    /* Where a picture opens to: as large as its shape allows in the middle
+       of the window, clear of the arrows on the 47 margins and of the bar. */
+    const spot = (picture: HTMLImageElement) => {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const ratio = (picture.naturalWidth || 1) / (picture.naturalHeight || 1);
+      const roomW = phone.matches ? vw - 40 : vw - 2 * Math.max(120, vw * (140 / 1728));
+      const roomH = phone.matches ? vh - 180 : vh - 2 * Math.max(60, vh * (90 / 982));
+      const w = Math.min(roomW, roomH * ratio);
+      const h = w / ratio;
+      return { x: (vw - w) / 2, y: (vh - h) / 2, w, h };
+    };
+
+    /* The picture laid at a box: placed at the open size, and scaled down
+       from there, so it grows and shrinks on the GPU alone. */
+    const lay = (to: { x: number; y: number; w: number; h: number }, size: { w: number; h: number }) => {
+      image.style.transform = `translate(${to.x}px, ${to.y}px) scale(${to.w / size.w}, ${to.h / size.h})`;
+    };
 
     const show = (i: number) => {
       index = (i + pictures.length) % pictures.length;
       const picture = pictures[index];
-      /* The largest the page already has of it. */
       image.src = picture.currentSrc || picture.src;
       image.alt = picture.alt;
-      at.textContent = String(index + 1);
+      const target = spot(picture);
+      image.style.width = `${target.w}px`;
+      image.style.height = `${target.h}px`;
+      lay(target, target);
     };
 
-    const open = (i: number, from: HTMLElement) => {
+    const thumb = (i: number) => {
+      const r = pictures[i].getBoundingClientRect();
+      return { x: r.left, y: r.top, w: r.width, h: r.height };
+    };
+
+    const openAt = (i: number, from: HTMLElement) => {
       opener = from;
-      show(i);
+      index = i;
+      const target = spot(pictures[i]);
+      image.src = pictures[i].currentSrc || pictures[i].src;
+      image.alt = pictures[i].alt;
+      image.style.width = `${target.w}px`;
+      image.style.height = `${target.h}px`;
+      /* Out of its own spot, without a transition, then to the middle. */
+      image.style.transition = 'none';
+      lay(thumb(i), target);
       box.hidden = false;
-      holdScroll(true);
-      requestAnimationFrame(() => box.classList.add('is-open'));
-      box.querySelector<HTMLButtonElement>('.lb-close')?.focus({ preventScroll: true });
+      void image.offsetWidth;
+      image.style.transition = '';
+      lay(target, target);
+      box.classList.add('is-open');
+      open = true;
     };
 
     const close = () => {
+      if (!open) return;
+      open = false;
       box.classList.remove('is-open');
-      holdScroll(false);
-      window.setTimeout(() => (box.hidden = true), 260);
+      /* Back into the spot of the picture it shows now. */
+      lay(thumb(index), { w: parseFloat(image.style.width), h: parseFloat(image.style.height) });
+      window.setTimeout(() => {
+        if (!open) box.hidden = true;
+      }, 420);
       opener?.focus({ preventScroll: true });
     };
 
@@ -250,11 +235,11 @@ const { selector, label = 'Pictures' } = Astro.props;
       target.tabIndex = 0;
       target.setAttribute('role', 'button');
       target.setAttribute('aria-label', `Open picture ${i + 1} of ${pictures.length}`);
-      target.addEventListener('click', () => open(i, target));
+      target.addEventListener('click', () => openAt(i, target));
       target.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          open(i, target);
+          openAt(i, target);
         }
       });
     });
@@ -267,26 +252,36 @@ const { selector, label = 'Pictures' } = Astro.props;
       e.stopPropagation();
       show(index + 1);
     });
-    box.querySelector('.lb-close')?.addEventListener('click', close);
-    /* A click anywhere but the picture and the arrows closes it. */
-    box.addEventListener('click', (e) => {
-      if (e.target === box) close();
+    image.addEventListener('click', (e) => {
+      e.stopPropagation();
+      show(index + 1);
     });
-    image.addEventListener('click', () => show(index + 1));
+    /* A click beside it puts it away. */
+    box.addEventListener('click', close);
 
     addEventListener('keydown', (e) => {
-      if (box.hidden) return;
+      if (!open) return;
       if (e.key === 'Escape') close();
       if (e.key === 'ArrowLeft') show(index - 1);
       if (e.key === 'ArrowRight') show(index + 1);
     });
 
-    /* A swipe pages on a phone. */
+    /* Scrolling on puts it back too: the page carries on under it. */
+    addEventListener('wheel', () => open && close(), { passive: true });
+    addEventListener('resize', () => open && show(index));
+
+    /* A swipe pages on a phone; a drag up or down puts it away. */
     let startX = 0;
-    box.addEventListener('touchstart', (e) => (startX = e.touches[0].clientX), { passive: true });
+    let startY = 0;
+    box.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    }, { passive: true });
     box.addEventListener('touchend', (e) => {
       const dx = e.changedTouches[0].clientX - startX;
-      if (Math.abs(dx) > 40) show(index + (dx < 0 ? 1 : -1));
+      const dy = e.changedTouches[0].clientY - startY;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) show(index + (dx < 0 ? 1 : -1));
+      else if (Math.abs(dy) > 40) close();
     });
   }
 </script>
