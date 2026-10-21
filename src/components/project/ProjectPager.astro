@@ -100,8 +100,22 @@ const links = [
       visibility 0s linear 420ms;
   }
 
-  .pager-bg.is-active {
+  /* Always fully opaque, on the page's own cream. A backdrop meant to show
+     at half strength (01's) is weakened in its picture alone, so it reads
+     as it does on the home page, where the cream under it is the empty
+     frame — here the layer itself at half let the whole project page show
+     through it. */
+  .pager-bg {
+    background: var(--color-bg);
+  }
+
+  .pager-bg :global(img),
+  .pager-bg video {
     opacity: var(--bg-opacity, 1);
+  }
+
+  .pager-bg.is-active {
+    opacity: 1;
     visibility: visible;
     transition:
       opacity 420ms ease,

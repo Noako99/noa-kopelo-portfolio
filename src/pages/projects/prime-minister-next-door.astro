@@ -9,6 +9,9 @@ import { siteConfig } from '@config/site';
 import cover from '@assets/projects/prime-minister/cover.jpg';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+/* Frames 5, 6 and 7 of the explainer, looping, in one row under the film. */
+const frames = [5, 6, 7].map((n) => `${base}/media/prime-minister-frame${n}.mp4`);
 const title = 'The Prime Minister Next Door';
 const description =
   "A mixed-media motion explainer examining the absurd reality of living 300 meters from the Israeli Prime Minister's residence. Through layered textures, archival footage, and motion design, the piece unpacks the bizarre intersections between personal daily life and heavy national politics.";
@@ -30,7 +33,40 @@ const description =
     <VimeoEmbed id="1209460267" title="למה ראש הממשלה שכן שלי?" />
   </ParallaxMedia>
 
+  <div class="frames">
+    {frames.map((src) => (
+      <video autoplay muted loop playsinline preload="metadata" src={src} aria-hidden="true"></video>
+    ))}
+  </div>
+
   <ProjectPager slug="prime-minister-next-door" />
 </BaseLayout>
 
+<style>
+  /* Side by side across the page, on the margins everything else keeps —
+     47 in from either edge, where CV and PREV / NEXT stand — with the same
+     47 between them, so the three gaps and the two margins are one measure.
+     100 under the film, the gap the pager keeps above PREV / NEXT. */
+  .frames {
+    --px: calc(100vw / 1728);
+    display: flex;
+    gap: calc(47 * var(--px));
+    padding: calc(100 * var(--u)) calc(47 * var(--px)) 0;
+  }
 
+  .frames video {
+    flex: 1 1 0;
+    min-width: 0;
+    aspect-ratio: 720 / 406;
+    display: block;
+  }
+
+  /* On a phone the row keeps its three, on the column's 20 margins with 20
+     between them. */
+  @media (max-width: 640px) {
+    .frames {
+      gap: calc(20 * var(--m));
+      padding: calc(40 * var(--m)) calc(20 * var(--m)) 0;
+    }
+  }
+</style>
