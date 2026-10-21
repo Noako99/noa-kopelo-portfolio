@@ -12,9 +12,12 @@ import ProjectTags from '@components/project/ProjectTags.astro';
 
 interface Props {
   slug: string;
+  /* The gap above PREV / NEXT, in Figma units: 100 on every page, less
+     where the work above it ends low on the glass. */
+  gap?: number;
 }
 
-const { slug } = Astro.props;
+const { slug, gap = 100 } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const at = projectOrder.findIndex((p) => p.slug === slug);
 const count = projectOrder.length;
@@ -27,7 +30,7 @@ const links = [
 ] as const;
 ---
 
-<nav class="pager" aria-label="More projects">
+<nav class="pager" aria-label="More projects" style={`--gap:${gap};`}>
   {links.map(({ dir, project }) => (
     <div
       class="pager-bg"
@@ -83,7 +86,7 @@ const links = [
     align-items: flex-end;
     /* 100 under the end of the page's content on every project: whatever
        comes before it ends where its content is seen to end. */
-    padding: calc(100 * var(--u)) calc(47 * var(--px)) calc(80 * var(--u));
+    padding: calc(var(--gap) * var(--u)) calc(47 * var(--px)) calc(80 * var(--u));
   }
 
   /* Pinned to the window, under the two links and over everything else on
