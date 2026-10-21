@@ -7,12 +7,25 @@ import ParallaxMedia from '@components/project/ParallaxMedia.astro';
 import { Image } from 'astro:assets';
 import { siteConfig } from '@config/site';
 import cover from '@assets/projects/prime-minister/cover.jpg';
+import process1 from '@assets/projects/prime-minister/process-1.jpg';
+import process2 from '@assets/projects/prime-minister/process-2.jpg';
+import process3 from '@assets/projects/prime-minister/process-3.jpg';
+import process4 from '@assets/projects/prime-minister/process-4.jpg';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 /* Frames 5, 6 and 7 of the explainer, looping, in one row under the film:
    6 on the left, 5 in the middle, 7 on the right, at her ask. */
 const frames = [6, 5, 7].map((n) => `${base}/media/prime-minister-frame${n}.mp4`);
+
+/* Process: four of her style frames, in her own order — the title, the
+   300 metres on the map, the archive protest, Dr. Nira Orni. */
+const process = [
+  { src: process1, alt: 'Style frame: the title, Shchenim' },
+  { src: process2, alt: 'Style frame: 300 metres on the map of the neighbourhood' },
+  { src: process3, alt: 'Style frame: an archive protest outside the residence' },
+  { src: process4, alt: 'Style frame: Dr. Nira Orni, architect and city planner' },
+];
 const title = 'The Prime Minister Next Door';
 const description =
   "A mixed-media motion explainer examining the absurd reality of living 300 meters from the Israeli Prime Minister's residence. Through layered textures, archival footage, and motion design, the piece unpacks the bizarre intersections between personal daily life and heavy national politics.";
@@ -40,6 +53,15 @@ const description =
     ))}
   </div>
 
+  <section class="process" aria-labelledby="process-title">
+    <h2 class="process-title" id="process-title">Process</h2>
+    <div class="process-grid">
+      {process.map((frame) => (
+        <Image src={frame.src} alt={frame.alt} widths={[800, 1200, 1700]} sizes="(max-width: 640px) 45vw, 48vw" loading="lazy" />
+      ))}
+    </div>
+  </section>
+
   <ProjectPager slug="prime-minister-next-door" />
 </BaseLayout>
 
@@ -63,12 +85,56 @@ const description =
     display: block;
   }
 
+  /* The process under them, on the same margins and the same 20 between
+     pictures, two by two. 100 above it, as above the row. Its heading in
+     the paragraph's voice: 18, uppercase, 0.2em. */
+  .process {
+    --px: calc(100vw / 1728);
+    padding: calc(100 * var(--u)) calc(47 * var(--px)) 0;
+  }
+
+  .process-title {
+    margin: 0 0 calc(24 * var(--u));
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: calc(18 * var(--u));
+    letter-spacing: 0.2em;
+    line-height: 1.24;
+    text-transform: uppercase;
+    color: var(--color-text);
+  }
+
+  .process-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: calc(20 * var(--px));
+  }
+
+  .process-grid :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
   /* On a phone the row keeps its three, on the column's 20 margins with 8
      between them. */
   @media (max-width: 640px) {
     .frames {
       gap: calc(8 * var(--m));
       padding: calc(40 * var(--m)) calc(20 * var(--m)) 0;
+    }
+
+    .process {
+      padding: calc(40 * var(--m)) calc(20 * var(--m)) 0;
+    }
+
+    .process-title {
+      margin-bottom: calc(12 * var(--m));
+      font-size: calc(12 * var(--m));
+    }
+
+    .process-grid {
+      gap: calc(8 * var(--m));
     }
   }
 </style>
