@@ -212,17 +212,18 @@ body.home-fixed {
 }
 
 /* Focus styles */
+/* The red ring shows where the keyboard is, and only once the keyboard is
+   in use: the layout marks the page `keys` on a Tab and clears it on the
+   next click or touch. Left to the browser's own judgement, a click on
+   CONTACT, a film or a detail drew it too — a red square round whatever
+   had been clicked. */
 :focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+  outline: none;
 }
 
-/* A film is clicked to play and pause, and some browsers count that click
-   as a reason to draw the ring round it: a red square left on the film. Its
-   own controls show their focus. */
-video:focus-visible,
-iframe:focus-visible {
-  outline: none;
+html.keys :focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 /* Container utility */

@@ -28,6 +28,13 @@ const { title, description, image, bodyClass } = Astro.props;
     <script>
       import { startSmoothScroll } from '../scripts/smoothScroll';
       startSmoothScroll();
+
+      /* Keyboard or pointer, for the focus ring (see theme.css). */
+      const root = document.documentElement;
+      addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') root.classList.add('keys');
+      });
+      addEventListener('pointerdown', () => root.classList.remove('keys'));
     </script>
   </body>
 </html>
