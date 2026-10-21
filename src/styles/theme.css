@@ -217,6 +217,14 @@ body.home-fixed {
   outline-offset: 2px;
 }
 
+/* A film is clicked to play and pause, and some browsers count that click
+   as a reason to draw the ring round it: a red square left on the film. Its
+   own controls show their focus. */
+video:focus-visible,
+iframe:focus-visible {
+  outline: none;
+}
+
 /* Container utility */
 .container {
   max-width: var(--max-width);

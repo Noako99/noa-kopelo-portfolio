@@ -161,6 +161,10 @@ const { selector, label = 'Pictures' } = Astro.props;
     let index = 0;
     let open = false;
     let opener: HTMLElement | null = null;
+    /* Focus goes back to the picture only when it was opened from the
+       keyboard: handed back after a click, the browser drew its red focus
+       ring round the square (closing with Escape counts as the keyboard). */
+    let byKeyboard = false;
 
     /* Where a picture opens to: as large as its shape allows in the middle
        of the window, clear of the arrows on the 47 margins and of the bar. */
@@ -225,7 +229,7 @@ const { selector, label = 'Pictures' } = Astro.props;
       window.setTimeout(() => {
         if (!open) box.hidden = true;
       }, 420);
-      opener?.focus({ preventScroll: true });
+      if (byKeyboard) opener?.focus({ preventScroll: true });
     };
 
     pictures.forEach((picture, i) => {
@@ -235,10 +239,14 @@ const { selector, label = 'Pictures' } = Astro.props;
       target.tabIndex = 0;
       target.setAttribute('role', 'button');
       target.setAttribute('aria-label', `Open picture ${i + 1} of ${pictures.length}`);
-      target.addEventListener('click', () => openAt(i, target));
+      target.addEventListener('click', () => {
+        byKeyboard = false;
+        openAt(i, target);
+      });
       target.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
+          byKeyboard = true;
           openAt(i, target);
         }
       });
