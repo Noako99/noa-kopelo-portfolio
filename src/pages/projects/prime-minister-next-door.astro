@@ -44,13 +44,14 @@ const description =
 
 <style>
   /* Side by side across the page, on the margins everything else keeps —
-     47 in from either edge, where CV and PREV / NEXT stand — with the same
-     47 between them, so the three gaps and the two margins are one measure.
-     100 under the film, the gap the pager keeps above PREV / NEXT. */
+     47 in from either edge, where CV and PREV / NEXT stand — and close
+     together, 20 apart (it was 47, the margins' own measure, which read
+     too loose at her eye). 100 under the film, the gap the pager keeps
+     above PREV / NEXT. */
   .frames {
     --px: calc(100vw / 1728);
     display: flex;
-    gap: calc(47 * var(--px));
+    gap: calc(20 * var(--px));
     padding: calc(100 * var(--u)) calc(47 * var(--px)) 0;
   }
 
@@ -61,11 +62,11 @@ const description =
     display: block;
   }
 
-  /* On a phone the row keeps its three, on the column's 20 margins with 20
+  /* On a phone the row keeps its three, on the column's 20 margins with 8
      between them. */
   @media (max-width: 640px) {
     .frames {
-      gap: calc(20 * var(--m));
+      gap: calc(8 * var(--m));
       padding: calc(40 * var(--m)) calc(20 * var(--m)) 0;
     }
   }
