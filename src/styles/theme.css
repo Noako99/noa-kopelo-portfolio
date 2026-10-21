@@ -151,6 +151,23 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* A project page on black (05, at her ask): the page black, everything
+   black on it white, the red left red. Every colour on the site is one of
+   these tokens, so turning them over on the body turns the page over. */
+body.theme-dark {
+  --color-bg: #000000;
+  --color-text: #ffffff;
+}
+
+/* PREV / NEXT bring up the next project as the home page shows it, on its
+   own cream and in its own black — and while they do, the two words over
+   it go black with it so they still read. */
+body.theme-dark .pager-bg,
+body.theme-dark .pager:has(.pager-bg.is-active) {
+  --color-bg: #fafaf4;
+  --color-text: #000000;
+}
+
 /* Pages that are exactly one screen tall (the homepage). The canvas scales
    itself to fit, so there is nothing to scroll to. */
 body.home-fixed {
