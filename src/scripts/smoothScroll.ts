@@ -60,3 +60,33 @@ export const onSmoothScroll = (draw: Draw) => {
   draws.push(draw);
   draw(window.scrollY);
 };
+
+/* Landing spots the page clicks onto on the way down — a film that lands to
+   fill the screen. While Lenis carries the page down, if the place it is
+   heading for falls within `reach` of a window of a spot still ahead of it,
+   the glide is turned to end exactly on it, so it lands there in one
+   movement. Only from above, and only before the spot is reached: from the
+   spot itself, or on the way back up, the page scrolls freely. Returns
+   false when there is no smooth scroll, for the caller to do it itself. */
+export const snapDown = (landings: () => number[], reach = 0.35) => {
+  startSmoothScroll();
+  if (!lenis) return false;
+  const smooth = lenis;
+  let snapping = false;
+  smooth.on('scroll', () => {
+    if (snapping || smooth.direction !== 1) return;
+    const now = smooth.animatedScroll;
+    const target = smooth.targetScroll;
+    const room = window.innerHeight * reach;
+    for (const landing of landings()) {
+      if (now < landing - 1 && Math.abs(target - landing) < room && target !== landing) {
+        snapping = true;
+        smooth.scrollTo(landing, { onComplete: () => (snapping = false) });
+        /* Should the glide be cut short, never stay stuck in a snap. */
+        window.setTimeout(() => (snapping = false), 1500);
+        return;
+      }
+    }
+  });
+  return true;
+};

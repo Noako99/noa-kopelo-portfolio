@@ -11,11 +11,12 @@ interface Props {
   height?: number;
   /* How long it holds in the centre, as a share of the window height. */
   dwell?: number;
-  /* The film is the last thing on the page (01, 02). */
+  /* What follows (PREV / NEXT, or more of the page) comes up close under
+     the film rather than past the band the pin leaves (01, 02). */
   last?: boolean;
 }
 
-const { height = 0.8, dwell = 0.7, last = false } = Astro.props;
+const { height = 0.95, dwell = 0.7, last = false } = Astro.props;
 ---
 
 <section class="stage" class:list={[{ last }]} style={`--h:${height}; --dwell:${dwell};`} data-stage>
@@ -52,11 +53,14 @@ const { height = 0.8, dwell = 0.7, last = false } = Astro.props;
     justify-content: center;
   }
 
-  /* The page's width less the Figma margin on each side. The scale is driven
-     from the script as the film rises, so it arrives rather than just
-     appears. */
+  /* Every film the size of 05's, at her ask: 1378 of the 1512 frame, 73 in
+     from either side — 91% of the page's width. (It was the width less 81
+     on each side, smaller on every page.) The height cap is 0.95 of the
+     window, so on any ordinary window the width is what decides. The scale
+     is driven from the script as the film rises, so it arrives rather than
+     just appears. */
   .inner {
-    width: calc(100vw - 2 * 81 * var(--u));
+    width: calc(100vw * 1378 / 1512);
     transform-origin: 50% 50%;
     will-change: transform;
   }
@@ -127,7 +131,7 @@ const { height = 0.8, dwell = 0.7, last = false } = Astro.props;
 </style>
 
 <script>
-  import { onSmoothScroll, glideTo } from '../../scripts/smoothScroll';
+  import { onSmoothScroll, glideTo, snapDown } from '../../scripts/smoothScroll';
 
   const stages = [...document.querySelectorAll<HTMLElement>('[data-stage]')];
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -225,10 +229,16 @@ const { height = 0.8, dwell = 0.7, last = false } = Astro.props;
        it, the page glides the rest of the way. It was CSS scroll snapping,
        but on 01 the page runs only a little further than the landing, so
        from anywhere near the foot the browser counted the film as near and
-       dragged the page back up to it. This only takes hold within 12% of a
-       window of the spot, and only on the way down, so the rest of the page —
-       and the way back up — scroll freely. */
-    if (!window.matchMedia('(max-width: 640px)').matches) {
+       dragged the page back up to it. It takes hold only on the way down, so
+       the rest of the page — and the way back up — scroll freely.
+       With the site's smooth scroll the catch rides inside the glide itself
+       (snapDown): the wheel's momentum carried the page to rest outside the
+       12% this used to wait for, so the film no longer caught. Without it
+       (reduced motion), the page is still glided on once it rests within
+       12% of the spot. */
+    const landings = () => stages.map((stage) => stage.getBoundingClientRect().top + window.scrollY);
+    const desktop = !window.matchMedia('(max-width: 640px)').matches;
+    if (desktop && !snapDown(landings)) {
       let lastY = window.scrollY;
       let heading = 0;
       let rest = 0;
