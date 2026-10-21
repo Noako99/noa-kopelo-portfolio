@@ -3,6 +3,7 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 import ProjectHeader from '@components/project/ProjectHeader.astro';
 import ProjectPager from '@components/project/ProjectPager.astro';
 import ProjectCanvas from '@components/project/ProjectCanvas.astro';
+import ProcessSection from '@components/project/ProcessSection.astro';
 import { siteConfig } from '@config/site';
 import building1 from '@assets/projects/3-generations/building-1.png';
 import building2 from '@assets/projects/3-generations/building-2.png';
@@ -14,6 +15,11 @@ import mapBg from '@assets/projects/3-generations/map-bg.jpg';
 import avatar1 from '@assets/projects/3-generations/avatar-1.png';
 import avatar2 from '@assets/projects/3-generations/avatar-2.png';
 import avatar3 from '@assets/projects/3-generations/avatar-3.png';
+import process1 from '@assets/projects/3-generations/process/process-1.jpg';
+import process2 from '@assets/projects/3-generations/process/process-2.jpg';
+import process3 from '@assets/projects/3-generations/process/process-3.jpg';
+import process4 from '@assets/projects/3-generations/process/process-4.jpg';
+import process5 from '@assets/projects/3-generations/process/process-5.jpg';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const title = '3 Generations';
@@ -24,6 +30,20 @@ const description =
 
 /* The film's own drift, as the default cycle gave it (-0.02, tripled). */
 const FILM_DEPTH = -0.06;
+/* Process, in its order: the paper sketch and the map drawn from it, then
+   the site's palette on screen and the two window projections. */
+const process = [
+  [
+    { src: process1, alt: 'Paper sketch of the map: the places of three generations' },
+    { src: process2, alt: 'The map drawn digitally, each place marked' },
+  ],
+  [
+    { src: process3, alt: 'The map in the site palette' },
+    { src: process4, alt: 'The map projected onto a window over Jerusalem' },
+    { src: process5, alt: 'Three silhouettes with the routes through the city' },
+  ],
+];
+
 const pieces = [
   /* The palette, top to bottom, at 108 with its hex underneath. It and the
      film beside it move as one block — the same speed, reckoned from the
@@ -70,7 +90,9 @@ const pieces = [
     ]}
   />
 
-  <ProjectCanvas width={1512} height={3117} offsetY={990} tail={200} items={pieces} />
+  <ProjectCanvas width={1512} height={3117} offsetY={990} tail={0} items={pieces} />
+
+  <ProcessSection rows={process} />
 
   <ProjectPager slug="3-generations" />
 </BaseLayout>

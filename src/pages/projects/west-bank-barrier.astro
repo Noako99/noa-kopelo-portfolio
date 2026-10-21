@@ -46,9 +46,10 @@ const filmTop = bookTop + bookHeight + GAP;
    even once scrolled to. It now ends 35 under the arrow — the arrow's own
    gap under the text. */
 const FRAME_HEIGHT = 1172 + 35;
-/* The film at the size of 05's, as every film on the site: 1378 of the
-   1512 frame, centred (it was 1100). */
-const filmWidth = 1378;
+/* The film at the size of 05's: as tall as 05's, 775, since this one is
+   taller for its width (1432x900) — at 05's 1378 wide it stood 866 high,
+   too big for the window. Centred. */
+const filmWidth = Math.round((775 * 1432) / 900);
 const filmLeft = Math.round((1512 - filmWidth) / 2);
 const filmHeight = Math.round(filmWidth / (1432 / 900));
 const screenTop = filmTop + filmHeight + GAP;

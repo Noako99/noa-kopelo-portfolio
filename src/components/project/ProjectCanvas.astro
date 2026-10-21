@@ -264,7 +264,7 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
 </style>
 
 <script>
-  import { onSmoothScroll } from '../../scripts/smoothScroll';
+  import { onSmoothScroll, snapDown } from '../../scripts/smoothScroll';
 
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   /* A phone keeps the parallax, over a shorter travel. */
@@ -347,6 +347,19 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
        forth, and at this strength eight such passes still left 04 29px out.
        Each pass therefore goes 60% of the way, which settles in a handful. */
     const fit = () => {
+      /* When more of the page follows it (a process), the page is not at its
+         foot as the canvas runs out, so the canvas simply ends under its
+         last piece as laid out, and what follows keeps its own gap. */
+      let next = canvas.nextElementSibling;
+      /* Scripts, styles and hidden layers (05's lightbox) are not page. */
+      while (next && (next.tagName === 'SCRIPT' || next.tagName === 'STYLE' || (next as HTMLElement).hidden)) {
+        next = next.nextElementSibling;
+      }
+      if (next && !next.classList.contains('pager')) {
+        const end = Math.max(...pieces.map((piece) => piece.offsetTop + piece.offsetHeight));
+        canvas.style.height = `${end}px`;
+        return;
+      }
       for (let pass = 0; pass < 30; pass++) {
         const canvasTop = canvas.getBoundingClientRect().top + window.scrollY;
         /* The page's foot is where its last laid-out block ends — the pager
@@ -373,6 +386,19 @@ const canvasHeight = Math.max(bottom, height ? Math.min(height, bottom) : bottom
     measure();
     fit();
     onSmoothScroll(draw);
+
+    /* A film with its own controls clicks into place on the way down, as
+       the films of 01, 02 and 04 do: centred in the window, read off where
+       it stands now, parallax and all. */
+    const films = pieces.filter((piece) => piece.querySelector('video[controls], iframe'));
+    if (films.length && !phone) {
+      snapDown(() =>
+        films.map((film) => {
+          const r = film.getBoundingClientRect();
+          return window.scrollY + r.top - (window.innerHeight - r.height) / 2;
+        })
+      );
+    }
   }
 
   /* The films that slide inside their frames. */
