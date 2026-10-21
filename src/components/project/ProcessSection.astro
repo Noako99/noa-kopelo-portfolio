@@ -22,7 +22,7 @@ const { rows, gap = 100 } = Astro.props;
 <section class="process" aria-labelledby="process-title" style={`--gap:${gap};`}>
   <h2 class="process-title" id="process-title">Process</h2>
   {rows.map((row) => (
-    <div class="process-row">
+    <div class="process-row" class:list={[{ single: row.length === 1 }]}>
       {row.map((picture) => (
         <Image
           src={picture.src}
@@ -70,6 +70,21 @@ const { rows, gap = 100 } = Astro.props;
     display: block;
     width: 100%;
     height: auto;
+  }
+
+  /* A picture alone on its row is held to three quarters of the window's
+     height, so it is seen whole, and centred: across the full width 06's
+     sketch stood 906 high, taller than the window. */
+  .process-row.single {
+    justify-content: center;
+  }
+
+  .process-row.single :global(img) {
+    flex: none;
+    height: 75vh;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
   }
 
   @media (max-width: 640px) {
