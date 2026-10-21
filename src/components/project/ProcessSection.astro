@@ -11,12 +11,15 @@ import type { ImageMetadata } from 'astro';
 interface Props {
   /* Rows of pictures, top to bottom. */
   rows: { src: ImageMetadata; alt: string }[][];
+  /* The gap above it, in Figma units: 100 as above PREV / NEXT, more where
+     the work above it still moves with the scroll. */
+  gap?: number;
 }
 
-const { rows } = Astro.props;
+const { rows, gap = 100 } = Astro.props;
 ---
 
-<section class="process" aria-labelledby="process-title">
+<section class="process" aria-labelledby="process-title" style={`--gap:${gap};`}>
   <h2 class="process-title" id="process-title">Process</h2>
   {rows.map((row) => (
     <div class="process-row">
@@ -37,7 +40,7 @@ const { rows } = Astro.props;
 <style>
   .process {
     --px: calc(100vw / 1728);
-    padding: calc(100 * var(--u)) calc(47 * var(--px)) 0;
+    padding: calc(var(--gap) * var(--u)) calc(47 * var(--px)) 0;
   }
 
   /* In the paragraph's voice: 18, uppercase, 0.2em. */
@@ -71,7 +74,7 @@ const { rows } = Astro.props;
 
   @media (max-width: 640px) {
     .process {
-      padding: calc(40 * var(--m)) calc(20 * var(--m)) 0;
+      padding: calc(var(--gap) * 0.4 * var(--m)) calc(20 * var(--m)) 0;
     }
 
     .process-title {

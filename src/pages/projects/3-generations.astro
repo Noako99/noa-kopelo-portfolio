@@ -18,8 +18,6 @@ import avatar3 from '@assets/projects/3-generations/avatar-3.png';
 import process1 from '@assets/projects/3-generations/process/process-1.jpg';
 import process2 from '@assets/projects/3-generations/process/process-2.jpg';
 import process3 from '@assets/projects/3-generations/process/process-3.jpg';
-import process4 from '@assets/projects/3-generations/process/process-4.jpg';
-import process5 from '@assets/projects/3-generations/process/process-5.jpg';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const title = '3 Generations';
@@ -28,19 +26,19 @@ const description =
 
 /* Straight off the Figma frame "3 Generations" (1512x3117). */
 
-/* The film's own drift, as the default cycle gave it (-0.02, tripled). */
-const FILM_DEPTH = -0.06;
-/* Process, in its order: the paper sketch and the map drawn from it, then
-   the site's palette on screen and the two window projections. */
+/* The film and everything with it scroll with the page, with no parallax
+   of their own: the process now follows them, and drifting at their own
+   speeds the portraits closed on it and pulled away again as the page
+   went by. */
+const FILM_DEPTH = 0;
+/* Process, at her ask: the paper sketch large across the page, and under
+   it the screen in the site's palette and the map drawn digitally. (The
+   week-11 window projections are left out.) */
 const process = [
-  [
-    { src: process1, alt: 'Paper sketch of the map: the places of three generations' },
-    { src: process2, alt: 'The map drawn digitally, each place marked' },
-  ],
+  [{ src: process1, alt: 'Paper sketch of the map: the places of three generations' }],
   [
     { src: process3, alt: 'The map in the site palette' },
-    { src: process4, alt: 'The map projected onto a window over Jerusalem' },
-    { src: process5, alt: 'Three silhouettes with the routes through the city' },
+    { src: process2, alt: 'The map drawn digitally, each place marked' },
   ],
 ];
 
@@ -59,9 +57,9 @@ const pieces = [
      row above it and the three portraits sit side by side under it. */
   { video: `${base}/media/three-generations`, controls: true, formats: ['mp4'], x: 292, y: 1030, w: 1130, h: 701, depth: FILM_DEPTH, group: 'film', m: { x: 20, y: 128.3, w: 362 } },
   /* Figma lays them out "Untitled-1-03", "-01", "-02" from left to right. */
-  { src: avatar3, alt: 'Jerusalem, 2022', x: 89, y: 1789, w: 421, h: 421, m: { x: 20, y: 381.7, w: 113.8 } },
-  { src: avatar1, alt: 'Jerusalem, 1989', x: 545, y: 1789, w: 421, h: 421, m: { x: 144.1, y: 381.7, w: 113.8 } },
-  { src: avatar2, alt: 'Jerusalem, 1956', x: 1001, y: 1789, w: 421, h: 421, m: { x: 268.2, y: 381.7, w: 113.8 } },
+  { src: avatar3, alt: 'Jerusalem, 2022', x: 89, y: 1789, w: 421, h: 421, depth: FILM_DEPTH, group: 'film', m: { x: 20, y: 381.7, w: 113.8 } },
+  { src: avatar1, alt: 'Jerusalem, 1989', x: 545, y: 1789, w: 421, h: 421, depth: FILM_DEPTH, group: 'film', m: { x: 144.1, y: 381.7, w: 113.8 } },
+  { src: avatar2, alt: 'Jerusalem, 1956', x: 1001, y: 1789, w: 421, h: 421, depth: FILM_DEPTH, group: 'film', m: { x: 268.2, y: 381.7, w: 113.8 } },
 ];
 ---
 
@@ -92,7 +90,9 @@ const pieces = [
 
   <ProjectCanvas width={1512} height={3117} offsetY={990} tail={0} items={pieces} />
 
-  <ProcessSection rows={process} />
+  <!-- Further down than on 02: the portraits above still drift with the
+       scroll, and at 100 they rode up close to it. -->
+  <ProcessSection rows={process} gap={260} />
 
   <ProjectPager slug="3-generations" />
 </BaseLayout>
